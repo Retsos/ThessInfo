@@ -1,0 +1,22 @@
+.footer {
+    background-color: #1e8449;
+    color: white;
+    margin-top: auto;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+}
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: flex-start;
+    max-width: 1500px;
+    margin: auto;
+}
+
+.footercontent {
+    margin-top: 20px;
+    font-size: 0.9rem;
+}
