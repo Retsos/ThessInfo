@@ -11,7 +11,7 @@ const Services = () => {
     const navigate = useNavigate();
 
     const options = [
-        { value: 'thessaloniki', label: 'Θεσσαλονίκη' },
+        { value: 'thessaloniki', label: 'Άνω Τούμπα' },
         { value: 'kalamaria', label: 'Καλαμαριά' },
         { value: 'pylaia-hortiati', label: 'Πυλαία-Χορτιάτης' },
         { value: 'neapoli-sykies', label: 'Νεάπολη-Συκιές' },

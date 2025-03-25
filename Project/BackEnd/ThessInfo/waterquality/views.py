@@ -55,7 +55,10 @@ class LatestAnalysisView(View):
             {
                 "category": category,
                 "latest_data": data["latest_data"],
-                "analysis": data["analysis"]
+                "analysis": data["analysis"],
+                "year":latest_year,
+                "month":latest_month_order,
+                "compliantCount": f"{sum(1 for item in data['analysis'] if item.get('is_compliant') is True)} of {sum(1 for item in data['analysis'] if isinstance(item.get('is_compliant'), bool))}"
             }
             for category, data in grouped.items()
         ]
@@ -82,6 +85,7 @@ class LatestAnalysisView(View):
             "notes": "Μη αριθμητική τιμή" if numeric_value is None else None
         }
     
+
     @staticmethod
     def extract_numeric(value):
         try:

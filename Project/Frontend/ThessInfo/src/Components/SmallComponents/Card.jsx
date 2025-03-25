@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { styled } from '@mui/material/styles';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
@@ -13,8 +13,13 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-const ExpandMore = styled((props) => {
+
+
+const ExpandMore = styled((props, waterData) => {
+
   const { expand, ...other } = props;
+
+
   return <IconButton {...other} />;
 })(({ theme, expand }) => ({
   marginLeft: 'auto',
@@ -31,10 +36,13 @@ export default function MyCard({
   expanded,
   onExpand,
   date = "September 14, 2016", // Default date
-  details = "Εδώ μπορείς να προσθέσεις περισσότερες πληροφορίες για την υπηρεσία ή τον δήμο.", // Default details
+  details,
+  waterData,
 }) {
 
+  const [showDetails, setShowDetails] = useState(false);
 
+  const toggleDetails = () => setShowDetails(prev => !prev);
   return (
     <Card sx={{ maxWidth: 345, margin: '1rem', height: '100%' }}>
       <CardHeader
@@ -72,7 +80,26 @@ export default function MyCard({
         <CardContent>
           <Typography sx={{ marginBottom: 2 }}>Λεπτομέρειες:</Typography>
           <Typography sx={{ marginBottom: 2 }}>{details}</Typography>
+
         </CardContent>
+        <div className="card">
+
+          <button onClick={toggleDetails}>
+            {showDetails ? "Κλείσε τις λεπτομέρειες" : "Προβολή λεπτομερειών"}
+          </button>
+          {showDetails && (
+            <div className="dropdown-content">
+              <ul>
+                {waterData.analysis.map((item, index) => (
+                  <li key={index}>
+                    <strong>{item.parameter}</strong>: {item.value} {item.unit} (Όριο: {item.limit}) – {item.is_compliant ? "Συμμορφώνεται" : "Δεν συμμορφώνεται"}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+
       </Collapse>
     </Card>
   );
