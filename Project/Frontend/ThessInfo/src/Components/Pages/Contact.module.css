@@ -3,3 +3,121 @@
     flex-direction: column;
     min-height: 100vh;
 }
+
+.ContactContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 5rem 0;
+}
+
+.formContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.contactArea {
+    width: 100%;
+    border-radius: 5px;
+    resize: none !important;
+    overflow-y: hidden !important;
+}
+
+.inputIcon,
+.emailIcon,
+.TextIcon {
+    font-size: 1.6rem;
+    font-weight: 600;
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+    z-index: 2;
+    pointer-events: none;
+
+}
+
+.contactinput {
+    width: 600px;
+
+    @media (max-width: 1200px) {
+        width: 450px;
+    }
+
+    @media (max-width: 992px) {
+        width: 400px;
+    }
+
+    @media (max-width:768px) {
+        width: 350px;
+    }
+
+    @media (max-width: 576px) {
+        width: 290px;
+    }
+}
+
+.btnContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.CotnactBtn {
+    background-color: #1daaad;
+    width: 100%;
+    height: 4rem;
+    max-width: 300px;
+    display: flex;
+    border: none;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    gap: 10px;
+    font-size: 1.1rem;
+    color: white;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+
+    @media (max-width: 576px) {
+        max-width: 200px;
+        font-size: 1rem;
+    }
+}
+
+.CotnactBtn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+}
+
+.CotnactBtn:hover,
+.CotnactBtn:active {
+    transform: scale(1.05);
+    cursor: pointer;
+    background-color: #1daaad !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.errors {
+    text-align: left;
+    color: rgb(227, 36, 36);
+    font-size: 1rem;
+    font-weight: 400;
+
+
+    @media (max-width: 992px) {
+        font-size: 0.9rem;
+        font-weight: 400;
+    }
+    @media (max-width: 400px) {
+        font-size: 0.8rem;
+    }
+}

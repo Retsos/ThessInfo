@@ -1,21 +1,20 @@
-import React from 'react'
-import Navbar from '../Navbars/Navbar'
-import ServicesCss from './Services.module.css'
-import Footer from '../Navbars/Footer'
-import Select from 'react-select'
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import Navbar from '../Navbars/Navbar';
+import ServicesCss from './Services.module.css';
+import Footer from '../Navbars/Footer';
+import Select from 'react-select';
+import { useNavigate } from 'react-router-dom';
 
 const Services = () => {
-
     const [selectedOption, setSelectedOption] = useState(null);
     const [showMinLengthWarning, setShowMinLengthWarning] = useState(false);
     const navigate = useNavigate();
 
     const options = [
-        { value: 'chocolate', label: 'Chocolate' },
-        { value: 'strawberry', label: 'Strawberry' },
-        { value: 'vanilla', label: 'Vanilla' }
+        { value: 'thessaloniki', label: 'Θεσσαλονίκη' },
+        { value: 'kalamaria', label: 'Καλαμαριά' },
+        { value: 'pylaia-hortiati', label: 'Πυλαία-Χορτιάτης' },
+        { value: 'neapoli-sykies', label: 'Νεάπολη-Συκιές' },
     ];
 
     const CustomStyles = {
@@ -36,11 +35,10 @@ const Services = () => {
             ...provided,
             color: state.isSelected ? "#ffffff" : "#333",
             backgroundColor: state.isSelected ? "#1e8449" : state.isFocused ? "#f4f4f4" : "#ffffff",
-            // ✅ Απενεργοποίηση hover effect στο selected element
             "&:hover": state.isSelected
-                ? {} // Αν είναι επιλεγμένο, δεν κάνει hover
+                ? {}
                 : {
-                    backgroundColor: "#e8f5e9" // Ενεργό hover μόνο αν ΔΕΝ είναι επιλεγμένο
+                    backgroundColor: "#e8f5e9"
                 },
             transition: "background-color 0.2s ease-in-out"
         }),
@@ -53,53 +51,56 @@ const Services = () => {
         })
     };
 
-
     const handleChange = (selected) => {
         setSelectedOption(selected);
         setShowMinLengthWarning(false);
     };
 
-    const handleSearchSubmit = () => {
-        if (!selectedOption || selectedOption.label.trim().length < 3) {
-            setShowMinLengthWarning(true);
-            return;
-        }
-
-        navigate(`/Results?search=${encodeURIComponent(selectedOption.value)}`);
-        setSelectedOption(null);
-    };
-
+// In Services.js, modify the handleSearchSubmit function
+const handleSearchSubmit = () => {
+    if (!selectedOption || selectedOption.label.trim().length < 3) {
+        setShowMinLengthWarning(true);
+        return;
+    }
+    // Pass both value and label as query parameters
+    navigate(`/Results?dimos=${encodeURIComponent(selectedOption.value)}&label=${encodeURIComponent(selectedOption.label)}`);
+    setSelectedOption(null);
+};
 
     return (
         <>
             <div className={ServicesCss.pageContainer}>
                 <Navbar></Navbar>
-                <div className={ServicesCss.selectContainer}>
-                    <Select
-                        options={options}
-                        styles={CustomStyles}
-                        isClearable
-                        placeholder="Αναζήτηση Δήμου/Περιοχής"
-                        value={selectedOption}
-                        onChange={handleChange}
-                    />
-                    {showMinLengthWarning && (
-                        <div style={{ color: "rgba(211, 46, 46, 0.88)", marginTop: "5px" }}>
-                            Επιλέξτε τουλάχιστον 3 χαρακτήρες.
-                        </div>
-                    )}
-                    <button
-                        className={ServicesCss.searchButton}
-                        type="button"
-                        onClick={handleSearchSubmit}
-                    >
-                        Αναζήτηση
-                    </button>
+                <div className={ServicesCss.wrapper}>
+                    <h1 className={ServicesCss.title}>Αναζήτησε Πληροφορίες για την Περιοχή σου</h1>
+                    <div className={ServicesCss.selectContainer}>
+                        <Select
+                            options={options}
+                            styles={CustomStyles}
+                            isClearable
+                            placeholder="Αναζήτηση Δήμου/Περιοχής"
+                            value={selectedOption}
+                            onChange={handleChange}
+                        />
+                        {showMinLengthWarning && (
+                            <div style={{ color: "rgba(211, 46, 46, 0.88)", marginTop: "5px" }}>
+                                Επιλέξτε τουλάχιστον 3 χαρακτήρες.
+                            </div>
+                        )}
+                        <button
+                            className={ServicesCss.searchButton}
+                            type="button"
+                            onClick={handleSearchSubmit}
+                        >
+                            Αναζήτηση
+                        </button>
+                    </div>
                 </div>
+
                 <Footer></Footer>
             </div>
         </>
-    )
-}
+    );
+};
 
-export default Services
+export default Services;
