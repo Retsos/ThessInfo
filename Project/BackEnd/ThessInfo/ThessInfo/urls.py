@@ -5,5 +5,6 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('water/', include('waterquality.urls'))
+    path('water/', include('waterquality.urls')),
+    path('recycle/', include('recycle.urls'))
 ]

@@ -10,7 +10,7 @@ def load_all_data():
     if cached_data is not None:
         return cached_data
 
-    data_dir = Path(settings.BASE_DIR) / 'waterquality' / 'datasheet'
+    data_dir = Path(settings.BASE_DIR) / 'recycle' / 'datasheets'
     all_data = []
     
     for filename in os.listdir(data_dir):

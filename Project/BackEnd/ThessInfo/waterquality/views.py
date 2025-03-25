@@ -26,7 +26,10 @@ class LatestAnalysisView(View):
         
         # Βρες το πιο πρόσφατο έτος μεταξύ των φιλτραρισμένων εγγραφών
         try:
-            latest_year = max(int(entry['Year']) for entry in filtered_data if entry.get('Year').isdigit())
+            latest_year = max(
+                int(entry['Year']) for entry in filtered_data 
+                if isinstance(entry.get('Year'), (str, int)) and str(entry['Year']).isdigit()
+            )
         except ValueError:
             return JsonResponse({"error": "Δεν υπάρχουν έγκυρα έτη στα δεδομένα."}, status=400)
         
@@ -73,7 +76,7 @@ class LatestAnalysisView(View):
         return {
             "parameter": entry.get('Φυσικοχημικές Παράμετροι', ''),
             "unit": entry.get('Μονάδα μέτρησης', ''),
-            "value": value,
+            "value": numeric_value,
             "limit": limit,
             "is_compliant": is_compliant,
             "notes": "Μη αριθμητική τιμή" if numeric_value is None else None
@@ -82,9 +85,21 @@ class LatestAnalysisView(View):
     @staticmethod
     def extract_numeric(value):
         try:
-            matches = re.findall(r'[\d,\.]+', value)
-            if matches:
-                return float(matches[0].replace(',', '.'))
+            # Αφαίρεση περιττών κενών
+            value = value.strip()
+
+            # Αν περιέχει γράμματα (π.χ. "ΔΠ^5"), επιστρέφουμε None
+            if re.search(r'[Α-Ωα-ωA-Za-z]', value):
+                return None
+
+            # Αντικατάσταση όλων των ',' με '.' για σωστή μετατροπή σε float
+            normalized_value = value.replace(',', '.')
+
+            # Εντοπίζει τον πρώτο αριθμό που εμφανίζεται
+            match = re.search(r'[\d]+(?:\.[\d]+)?', normalized_value)
+            if match:
+                return float(match.group())
+
             return None
         except Exception:
             return None
@@ -173,13 +188,24 @@ class YearlyAnalysisView(View):
 
         return JsonResponse(yearly_stats, safe=False)
     
-    def extract_numeric(self, value):
-        """ Εξάγει τον πρώτο αριθμό που εμφανίζεται στο string. """
+    @staticmethod
+    def extract_numeric(value):
         try:
-            # Βρίσκει σύνολα ψηφίων με κόμμα ή τελεία
-            matches = re.findall(r'[\d,\.]+', value)
-            if matches:
-                return float(matches[0].replace(',', '.'))
+            # Αφαίρεση περιττών κενών
+            value = value.strip()
+
+            # Αν περιέχει γράμματα (π.χ. "ΔΠ^5"), επιστρέφουμε None
+            if re.search(r'[Α-Ωα-ωA-Za-z]', value):
+                return None
+
+            # Αντικατάσταση όλων των ',' με '.' για σωστή μετατροπή σε float
+            normalized_value = value.replace(',', '.')
+
+            # Εντοπίζει τον πρώτο αριθμό που εμφανίζεται
+            match = re.search(r'[\d]+(?:\.[\d]+)?', normalized_value)
+            if match:
+                return float(match.group())
+
             return None
         except Exception:
             return None
