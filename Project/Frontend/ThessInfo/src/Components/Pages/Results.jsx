@@ -16,7 +16,7 @@ const Results = () => {
     const [dimosValue, setDimosValue] = useState(null);
     const [dimosLabel, setDimosLabel] = useState(null);
     const [expandedCardId, setExpandedCardId] = useState(null);
-    const [waterDatalatest, setWaterDatalatest] = useState([]);
+    const [waterDatalatest, setWaterDatalatest] = useState(null);
 
     useEffect(() => {
         const queryParams = new URLSearchParams(location.search);
@@ -28,35 +28,27 @@ const Results = () => {
     }, [location.search]);
 
     useEffect(() => {
-        if (!dimosLabel) return; // Δεν εκτελείται εάν δεν υπάρχει dimosLabel
+        if (!dimosLabel) return;
 
         const fetchWaterData = async () => {
             try {
-                console.log("dimosLabel:", dimosLabel);
-                const responsewateryearly = await api.get(`water/api/group-by-year/?region=${encodeURIComponent(dimosLabel)}`);
-                console.log("Response:", responsewateryearly.data);
-                const responsewatelastmonth = await api.get(`water/api/latest-measurements/?region=${encodeURIComponent(dimosLabel)}`);
-                setWaterDatalatest(responsewatelastmonth.data[0]);
-                console.log("Response:", responsewatelastmonth.data[0]
+                const responsewatelastmonth = await api.get(
+                    `water/api/latest-measurements/?region=${encodeURIComponent(dimosLabel)}`
                 );
+                setWaterDatalatest(responsewatelastmonth.data[0]);
             } catch (error) {
-                console.error("Error fetching user data:", error);
+                console.error("Error fetching water data:", error);
             }
         };
         fetchWaterData();
     }, [dimosLabel]);
 
-
-    // Συνάρτηση για υπολογισμό της ποιότητας βάσει του compliantCount (π.χ. "5 of 6")
     const getQualityLevel = (compliantCount) => {
-        // Ελέγχουμε αν δεν είναι string και προσπαθούμε να το μετατρέψουμε
-        if (typeof compliantCount !== "string") {
-            compliantCount = String(compliantCount);
-        }
-    
-        // Τώρα συνεχίζουμε κανονικά
-        const parts = compliantCount.split(" of ");
+        if (!compliantCount) return "Unknown";
+        
+        const parts = String(compliantCount).split(" of ");
         if (parts.length !== 2) return "Unknown";
+        
         const compliant = Number(parts[0]);
         const total = Number(parts[1]);
         if (!total) return "Unknown";
@@ -68,79 +60,39 @@ const Results = () => {
         return "Poor";
     };
 
-    const cardData = {
+    // Βασικά δεδομένα που είναι κοινά για όλους τους δήμους
+    const baseCardData = [
+        {
+            id: 1,
+            titleTemplate: 'Ποιότητα Νερού {dimos}',
+            description: 'Πληροφορίες για την ποιότητα του νερού στον δήμο.',
+            imageUrl: WaterPic,
+            getDetails: (data) => 
+                data ? `Οι μετρήσεις έγιναν ${data.month}/${data.year} με ποιότητα νερού ${getQualityLevel(data.compliantCount)}` 
+                     : "Δεν υπαρχοθν ακομα μετρησεισ"
+        },
+        {
+            id: 2,
+            titleTemplate: 'Anakiklosh ston dhmo {dimos}',
+            description: 'Πληροφορίες για τον δήμο.',
+            imageUrl: RecyclePic,
+            details: "Περισσότερες πληροφορίες σύντομα..."
+        }
+    ];
+
+    // Δημιουργία δυναμικών card data βασισμένο στον επιλεγμένο δήμο
+    const getDynamicCardData = () => {
+        if (!dimosLabel) return [];
         
-        thessaloniki: [
-            {
-                id: 1,
-                title: 'Ποιότητα Νερού Θεσσαλονίκης',
-                description:
-                    'Πληροφορίες για την ποιότητα του νερού στην Θεσσαλονίκη.',
-                imageUrl: WaterPic,
-                details: "Oi metriseis eginan "+waterDatalatest.month+"/"+waterDatalatest.year+ "me poiothta nerou "+getQualityLevel(waterDatalatest.compliantCount)+"  jilo katalaves tvra kidooo",
-                analysis: waterDatalatest,
-            },
-            {
-                id: 2,
-                title: 'Δήμος Θεσσαλονίκης',
-                description: 'Πληροφορίες για τον Δήμο Θεσσαλονίκης.',
-                imageUrl: RecyclePic
-            },
-        ],
-        kalamaria: [
-            {
-                id: 1,
-                title: 'Ποιότητα Νερού Καλαμαριάς',
-                description: 'Πληροφορίες για την ποιότητα του νερού στην Καλαμαριά.',
-                imageUrl: WaterPic,
-            },
-            {
-
-                id: 2,
-                title: 'Δήμος Καλαμαριάς',
-                description: 'Πληροφορίες για τον Δήμο Καλαμαριάς.',
-                imageUrl: RecyclePic
-
-            },
-        ],
-        'pylaia-hortiati': [
-            {
-                id: 1,
-                title: 'Ποιότητα Νερού Πυλαίας-Χορτιάτη',
-                description:
-                    'Πληροφορίες για την ποιότητα του νερού στην Πυλαία-Χορτιάτη.',
-                imageUrl: WaterPic,
-            },
-            {
-                id: 2,
-                title: 'Δήμος Πυλαίας-Χορτιάτη',
-                description: 'Πληροφορίες για τον Δήμο Πυλαίας-Χορτιάτη.',
-                imageUrl: RecyclePic
-
-            },
-        ],
-        'neapoli-sykies': [
-            {
-                id: 1,
-                title: 'Ποιότητα Νερού Νεάπολης-Συκεών',
-                description:
-                    'Πληροφορίες για την ποιότητα του νερού στην Νεάπολη-Συκιές.',
-                imageUrl: WaterPic,
-            },
-            {
-                id: 2,
-                title: 'Δήμος Νεάπολης-Συκεών',
-                description: 'Πληροφορίες για τον Δήμο Νεάπολης-Συκεών.',
-                imageUrl: RecyclePic
-            },
-        ],
+        return baseCardData.map(card => ({
+            ...card,
+            title: card.titleTemplate.replace('{dimos}', dimosLabel),
+            details: card.getDetails ? card.getDetails(waterDatalatest) : card.details
+        }));
     };
 
-
-
-
     const handleExpand = (cardId) => {
-        setExpandedCardId((prevId) => (prevId === cardId ? null : cardId));
+        setExpandedCardId(prevId => (prevId === cardId ? null : cardId));
     };
 
     return (
@@ -152,10 +104,11 @@ const Results = () => {
             </div>
 
             <div className={ResultsCss.CardContainer}>
-                {dimosValue && cardData[dimosValue].map((card) => (
+                {getDynamicCardData().map((card) => (
                     <Card
                         key={card.id}
                         title={card.title}
+                        id = {card.id}
                         description={card.description}
                         details={card.details}
                         imageUrl={card.imageUrl}
@@ -163,10 +116,7 @@ const Results = () => {
                         onExpand={() => handleExpand(card.id)}
                         waterData={waterDatalatest}
                     />
-                    
-                ))
-                }
-                
+                ))}
             </div>
 
             <Footer />
