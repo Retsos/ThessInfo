@@ -43,4 +43,9 @@
     gap: 10px;
     padding: 0 20px; 
   }
-  
+  .noiseIcon {
+    width: 1.2rem;
+    height: 1.2rem;
+    margin-left: 8px;
+    opacity: 0.7;
+}

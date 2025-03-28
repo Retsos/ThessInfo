@@ -7,8 +7,6 @@ import WaterPic from '../../assets/waterphoto.png';
 import RecyclePic from '../../assets/recycle.png';
 import api from '../../endpoints/api';
 
-
-
 import { useLocation } from 'react-router-dom';
 
 const Results = () => {
@@ -17,6 +15,8 @@ const Results = () => {
     const [dimosLabel, setDimosLabel] = useState(null);
     const [expandedCardId, setExpandedCardId] = useState(null);
     const [waterDatalatest, setWaterDatalatest] = useState(null);
+    const [waterDatalastyear, setwaterDatalastyear] = useState(null);
+    const [selectedPeriod, setSelectedPeriod] = useState('last_month');
 
     useEffect(() => {
         const queryParams = new URLSearchParams(location.search);
@@ -34,8 +34,15 @@ const Results = () => {
             try {
                 const responsewatelastmonth = await api.get(
                     `water/api/latest-measurements/?region=${encodeURIComponent(dimosLabel)}`
+
                 );
+                const responsewaterlastyear = await api.get(
+                    `water/api/group-by-year/?region=${encodeURIComponent(dimosLabel)}`
+                )
                 setWaterDatalatest(responsewatelastmonth.data[0]);
+                setwaterDatalastyear(responsewaterlastyear.data[0]);
+                console.log(responsewaterlastyear);
+
             } catch (error) {
                 console.error("Error fetching water data:", error);
             }
@@ -44,20 +51,22 @@ const Results = () => {
     }, [dimosLabel]);
 
     const getQualityLevel = (compliantCount) => {
-        if (!compliantCount) return "Unknown";
-        
+        if (!compliantCount) return "Άγνωστη";
+
         const parts = String(compliantCount).split(" of ");
-        if (parts.length !== 2) return "Unknown";
-        
+        if (parts.length !== 2) return "Άγνωστη";
+
         const compliant = Number(parts[0]);
         const total = Number(parts[1]);
-        if (!total) return "Unknown";
-    
+        if (!total) return "Άγνωστη";
+
         const percentage = (compliant / total) * 100;
-        if (percentage >= 90) return "Excellent";
-        else if (percentage >= 75) return "Good";
-        else if (percentage >= 50) return "Average";
-        return "Poor";
+
+        if (percentage >= 90) return `Εξαιρετική με ποσοστό: ${percentage.toFixed(2)}%`;
+        if (percentage >= 75) return `Καλή με ποσοστό: ${percentage.toFixed(2)}%`;
+        if (percentage >= 50) return `Μέτρια με ποσοστό: ${percentage.toFixed(2)}%`;
+
+        return `Κακή με ποσοστό: ${percentage.toFixed(2)}%`;
     };
 
     // Βασικά δεδομένα που είναι κοινά για όλους τους δήμους
@@ -67,9 +76,23 @@ const Results = () => {
             titleTemplate: 'Ποιότητα Νερού {dimos}',
             description: 'Πληροφορίες για την ποιότητα του νερού στον δήμο.',
             imageUrl: WaterPic,
-            getDetails: (data) => 
-                data ? `Οι μετρήσεις έγιναν ${data.month}/${data.year} με ποιότητα νερού ${getQualityLevel(data.compliantCount)}` 
-                     : "Δεν υπαρχοθν ακομα μετρησεισ"
+            getDetails: (data) =>
+                data ? `Οι μετρήσεις έγιναν ${data.month}/${data.year} με ποιότητα νερού "${getQualityLevel(data.compliantCount)}"`
+                    : "Δεν υπαρχοθν ακομα μετρησεισ"
+        },
+        {
+            id: 2,
+            titleTemplate: 'Anakiklosh ston dhmo {dimos}',
+            description: 'Πληροφορίες για τον δήμο.',
+            imageUrl: RecyclePic,
+            details: "Περισσότερες πληροφορίες σύντομα..."
+        },
+        {
+            id: 2,
+            titleTemplate: 'Anakiklosh ston dhmo {dimos}',
+            description: 'Πληροφορίες για τον δήμο.',
+            imageUrl: RecyclePic,
+            details: "Περισσότερες πληροφορίες σύντομα..."
         },
         {
             id: 2,
@@ -83,7 +106,7 @@ const Results = () => {
     // Δημιουργία δυναμικών card data βασισμένο στον επιλεγμένο δήμο
     const getDynamicCardData = () => {
         if (!dimosLabel) return [];
-        
+
         return baseCardData.map(card => ({
             ...card,
             title: card.titleTemplate.replace('{dimos}', dimosLabel),
@@ -108,7 +131,7 @@ const Results = () => {
                     <Card
                         key={card.id}
                         title={card.title}
-                        id = {card.id}
+                        id={card.id}
                         description={card.description}
                         details={card.details}
                         imageUrl={card.imageUrl}
