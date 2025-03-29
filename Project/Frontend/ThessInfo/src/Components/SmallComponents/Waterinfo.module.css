@@ -1,0 +1,54 @@
+.card {
+    border-radius: 8px;
+    padding: 10px 0;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.listItem {
+    list-style: none;
+    padding: 8px 5px;
+    right: 14px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    background-color: #f6f6f6;
+}
+
+.parameter {
+    font-size: 14px;
+}
+
+.iconSuccess {
+    color: green;
+    margin-left: 5px;
+}
+
+.iconFail {
+    color: red;
+    margin-left: 5px;
+}
+
+.tooltipIcon {
+    margin-left: 10px;
+    font-size: 16px;
+}
+
+.tooltip {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.75);
+    color: white;
+    padding: 5px;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 12px;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: normal;
+    /* Επιτρέπει το wrapping του κειμένου */
+    max-width: 200px;
+    /* Περιορίζει το πλάτος και κάνει break line όταν είναι πολύ μακρύ */
+    z-index: 20;
+}

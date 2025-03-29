@@ -3,7 +3,8 @@
     flex-direction: column;
     min-height: 100vh;
 }
-.CardContainer{
+
+.CardContainer {
     margin: 5rem 2rem;
     gap: 10px;
     display: flex;
@@ -11,4 +12,14 @@
     flex-wrap: wrap;
     justify-content: space-between;
     height: 100%;
-}  
+}
+
+.qualityDisplay {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 8px;
+    font-size: 1.1em;
+    background-color: transparent;
+    flex-direction: column;
+}

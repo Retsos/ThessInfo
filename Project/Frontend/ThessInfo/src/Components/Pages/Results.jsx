@@ -6,7 +6,8 @@ import Card from '../SmallComponents/Card';
 import WaterPic from '../../assets/waterphoto.png';
 import RecyclePic from '../../assets/recycle.png';
 import api from '../../endpoints/api';
-
+import { IoMdWater } from "react-icons/io";
+import { Tooltip } from '@mui/material';
 import { useLocation } from 'react-router-dom';
 
 const Results = () => {
@@ -34,76 +35,122 @@ const Results = () => {
             try {
                 const responsewatelastmonth = await api.get(
                     `water/api/latest-measurements/?region=${encodeURIComponent(dimosLabel)}`
-
                 );
                 const responsewaterlastyear = await api.get(
                     `water/api/group-by-year/?region=${encodeURIComponent(dimosLabel)}`
-                )
-                setWaterDatalatest(responsewatelastmonth.data[0]);
-                setwaterDatalastyear(responsewaterlastyear.data[0]);
-                console.log(responsewaterlastyear);
+                );
+
+                setWaterDatalatest(responsewatelastmonth.data[0] || null);
+                setwaterDatalastyear(responsewaterlastyear.data[0] || null);
 
             } catch (error) {
                 console.error("Error fetching water data:", error);
+                setWaterDatalatest(null);
+                setwaterDatalastyear(null);
             }
         };
         fetchWaterData();
     }, [dimosLabel]);
 
     const getQualityLevel = (compliantCount) => {
-        if (!compliantCount) return "Άγνωστη";
+        const defaultResult = {
+            color: "#cccccc",
+            label: "Άγνωστη",
+            tooltip: "Άγνωστη ποιότητα νερού",
+            percentage: null
+        };
+
+        if (!compliantCount) return defaultResult;
 
         const parts = String(compliantCount).split(" of ");
-        if (parts.length !== 2) return "Άγνωστη";
+        if (parts.length !== 2) return defaultResult;
 
         const compliant = Number(parts[0]);
         const total = Number(parts[1]);
-        if (!total) return "Άγνωστη";
+        if (!total || isNaN(compliant) || isNaN(total)) return defaultResult;
 
         const percentage = (compliant / total) * 100;
+        // const percentage = 40 //ΤΕΣΤΕΡ ΓΙΑ ΤΑ ΧΡΩΜΑΤΑ 
+        const levels = [
+            {
+                min: 90,
+                color: "#0000FF", //ΜΠΛΕ 
+                label: "Εξαιρετική",
+                tooltip: "Εξαιρετική ποιότητα νερού"
+            },
+            {
+                min: 75,
+                color: "#4f4fff", //ΜΠΛΕ ΘΩΛΟ
+                label: "Καλή",
+                tooltip: "Καλή ποιότητα νερού"
+            },
+            {
+                min: 50,
+                color: "#8888FF", //ΜΠΛΕ ΘΩΛΟ Χ2 
+                label: "Μέτρια",
+                tooltip: "Μέτρια ποιότητα νερού"
+            },
+            {
+                min: 0,
+                color: "#ccccff",//ΜΠΛΕ ΘΩΛΟ Χ5
+                label: "Κακή",
+                tooltip: "Κακή ποιότητα νερού"
+            }
+        ];
 
-        if (percentage >= 90) return `Εξαιρετική με ποσοστό: ${percentage.toFixed(2)}%`;
-        if (percentage >= 75) return `Καλή με ποσοστό: ${percentage.toFixed(2)}%`;
-        if (percentage >= 50) return `Μέτρια με ποσοστό: ${percentage.toFixed(2)}%`;
+        const level = levels.find(l => percentage >= l.min) || defaultResult;
 
-        return `Κακή με ποσοστό: ${percentage.toFixed(2)}%`;
+        return {
+            ...level,
+            percentage: Number(percentage.toFixed(2))
+        };
     };
 
-    // Βασικά δεδομένα που είναι κοινά για όλους τους δήμους
+    // Διορθωμένα δεδομένα κάρτας με μοναδικά IDs
     const baseCardData = [
         {
             id: 1,
             titleTemplate: 'Ποιότητα Νερού {dimos}',
             description: 'Πληροφορίες για την ποιότητα του νερού στον δήμο.',
             imageUrl: WaterPic,
-            getDetails: (data) =>
-                data ? `Οι μετρήσεις έγιναν ${data.month}/${data.year} με ποιότητα νερού "${getQualityLevel(data.compliantCount)}"`
-                    : "Δεν υπαρχοθν ακομα μετρησεισ"
+            getDetails: (data) => {
+                if (!data) return "Δεν υπάρχουν ακόμα μετρήσεις";
+                const quality = getQualityLevel(data.compliantCount);
+                return (
+                    <div className={ResultsCss.qualityDisplay}>
+                        <div>
+                            Οι μετρήσεις πραγματοποιήθηκαν κατά την περίοδο {data.month}/{data.year}, με ποιότητα νερού: 
+                        </div>
+                        <Tooltip title={quality.tooltip}>
+                        {quality.percentage}% <IoMdWater style={{ color: quality.color }} />
+                        </Tooltip>
+                    </div>
+                );
+            }
         },
         {
             id: 2,
-            titleTemplate: 'Anakiklosh ston dhmo {dimos}',
+            titleTemplate: 'Ανακύκλωση στον δήμο {dimos}',
             description: 'Πληροφορίες για τον δήμο.',
             imageUrl: RecyclePic,
             details: "Περισσότερες πληροφορίες σύντομα..."
         },
         {
-            id: 2,
-            titleTemplate: 'Anakiklosh ston dhmo {dimos}',
+            id: 3,
+            titleTemplate: 'Δείκτης Καθαριότητας {dimos}',
             description: 'Πληροφορίες για τον δήμο.',
             imageUrl: RecyclePic,
             details: "Περισσότερες πληροφορίες σύντομα..."
         },
         {
-            id: 2,
-            titleTemplate: 'Anakiklosh ston dhmo {dimos}',
+            id: 4,
+            titleTemplate: 'Ποιότητα Αέρα {dimos}',
             description: 'Πληροφορίες για τον δήμο.',
             imageUrl: RecyclePic,
             details: "Περισσότερες πληροφορίες σύντομα..."
         }
     ];
 
-    // Δημιουργία δυναμικών card data βασισμένο στον επιλεγμένο δήμο
     const getDynamicCardData = () => {
         if (!dimosLabel) return [];
 

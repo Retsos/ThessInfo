@@ -41,7 +41,7 @@ const Services = () => {
             icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />
         },
     ];
-    
+
     const CustomStyles = {
         control: (provided, state) => ({
             ...provided,
@@ -55,7 +55,7 @@ const Services = () => {
             padding: "4px 8px",
             transition: "all 0.3s ease-in-out"
         }),
-    
+
         option: (provided, state) => ({
             ...provided,
             color: state.isSelected ? "#ffffff" : "#333",
@@ -67,7 +67,7 @@ const Services = () => {
             "&:hover": state.isSelected ? {} : { backgroundColor: "#e8f5e9" },
             transition: "background-color 0.2s ease-in-out"
         }),
-    
+
         singleValue: (provided) => ({
             ...provided,
             display: 'flex',
@@ -75,7 +75,7 @@ const Services = () => {
             justifyContent: 'space-between',
             width: '100%'
         }),
-    
+
         menu: (provided) => ({
             ...provided,
             boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
@@ -84,7 +84,7 @@ const Services = () => {
         })
     };
     //gia icon3 edw panw SOS
-    const formatOptionLabel = ({ label, icon, icon2,icon3 }) => (
+    const formatOptionLabel = ({ label, icon, icon2, icon3 }) => (
         <div style={{ 
             display: 'flex', 
             alignItems: 'center', 
@@ -99,12 +99,13 @@ const Services = () => {
                 paddingRight: '12px',
                 gap: '8px'
             }}>
-                {icon}
-                {icon2}
-                {icon3}
+                <div title="Δεδομένα νερού">{icon}</div>
+                <div title="Δεδομένα ανακύκλωσης">{icon2}</div>
+                {icon3 && <div title="Δεδομένα θορύβου">{icon3}</div>}
             </div>
         </div>
     );
+    
     const handleChange = (selected) => {
         setSelectedOption(selected);
         setShowMinLengthWarning(false);
