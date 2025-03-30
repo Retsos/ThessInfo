@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'findbin',
     'waterquality',
     'recycle',
+    'airquality',
 
 ]
 
