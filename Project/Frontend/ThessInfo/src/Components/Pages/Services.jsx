@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbars/Navbar';
 import ServicesCss from './Services.module.css';
 import Footer from '../Navbars/Footer';
@@ -12,6 +12,26 @@ const Services = () => {
     const [selectedOption, setSelectedOption] = useState(null);
     const [showMinLengthWarning, setShowMinLengthWarning] = useState(false);
     const navigate = useNavigate();
+    const [isSticky, setIsSticky] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const initialPageHeight = window.innerHeight;
+            const twentyPercentPoint = initialPageHeight * 0.20;
+            const scrollPosition = window.scrollY;
+
+            if (scrollPosition > twentyPercentPoint) {
+                setIsSticky(true);
+            } else {
+                setIsSticky(false);
+            }
+        };
+
+        window.addEventListener("scroll", handleScroll, { passive: true });
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+        };
+    }, []);
 
     const options = [
         {
@@ -85,14 +105,14 @@ const Services = () => {
     };
     //gia icon3 edw panw SOS
     const formatOptionLabel = ({ label, icon, icon2, icon3 }) => (
-        <div style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
+        <div style={{
+            display: 'flex',
+            alignItems: 'center',
             justifyContent: 'space-between',
             width: '100%'
         }}>
             <span>{label}</span>
-            <div style={{ 
+            <div style={{
                 display: 'flex',
                 alignItems: 'center',
                 marginLeft: 'auto',
@@ -105,7 +125,7 @@ const Services = () => {
             </div>
         </div>
     );
-    
+
     const handleChange = (selected) => {
         setSelectedOption(selected);
         setShowMinLengthWarning(false);
@@ -125,7 +145,9 @@ const Services = () => {
     return (
         <>
             <div className={ServicesCss.pageContainer}>
-                <Navbar></Navbar>
+                <div className={`${ServicesCss.FullContainer} ${isSticky ? ServicesCss.sticky : ''}`}   >
+                    <Navbar></Navbar>
+                </div>
                 <div className={ServicesCss.wrapper}>
                     <h1 className={ServicesCss.title}>Αναζήτησε Πληροφορίες για την Περιοχή σου</h1>
                     <div className={ServicesCss.selectContainer}>

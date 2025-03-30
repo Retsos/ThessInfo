@@ -18,6 +18,7 @@ const Results = () => {
     const [waterDatalatest, setWaterDatalatest] = useState(null);
     const [waterDatalastyear, setwaterDatalastyear] = useState(null);
     const [selectedPeriod, setSelectedPeriod] = useState('last_month');
+    const [isSticky, setIsSticky] = useState(false);
 
     useEffect(() => {
         const queryParams = new URLSearchParams(location.search);
@@ -51,6 +52,25 @@ const Results = () => {
         };
         fetchWaterData();
     }, [dimosLabel]);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const initialPageHeight = window.innerHeight;
+            const twentyPercentPoint = initialPageHeight * 0.20;
+            const scrollPosition = window.scrollY;
+
+            if (scrollPosition > twentyPercentPoint) {
+                setIsSticky(true);
+            } else {
+                setIsSticky(false);
+            }
+        };
+
+        window.addEventListener("scroll", handleScroll, { passive: true });
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+        };
+    }, []);
 
     const getQualityLevel = (compliantCount) => {
         const defaultResult = {
@@ -119,10 +139,10 @@ const Results = () => {
                 return (
                     <div className={ResultsCss.qualityDisplay}>
                         <div>
-                            Οι μετρήσεις πραγματοποιήθηκαν κατά την περίοδο {data.month}/{data.year}, με ποιότητα νερού: 
+                            Οι μετρήσεις πραγματοποιήθηκαν κατά την περίοδο {data.month}/{data.year}, με ποιότητα νερού:
                         </div>
                         <Tooltip title={quality.tooltip}>
-                        {quality.percentage}% <IoMdWater style={{ color: quality.color }} />
+                            {quality.percentage}% <IoMdWater style={{ color: quality.color }} />
                         </Tooltip>
                     </div>
                 );
@@ -167,7 +187,10 @@ const Results = () => {
 
     return (
         <div className={ResultsCss.pageContainer}>
-            <Navbar />
+            <div className={`${ResultsCss.FullContainer} ${isSticky ? ResultsCss.sticky : ''}`}>
+                <Navbar />
+            </div>
+
 
             <div className="text-center mt-5">
                 <h3>Όλα τα δεδομένα σχετικά με τον Δήμο: {dimosLabel}</h3>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import ContactCss from './Contact.module.css'
 import Navbar from '../Navbars/Navbar'
 import Footer from '../Navbars/Footer'
@@ -12,6 +12,7 @@ const Contact = () => {
   const form = useForm()
   const { register, reset, handleSubmit, formState, clearErrors } = form
   const { errors } = formState;
+  const [isSticky, setIsSticky] = useState(false);
 
   //   const onSubmit = async (data) => {
 
@@ -35,10 +36,32 @@ const Contact = () => {
   //     }
   // };
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const initialPageHeight = window.innerHeight;
+      const twentyPercentPoint = initialPageHeight * 0.20;
+      const scrollPosition = window.scrollY;
+
+      if (scrollPosition > twentyPercentPoint) {
+        setIsSticky(true);
+      } else {
+        setIsSticky(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
     <>
       <div className={ContactCss.pageContainer}>
-        <Navbar></Navbar>
+        <div className={`${ContactCss.FullContainer} ${isSticky ?  ContactCss.sticky : ''}`}   >
+          <Navbar></Navbar>
+        </div>
+
         <div className={ContactCss.ContactContainer}>
           <div className='text-center'>
             <h1>Επικοινωνήστε Μαζί Μας</h1>
@@ -102,7 +125,7 @@ const Contact = () => {
                   id="message"
                   placeholder="Μήνυμα"
                   name="message"
-                  rows="5"  
+                  rows="5"
                   style={{
                     resize: 'none',
                     overflow: 'hidden',

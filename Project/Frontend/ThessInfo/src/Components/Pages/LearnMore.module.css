@@ -1,5 +1,140 @@
 .pageContainer {
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    background-color: #f9fafb;
+  }
+  
+  .heroSection {
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://example.com/hero-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .heroContent h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  }
+  
+  .heroContent p {
+    font-size: 1.5rem;
+    opacity: 0.9;
+  }
+  
+  .contentWrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    flex: 1;
+  }
+  
+  .featuresSection {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 4rem;
+  }
+  
+  .featureCard {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+  
+  .featureCard:hover {
+    transform: translateY(-5px);
+  }
+  
+  .featureIcon {
+    font-size: 2.5rem;
+    color: #3b82f6;
+    margin-bottom: 1rem;
+  }
+  
+  .featureList {
+    list-style: none;
+    padding-left: 0;
+  }
+  
+  .featureList li {
+    padding: 0.5rem 0;
+    display: flex;
+    align-items: center;
+  }
+  
+  .featureList li::before {
+    content: "✓";
+    color: #10b981;
+    margin-right: 0.75rem;
+  }
+  
+  .faqSection {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 4rem;
+  }
+  
+  .sectionIcon {
+    vertical-align: middle;
+    margin-right: 0.5rem;
+  }
+  
+  .ctaSection {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: #1daaad;
+    color: white;
+    border-radius: 10px;
+    margin-bottom: 4rem;
+  }
+  
+  .ctaButton {
+    background: white;
+    color: #1daaad;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .FullContainer {
+    top: 0;
+    z-index: 100;
+    transition: position 0.3s ease;
+    min-height: 100%;
+    min-width: 100%;
 }
+  .FullContainer.sticky {
+    position: sticky;
+}
+  .ctaButton:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  }
+  
+  @media (max-width: 768px) {
+    .heroContent h1 {
+      font-size: 2rem;
+    }
+    
+    .heroContent p {
+      font-size: 1.2rem;
+    }
+    
+    .featuresSection {
+      grid-template-columns: 1fr;
+    }
+  }
