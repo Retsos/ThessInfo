@@ -42,7 +42,16 @@
     pointer-events: none;
 
 }
-
+.FullContainer {
+    top: 0;
+    z-index: 100;
+    transition: position 0.3s ease;
+    min-height: 100%;
+    min-width: 100%;
+}
+.FullContainer.sticky {
+    position: sticky;
+}
 .contactinput {
     width: 600px;
 

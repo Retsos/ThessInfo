@@ -1,55 +1,93 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbars/Navbar';
 import photo from '../../assets/menu-photo.jpg';
 import HomeCss from './Home.module.css';
 import Footer from '../Navbars/Footer';
-import { FaArrowRight } from 'react-icons/fa6';
-import Accordion from '../SmallComponents/Accordion';
+import { FaArrowRight, FaQuestionCircle } from 'react-icons/fa';
+import Accordion2 from '../SmallComponents/Accordion2';
 import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
   const navigate = useNavigate();
+  const [isSticky, setIsSticky] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      setIsSticky(scrollPosition > 100);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
     <div className={HomeCss.pageContainer}>
-      <Navbar />
-      <div>
-        <div className={HomeCss.imgContainer}>
-          <img src={photo} alt="Περιγραφή εικόνας" />
-          <p className={HomeCss.overlayText}>
-            "Η ποιότητα ζωής ξεκινά από την ενημέρωση"💡
-          </p>
-        </div>
+      <div className={`${HomeCss.headerWrapper} ${isSticky ? HomeCss.sticky : ''}`}>
+        <Navbar />
+      </div>
 
-        <p className={HomeCss.description}>
-          Η εφαρμογή μας σου δίνει τη δυνατότητα να ενημερώνεσαι άμεσα για
-          κρίσιμα περιβαλλοντικά δεδομένα στη Θεσσαλονίκη. Μάθε για την
-          ποιότητα του νερού, την ατμοσφαιρική ρύπανση και τη διαχείριση
-          απορριμμάτων στη γειτονιά σου. Δράσε προληπτικά, προστάτευσε την
-          υγεία σου και βοήθησε στη βελτίωση της ποιότητας ζωής στην πόλη
-          μας. 🌍
-        </p>
-
-        <div className={`mb-3 ${HomeCss.BtnContainer}`}>
-          <button
-            className={`btn ${HomeCss.LearnMoreBtn}`}
-            onClick={() => {
-              navigate('/LearnMore');
-            }}
-          >
-            Μάθε Περισσότερα
-            <FaArrowRight className={HomeCss.LearnMoreBtnArrow} />
-          </button>
-        </div>
-
-        <div className="text-center mt-5">
-          <h3>Συχνές Ερωτήσεις και Απαντήσεις</h3>
-        </div>
-
-        <div className={HomeCss.accordionContainer}>
-            <Accordion></Accordion>
+      {/* Hero Section */}
+      <div className={HomeCss.heroSection}>
+        <div className={HomeCss.heroContent}>
+          <h1>Περιβαλλοντική Πληροφόρηση Θεσσαλονίκης</h1>
+          <p>Πραγματικές μετρήσεις - Άμεση ενημέρωση - Δράση αποτελεσματικότητας</p>
         </div>
       </div>
+
+      {/* Main Content */}
+      <main className={HomeCss.mainContent}>
+        {/* Features Grid */}
+        <div className={HomeCss.featuresGrid}>
+          <div className={HomeCss.featureCard}>
+            <h3>📊 Έλεγχος Ποιότητας Νερού</h3>
+            <p>Συνεχής παρακολούθηση σε κρίσιμες υδάτινες περιοχές</p>
+          </div>
+          <div className={HomeCss.featureCard}>
+            <h3>🌫️ Ατμοσφαιρική Ρύπανση</h3>
+            <p>Δείκτες PM2.5, NO2 και O3 σε πραγματικό χρόνο</p>
+          </div>
+          <div className={HomeCss.featureCard}>
+            <h3>♻️ Διαχείριση Απορριμμάτων</h3>
+            <p>Ευφυής διαχείριση και ανακύκλωση αποβλήτων</p>
+          </div>
+        </div>
+
+        {/* Description Section */}
+        <section className={HomeCss.descriptionSection}>
+          <h2>Γιατί να μας επιλέξετε;</h2>
+          <div className={HomeCss.benefitsList}>
+            <div className={HomeCss.benefitItem}>
+              <FaArrowRight className={HomeCss.benefitIcon} />
+              <p>Συνεχής ενημέρωση μέσω ειδοποιήσεων</p>
+            </div>
+            <div className={HomeCss.benefitItem}>
+              <FaArrowRight className={HomeCss.benefitIcon} />
+              <p>Αξιόπιστες μετρήσεις από επίσημους φορείς</p>
+            </div>
+          </div>
+        </section>
+
+        {/* FAQ Section */}
+        <section className={HomeCss.faqSection}>
+          <h2><FaQuestionCircle className={HomeCss.sectionIcon} /> Συχνές Ερωτήσεις</h2>
+          <div className={HomeCss.accordionContainer}>
+            <Accordion2 />
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <div className={HomeCss.ctaSection}>
+          <button
+            className={HomeCss.ctaButton}
+            onClick={() => navigate('/LearnMore')}
+          >
+            Μάθε Περισσότερα
+            <FaArrowRight className={HomeCss.ctaIcon} />
+          </button>
+        </div>
+      </main>
+
       <Footer />
     </div>
   );
