@@ -12,43 +12,63 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    hyphens: initial;
     position: relative;
     background-color: #f6f6f6;
 }
 
 .parameter {
-    font-size: 14px;
+    font-size: 16px;
+    flex-grow: 1;
+    text-align: left;
+
+    @media (max-width: 768px) {
+        font-size: 14px;
+    }
 }
 
 .iconSuccess {
     color: green;
     margin-left: 5px;
+    flex-shrink: 0;
 }
 
 .iconFail {
     color: red;
     margin-left: 5px;
+    flex-shrink: 0;
 }
 
 .tooltipIcon {
     margin-left: 10px;
     font-size: 16px;
+    flex-shrink: 0;
+    position: relative;
 }
 
+/* Αν χρησιμοποιείτε custom tooltip αντί για Bootstrap */
 .tooltip {
     position: absolute;
     background: rgba(0, 0, 0, 0.75);
     color: white;
-    padding: 5px;
+    padding: 8px;
     border-radius: 4px;
-    text-align: center;
     font-size: 12px;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
     white-space: normal;
-    /* Επιτρέπει το wrapping του κειμένου */
-    max-width: 200px;
-    /* Περιορίζει το πλάτος και κάνει break line όταν είναι πολύ μακρύ */
-    z-index: 20;
+    max-width: 250px;
+    z-index: 1000;
+    left: 100%;
+    top: 50%;
+    transform: translate(10px, -50%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.tooltipIcon:hover .tooltip {
+    opacity: 1;
+}
+
+.bs-tooltip-end .tooltip-arrow {
+    left: -4px;
 }

@@ -2,34 +2,131 @@
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    background-color: #f8f9fa;
 }
 
-.CardContainer {
-    margin: 5rem 2rem;
-    gap: 10px;
-    display: flex;
-    padding: 10px 0;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    height: 100%;
-}
-
-.qualityDisplay {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    padding: 8px;
-    font-size: 1.1em;
-    background-color: transparent;
-    flex-direction: column;
-}
-.FullContainer {
-    top: 0;
-    z-index: 100;
-    transition: position 0.3s ease;
-    min-height: 100%;
-    min-width: 100%;
-}
-.FullContainer.sticky {
+.headerWrapper {
     position: sticky;
+    top: -1px;
+    z-index: 1000;
+    transition: all 0.3s ease;
+    background: transparent;
+}
+
+.headerWrapper.sticky {
+    background: rgba(255, 255, 255, 0.98);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    top: 0;
+}
+
+.contentWrapper {
+    margin: 2rem 0;
+    padding: 0 1.5rem;
+    flex: 1;
+}
+
+.pageTitle {
+    text-align: center;
+    color: #1a535c;
+    margin-bottom: 2rem;
+}
+
+/* Tab Navigation */
+.tabNavigation {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.tabButton {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 8px;
+    background: #e9ecef;
+    color: #495057;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.tabButton:hover {
+    background: #dee2e6;
+}
+
+.activeTab {
+    background: #1daaad;
+    color: white;
+}
+
+.activeTab:hover {
+    background: #189b9e;
+}
+
+/* Tab Content */
+.tabContent {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.waterQuality {
+    display: grid;
+    gap: 2rem;
+}
+
+.qualityInfo {
+    text-align: center;
+}
+
+.qualityIndicator {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #1a535c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.qualityDescription {
+    color: #6c757d;
+    font-size: 1.1rem;
+}
+
+.comingSoon {
+    text-align: center;
+    padding: 3rem 1rem;
+}
+
+.comingSoonIcon {
+    font-size: 3rem;
+    color: #adb5bd;
+    margin-bottom: 1rem;
+}
+.waterinfoTitle{
+    font-size: 26px;
+}
+.waterinfo{
+    max-width: 800px;
+}
+@media (max-width: 768px) {
+    .tabNavigation {
+        gap: 0.5rem;
+    }
+    
+    .tabButton {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .qualityIndicator {
+        font-size: 2rem;
+    }
 }

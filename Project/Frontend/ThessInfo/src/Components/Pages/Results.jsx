@@ -2,23 +2,30 @@ import React, { useEffect, useState } from 'react';
 import Navbar from '../Navbars/Navbar';
 import ResultsCss from './Results.module.css';
 import Footer from '../Navbars/Footer';
-import Card from '../SmallComponents/Card';
-import WaterPic from '../../assets/waterphoto.png';
-import RecyclePic from '../../assets/recycle.png';
 import api from '../../endpoints/api';
 import { IoMdWater } from "react-icons/io";
+import { GiRecycle } from "react-icons/gi";
+import { MdAir, MdCleanHands } from "react-icons/md";
 import { Tooltip } from '@mui/material';
 import { useLocation } from 'react-router-dom';
+import WaterCard from '../SmallComponents/waterinfo';
 
 const Results = () => {
     const location = useLocation();
     const [dimosValue, setDimosValue] = useState(null);
     const [dimosLabel, setDimosLabel] = useState(null);
-    const [expandedCardId, setExpandedCardId] = useState(null);
-    const [waterDatalatest, setWaterDatalatest] = useState(null);
-    const [waterDatalastyear, setwaterDatalastyear] = useState(null);
-    const [selectedPeriod, setSelectedPeriod] = useState('last_month');
+    const [waterDataLatest, setWaterDataLatest] = useState(null);
+    const [waterDataLastYear, setWaterDataLastYear] = useState(null);
+    const [activeTab, setActiveTab] = useState('water');
     const [isSticky, setIsSticky] = useState(false);
+
+    // Tabs configuration
+    const tabs = [
+        { id: 'water', label: 'Ποιότητα Νερού', icon: <IoMdWater /> },
+        { id: 'recycle', label: 'Ανακύκλωση', icon: <GiRecycle /> },
+        { id: 'cleanliness', label: 'Καθαριότητα', icon: <MdCleanHands /> },
+        { id: 'air', label: 'Ποιότητα Αέρα', icon: <MdAir /> }
+    ];
 
     useEffect(() => {
         const queryParams = new URLSearchParams(location.search);
@@ -26,7 +33,6 @@ const Results = () => {
         const selectedDimosLabel = queryParams.get('label');
         setDimosValue(selectedDimosValue);
         setDimosLabel(selectedDimosLabel);
-        setExpandedCardId(null);
     }, [location.search]);
 
     useEffect(() => {
@@ -34,42 +40,34 @@ const Results = () => {
 
         const fetchWaterData = async () => {
             try {
-                const responsewatelastmonth = await api.get(
+                const responseWaterLastMonth = await api.get(
                     `water/api/latest-measurements/?region=${encodeURIComponent(dimosLabel)}`
                 );
-                const responsewaterlastyear = await api.get(
+                const responseWaterLastYear = await api.get(
                     `water/api/group-by-year/?region=${encodeURIComponent(dimosLabel)}`
                 );
 
-                setWaterDatalatest(responsewatelastmonth.data[0] || null);
-                setwaterDatalastyear(responsewaterlastyear.data[0] || null);
+                setWaterDataLatest(responseWaterLastMonth.data[0] || null);
+                setWaterDataLastYear(responseWaterLastYear.data[0] || null);
 
             } catch (error) {
                 console.error("Error fetching water data:", error);
-                setWaterDatalatest(null);
-                setwaterDatalastyear(null);
+                setWaterDataLatest(null);
+                setWaterDataLastYear(null);
             }
         };
+
         fetchWaterData();
     }, [dimosLabel]);
 
     useEffect(() => {
         const handleScroll = () => {
-            const initialPageHeight = window.innerHeight;
-            const twentyPercentPoint = initialPageHeight * 0.20;
             const scrollPosition = window.scrollY;
-
-            if (scrollPosition > twentyPercentPoint) {
-                setIsSticky(true);
-            } else {
-                setIsSticky(false);
-            }
+            setIsSticky(scrollPosition > 100);
         };
 
-        window.addEventListener("scroll", handleScroll, { passive: true });
-        return () => {
-            window.removeEventListener("scroll", handleScroll);
-        };
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
     const getQualityLevel = (compliantCount) => {
@@ -126,90 +124,105 @@ const Results = () => {
         };
     };
 
-    // Διορθωμένα δεδομένα κάρτας με μοναδικά IDs
-    const baseCardData = [
-        {
-            id: 1,
-            titleTemplate: 'Ποιότητα Νερού {dimos}',
-            description: 'Πληροφορίες για την ποιότητα του νερού στον δήμο.',
-            imageUrl: WaterPic,
-            getDetails: (data) => {
-                if (!data) return "Δεν υπάρχουν ακόμα μετρήσεις";
-                const quality = getQualityLevel(data.compliantCount);
+
+    const renderTabContent = () => {
+        switch (activeTab) {
+            case 'water':
                 return (
-                    <div className={ResultsCss.qualityDisplay}>
-                        <div>
-                            Οι μετρήσεις πραγματοποιήθηκαν κατά την περίοδο {data.month}/{data.year}, με ποιότητα νερού:
-                        </div>
-                        <Tooltip title={quality.tooltip}>
-                            {quality.percentage}% <IoMdWater style={{ color: quality.color }} />
-                        </Tooltip>
+                    <div className={ResultsCss.tabContent}>
+                        <h3>Ποιότητα Νερού - {dimosLabel}</h3>
+                        {waterDataLatest ? (
+                            <div className={ResultsCss.waterQuality}>
+                                <div className={ResultsCss.qualityInfo}>
+                                    <div className={ResultsCss.qualityIndicator}>
+                                        {getQualityLevel(waterDataLatest.compliantCount).percentage}%
+                                        <IoMdWater style={{
+                                            color: getQualityLevel(waterDataLatest.compliantCount).color,
+                                            fontSize: '2rem'
+                                        }} />
+                                    </div>
+                                    <p className={ResultsCss.qualityDescription}>
+                                        {getQualityLevel(waterDataLatest.compliantCount).tooltip}
+                                    </p>
+                                    <div className={ResultsCss.waterinfo}>
+                                        <p className={ResultsCss.waterinfoTitle}>Λεπτομέρειες</p>
+                                        <WaterCard  waterData={waterDataLatest}></WaterCard>
+                                    </div>
+                                </div>
+                                {/* Add charts/historical data here */}
+                                <p className='text-end'>Τελευταία μέτρηση: {waterDataLatest.month}/{waterDataLatest.year}</p>
+
+                            </div>
+                        ) : <div className={ResultsCss.comingSoon}>
+                            <IoMdWater className={ResultsCss.comingSoonIcon} />
+                            <p>Δεν υπάρχουν διαθέσιμα δεδομένα για την ποιότητα νερού στον δήμο αυτήν τη στιγμή</p>
+                        </div>}
                     </div>
                 );
-            }
-        },
-        {
-            id: 2,
-            titleTemplate: 'Ανακύκλωση στον δήμο {dimos}',
-            description: 'Πληροφορίες για τον δήμο.',
-            imageUrl: RecyclePic,
-            details: "Περισσότερες πληροφορίες σύντομα..."
-        },
-        {
-            id: 3,
-            titleTemplate: 'Δείκτης Καθαριότητας {dimos}',
-            description: 'Πληροφορίες για τον δήμο.',
-            imageUrl: RecyclePic,
-            details: "Περισσότερες πληροφορίες σύντομα..."
-        },
-        {
-            id: 4,
-            titleTemplate: 'Ποιότητα Αέρα {dimos}',
-            description: 'Πληροφορίες για τον δήμο.',
-            imageUrl: RecyclePic,
-            details: "Περισσότερες πληροφορίες σύντομα..."
+
+            case 'recycle':
+                return (
+                    <div className={ResultsCss.tabContent}>
+                        <h3>Στοιχεία Ανακύκλωσης - {dimosLabel}</h3>
+                        <div className={ResultsCss.comingSoon}>
+                            <GiRecycle className={ResultsCss.comingSoonIcon} />
+                            <p>Τα στοιχεία ανακύκλωσης θα είναι διαθέσιμα σύντομα</p>
+                        </div>
+                    </div>
+                );
+
+            case 'cleanliness':
+                return (
+                    <div className={ResultsCss.tabContent}>
+                        <h3>Δείκτης Καθαριότητας - {dimosLabel}</h3>
+                        <div className={ResultsCss.comingSoon}>
+                            <MdCleanHands className={ResultsCss.comingSoonIcon} />
+                            <p>Ο δείκτης καθαριότητας θα είναι διαθέσιμος σύντομα</p>
+                        </div>
+                    </div>
+                );
+
+            case 'air':
+                return (
+                    <div className={ResultsCss.tabContent}>
+                        <h3>Ποιότητα Αέρα - {dimosLabel}</h3>
+                        <div className={ResultsCss.comingSoon}>
+                            <MdAir className={ResultsCss.comingSoonIcon} />
+                            <p>Τα δεδομένα ποιότητας αέρα θα είναι διαθέσιμα σύντομα</p>
+                        </div>
+                    </div>
+                );
+
+            default:
+                return null;
         }
-    ];
-
-    const getDynamicCardData = () => {
-        if (!dimosLabel) return [];
-
-        return baseCardData.map(card => ({
-            ...card,
-            title: card.titleTemplate.replace('{dimos}', dimosLabel),
-            details: card.getDetails ? card.getDetails(waterDatalatest) : card.details
-        }));
-    };
-
-    const handleExpand = (cardId) => {
-        setExpandedCardId(prevId => (prevId === cardId ? null : cardId));
     };
 
     return (
         <div className={ResultsCss.pageContainer}>
-            <div className={`${ResultsCss.FullContainer} ${isSticky ? ResultsCss.sticky : ''}`}>
+            <div className={`${ResultsCss.headerWrapper} ${isSticky ? ResultsCss.sticky : ''}`}>
                 <Navbar />
             </div>
 
+            <div className={ResultsCss.contentWrapper}>
+                <h2 className={ResultsCss.pageTitle}>Δεδομένα για τον Δήμο {dimosLabel}</h2>
 
-            <div className="text-center mt-5">
-                <h3>Όλα τα δεδομένα σχετικά με τον Δήμο: {dimosLabel}</h3>
-            </div>
+                {/* Tab Navigation */}
+                <nav className={ResultsCss.tabNavigation}>
+                    {tabs.map(tab => (
+                        <button
+                            key={tab.id}
+                            className={`${ResultsCss.tabButton} ${activeTab === tab.id ? ResultsCss.activeTab : ''}`}
+                            onClick={() => setActiveTab(tab.id)}
+                        >
+                            {tab.icon}
+                            <span>{tab.label}</span>
+                        </button>
+                    ))}
+                </nav>
 
-            <div className={ResultsCss.CardContainer}>
-                {getDynamicCardData().map((card) => (
-                    <Card
-                        key={card.id}
-                        title={card.title}
-                        id={card.id}
-                        description={card.description}
-                        details={card.details}
-                        imageUrl={card.imageUrl}
-                        expanded={expandedCardId === card.id}
-                        onExpand={() => handleExpand(card.id)}
-                        waterData={waterDatalatest}
-                    />
-                ))}
+                {/* Tab Content */}
+                {renderTabContent()}
             </div>
 
             <Footer />

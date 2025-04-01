@@ -20,7 +20,7 @@ const WaterCard = ({ waterData }) => {
       const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
       tooltipTriggerList.forEach((tooltipTriggerEl) => {
         // Ελέγχεις αν υπάρχει το window.bootstrap για να αποφύγεις errors αν δεν έχει φορτωθεί
-        if(window.bootstrap) {
+        if (window.bootstrap) {
           new window.bootstrap.Tooltip(tooltipTriggerEl);
         }
       });
@@ -47,11 +47,11 @@ const WaterCard = ({ waterData }) => {
                     <FaTimesCircle className={WaterCss.iconFail} />
                   )}
                 </div>
-                
+
                 <span
                   className={WaterCss.tooltipIcon}
                   data-bs-toggle="tooltip"
-                  data-bs-placement="top"
+                  data-bs-placement="right" // Changed from 'top' to 'right'
                   title={tooltips[item.parameter] || "Δεν υπάρχουν πληροφορίες."}
                 >
                   <GrTooltip />
