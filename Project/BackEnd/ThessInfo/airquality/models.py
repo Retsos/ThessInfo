@@ -1,5 +1,5 @@
 from django.db import models
-
+'''
 class AirQualityData(models.Model):
     spatial_ref = models.CharField(max_length=255)  # Area name
     time = models.DateTimeField()
@@ -11,3 +11,4 @@ class AirQualityData(models.Model):
 
     def __str__(self):
         return f"{self.spatial_ref} - {self.time}"
+'''
