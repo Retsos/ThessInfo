@@ -51,8 +51,18 @@ class AreaLatestAnalysisView(View):
             if r["parsed_time"].year == latest_year and r["parsed_time"].month == latest_month
         ]
 
+        # Compute averages for the latest month.
         averages = compute_averages(last_month_records)
-        return JsonResponse(averages)
+
+        # Prepare response including area, month, and year.
+        response_data = {
+            "area": area,
+            "year": latest_year,
+            "month": latest_month,
+            "averages": averages
+        }
+
+        return JsonResponse(response_data)
 
 class AreaYearlyAnalysisView(View):
     """
@@ -70,8 +80,7 @@ class AreaYearlyAnalysisView(View):
         for record in data:
             record["parsed_time"] = datetime.strptime(record["time"], "%Y-%m-%d %H:%M:%S")
 
-        # Since data is loaded only from the latest year folder,
-        # the latest year is the year of the latest record.
+        # Identify the latest year from the data.
         latest_record = max(data, key=lambda r: r["parsed_time"])
         latest_year = latest_record["parsed_time"].year
 
@@ -84,7 +93,14 @@ class AreaYearlyAnalysisView(View):
         yearly_averages = {}
         for month in range(1, 13):
             month_records = records_by_month.get(month, [])
-            month_avg = compute_averages(month_records)
+            month_avg = compute_averages(month_records) if month_records else {}
             yearly_averages[calendar.month_name[month]] = month_avg
 
-        return JsonResponse(yearly_averages)
+        # Prepare the final response including year and area.
+        response_data = {
+            "area": area,
+            "year": latest_year,
+            "monthly_averages": yearly_averages
+        }
+
+        return JsonResponse(response_data)

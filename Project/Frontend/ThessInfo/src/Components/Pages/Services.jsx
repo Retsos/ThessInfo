@@ -45,6 +45,7 @@ const Services = () => {
         {
             value: 'kalamaria',
             label: 'Καλαμαριά',
+            test2:'ΚΑΛΑΜΑΡΙΑ',
             icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
             icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />
         },
@@ -138,7 +139,7 @@ const Services = () => {
             return;
         }
         // Pass both value and label as query parameters
-        navigate(`/Results?dimos=${encodeURIComponent(selectedOption.value)}&label=${encodeURIComponent(selectedOption.label)}`);
+        navigate(`/Results?dimos=${encodeURIComponent(selectedOption.value)}&label=${encodeURIComponent(selectedOption.label)}&test=${encodeURIComponent(selectedOption.test2)}`);
         setSelectedOption(null);
     };
 

@@ -12,7 +12,6 @@ class LatestAnalysisView(View):
             return JsonResponse({'error': 'Παρακαλώ δώστε το όνομα της περιοχής ως query parameter (region).'}, status=400)
         
         all_data = load_all_data()
-        # Φιλτράρει τα δεδομένα βάσει περιοχής (Category)
         filtered_data = [entry for entry in all_data if entry.get('Category', '').lower() == region.lower()]
         if not filtered_data:
             return JsonResponse({'error': f'Δεν βρέθηκαν δεδομένα για την περιοχή "{region}".'}, status=404)
@@ -24,7 +23,6 @@ class LatestAnalysisView(View):
             "Οκτώβριος": 10, "Νοέμβριος": 11, "Δεκέμβριος": 12
         }
         
-        # Βρες το πιο πρόσφατο έτος μεταξύ των φιλτραρισμένων εγγραφών
         try:
             latest_year = max(
                 int(entry['Year']) for entry in filtered_data 
@@ -34,12 +32,9 @@ class LatestAnalysisView(View):
             return JsonResponse({"error": "Δεν υπάρχουν έγκυρα έτη στα δεδομένα."}, status=400)
         
         entries_latest_year = [entry for entry in filtered_data if int(entry['Year']) == latest_year]
-        
-        # Εντοπισμός του πιο πρόσφατου μήνα βάσει του month_order
         latest_month_order = max(month_order.get(entry['Month'], 0) for entry in entries_latest_year)
         latest_month_entries = [entry for entry in entries_latest_year if month_order.get(entry['Month'], 0) == latest_month_order]
         
-        # Ομαδοποίηση των εγγραφών ανά κατηγορία
         grouped = {}
         for entry in latest_month_entries:
             category = entry.get('Category', 'Άγνωστη Κατηγορία')
@@ -51,19 +46,32 @@ class LatestAnalysisView(View):
             grouped[category]['latest_data'].append(entry)
             grouped[category]['analysis'].append(self.analyze_entry(entry))
         
-        response = [
-            {
+        # Αν υπάρχει μόνο μία κατηγορία, επιστρέφουμε μόνο αυτήν
+        if len(grouped) == 1:
+            category, data = next(iter(grouped.items()))
+            response = {
                 "category": category,
                 "latest_data": data["latest_data"],
                 "analysis": data["analysis"],
-                "year":latest_year,
-                "month":latest_month_order,
+                "year": latest_year,
+                "month": latest_month_order,
                 "compliantCount": f"{sum(1 for item in data['analysis'] if item.get('is_compliant') is True)} of {sum(1 for item in data['analysis'] if isinstance(item.get('is_compliant'), bool))}"
             }
-            for category, data in grouped.items()
-        ]
-        
+        else:
+            # Αν υπάρχουν πολλές κατηγορίες, επιστρέφουμε ένα αντικείμενο με κάθε κατηγορία ως κλειδί
+            response = {
+                category: {
+                    "latest_data": data["latest_data"],
+                    "analysis": data["analysis"],
+                    "year": latest_year,
+                    "month": latest_month_order,
+                    "compliantCount": f"{sum(1 for item in data['analysis'] if item.get('is_compliant') is True)} of {sum(1 for item in data['analysis'] if isinstance(item.get('is_compliant'), bool))}"
+                }
+                for category, data in grouped.items()
+            }
+
         return JsonResponse(response, safe=False)
+
     
     def analyze_entry(self, entry):
         """

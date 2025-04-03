@@ -45,46 +45,51 @@ def recycling_view(request):
     
     month_keys = sorted(
         [key for key in record.keys() if key.endswith('-' + year)],
-        key=lambda x: months_order.get(x.split('-')[0], 0),
-        reverse=True
+        key=lambda x: months_order.get(x.split('-')[0], 0)
     )
+    
+    monthly_data = {}  # Αποθήκευση όλων των μηνών
+    
+    most_recent_month = None
+    most_recent_value = None
     
     for key in month_keys:
         value = record.get(key, "").strip()
         if value:
             try:
                 num = float(value.replace(",", "."))
-                total += num
-                count += 1
+                month_name = key.split('-')[0]
+                monthly_data[month_name] = num  # Αποθήκευση τιμής
+
+                if num > 0:  # Μόνο θετικές τιμές λαμβάνονται υπόψη στον μέσο όρο
+                    total += num
+                    count += 1
+
+                # Βρίσκουμε την πιο πρόσφατη τιμή
+                most_recent_month = month_name
+                most_recent_value = num
             except ValueError:
-                continue
+                monthly_data[month_name] = None  # Αν η τιμή δεν είναι αριθμός, αποθηκεύουμε `null`
     
     average = total / count if count > 0 else None
 
-    most_recent_value = None
-    most_recent_month = None
-    for key in month_keys:
-        value = record.get(key, "").strip()
-        if value:
-            try:
-                most_recent_value = float(value.replace(",", "."))
-                most_recent_month = key.split('-')[0]
-                break
-            except ValueError:
-                continue
-    
     results = {
-        "ΠΕΡΙΟΧΗ": record.get("ΠΕΡΙΟΧΗ"),
-        "ΤΥΠΟΣ": record.get("ΤΥΠΟΣ"),
-        f"Μέσος Όρος ΔΙΑΛΟΓΗΣ για το έτος {year}": average,
-        "Πρόσφατος Μήνας": most_recent_month,
-        "Τιμή για τον πιο πρόσφατο μήνα": most_recent_value
+    
+        "REGION": record.get("ΠΕΡΙΟΧΗ"),
+        "TYPE": record.get("ΤΥΠΟΣ"),
+        f"Average_RECYCLING_for_the_year_{year}": average,
+        "Most_Recent_Month": most_recent_month,
+        "Value_for_the_Most_Recent_Month": most_recent_value,
+        "Detailed_Monthly_Data": monthly_data  # All data per month, including `null`
+
+
     }
     
     return JsonResponse(results)
 
 
-def recycling_view2(request):
+
+def recycling_viewperperson(request):
     region = request.GET.get('region')
     year = request.GET.get('year')
     
@@ -124,39 +129,46 @@ def recycling_view2(request):
     
     month_keys = sorted(
         [key for key in record.keys() if key.endswith('-' + year)],
-        key=lambda x: months_order.get(x.split('-')[0], 0),
-        reverse=True
+        key=lambda x: months_order.get(x.split('-')[0], 0)
     )
     
+    monthly_values = {}
     valid_values = []
     most_recent_value = None
     most_recent_month = None
     
     for key in month_keys:
+        month = key.split('-')[0]
         value = record.get(key, "").strip()
-        if value:
+        
+        if value:  # Αν η τιμή δεν είναι κενή
             try:
                 num = float(value.replace(",", "."))
                 if num > 0:
                     valid_values.append(num)
-                    if most_recent_value is None:  # Βρίσκουμε τον πιο πρόσφατο μήνα με τιμή
-                        most_recent_value = num
-                        most_recent_month = key.split('-')[0]
+                    monthly_values[month] = num
+                    most_recent_value = num
+                    most_recent_month = month
+                else:
+                    monthly_values[month] = None  # Αν η τιμή είναι 0 ή αρνητική, αγνοείται
             except ValueError:
-                continue
-    
+                monthly_values[month] = None  # Αν δεν μπορεί να μετατραπεί σε αριθμό
+        else:
+            monthly_values[month] = None  # Αν η τιμή είναι κενή ("")
+
     average = sum(valid_values) / len(valid_values) if valid_values else None
 
     results = {
-        "ΠΕΡΙΟΧΗ": record.get("ΠΕΡΙΟΧΗ"),
-        "ΤΥΠΟΣ": record.get("ΤΥΠΟΣ"),
-        f"Μέσος Όρος ΔΙΑΛΟΓΗΣ ανά κάτοικο για το έτος {year}": average,
-        "Πρόσφατος Μήνας": most_recent_month,
-        "Τιμή για τον πιο πρόσφατο μήνα": most_recent_value
-    }
+        "REGION": record.get("ΠΕΡΙΟΧΗ"),
+        "TYPE": record.get("ΤΥΠΟΣ"),
+        f"Average RECYCLING for the year {year}": average,
+        "Most Recent Month": most_recent_month,
+        "Value for the Most Recent Month": most_recent_value,
+        "Detailed Monthly Data": monthly_values  # All data per month, including `null`
+}
+
     
     return JsonResponse(results)
-
 
 
 

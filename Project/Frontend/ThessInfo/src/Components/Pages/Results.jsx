@@ -14,8 +14,16 @@ const Results = () => {
     const location = useLocation();
     const [dimosValue, setDimosValue] = useState(null);
     const [dimosLabel, setDimosLabel] = useState(null);
+    const [dimosLabel2, setDimosLabel2] = useState(null);
+
     const [waterDataLatest, setWaterDataLatest] = useState(null);
     const [waterDataLastYear, setWaterDataLastYear] = useState(null);
+
+    const [RecycleDataLatest, setRecycleDataLatest] = useState(null);
+    const [RecycleDataLatestperperson, setRecycleDataLatest2] = useState(null);
+    const [RecycleUsableGeneral, setRecycleUsableGeneral] = useState(null);
+
+
     const [activeTab, setActiveTab] = useState('water');
     const [isSticky, setIsSticky] = useState(false);
 
@@ -31,25 +39,24 @@ const Results = () => {
         const queryParams = new URLSearchParams(location.search);
         const selectedDimosValue = queryParams.get('dimos');
         const selectedDimosLabel = queryParams.get('label');
+        const selectedDimosLabel2 = queryParams.get('test');
+        setDimosLabel2(selectedDimosLabel2);
         setDimosValue(selectedDimosValue);
         setDimosLabel(selectedDimosLabel);
     }, [location.search]);
 
+
     useEffect(() => {
-        if (!dimosLabel) return;
+        if (!dimosLabel || !dimosLabel2) return;
 
         const fetchWaterData = async () => {
             try {
-                const responseWaterLastMonth = await api.get(
-                    `water/api/latest-measurements/?region=${encodeURIComponent(dimosLabel)}`
-                );
-                const responseWaterLastYear = await api.get(
-                    `water/api/group-by-year/?region=${encodeURIComponent(dimosLabel)}`
-                );
-
-                setWaterDataLatest(responseWaterLastMonth.data[0] || null);
-                setWaterDataLastYear(responseWaterLastYear.data[0] || null);
-
+                const [responseWaterLastMonth, responseWaterLastYear] = await Promise.all([
+                    api.get(`water/api/latest-measurements/?region=${encodeURIComponent(dimosLabel)}`),
+                    api.get(`water/api/group-by-year/?region=${encodeURIComponent(dimosLabel)}`)
+                ]);
+                setWaterDataLastYear(responseWaterLastYear.data || {});
+                setWaterDataLatest(responseWaterLastMonth.data || null);
             } catch (error) {
                 console.error("Error fetching water data:", error);
                 setWaterDataLatest(null);
@@ -57,8 +64,28 @@ const Results = () => {
             }
         };
 
+        const fetchRecycleData = async () => {
+            try {
+                const [responseRecycleLastMonth, responseRecycleLastMonthperrerson, responseUsableRecycle] = await Promise.all([
+                    api.get(`recycle/recycling/?region=${encodeURIComponent(dimosLabel2)}&year=24`),
+                    api.get(`recycle/recycling2/?region=${encodeURIComponent(dimosLabel2)}&year=24`),
+                    api.get(`recycle/recycling-good/`),
+                ]);
+                setRecycleDataLatest(responseRecycleLastMonth.data);
+                setRecycleDataLatest2(responseRecycleLastMonthperrerson.data);
+                console.log(responseUsableRecycle);
+                
+                setRecycleUsableGeneral(responseUsableRecycle.data.results["24"]);
+            } catch (error) {
+                console.error("Error fetching recycle data:", error);
+            }
+        };
+
         fetchWaterData();
-    }, [dimosLabel]);
+        fetchRecycleData();
+
+    }, [dimosLabel, dimosLabel2]);
+
 
     useEffect(() => {
         const handleScroll = () => {
@@ -69,6 +96,14 @@ const Results = () => {
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
+
+
+    useEffect(() => {
+        console.log("Updated Water Data Last Year:", waterDataLastYear);
+        console.log("recycleeeee:", RecycleUsableGeneral);
+
+    }, [waterDataLastYear, RecycleDataLatest]);
+
 
     const getQualityLevel = (compliantCount) => {
         const defaultResult = {
@@ -146,7 +181,7 @@ const Results = () => {
                                     </p>
                                     <div className={ResultsCss.waterinfo}>
                                         <p className={ResultsCss.waterinfoTitle}>Λεπτομέρειες</p>
-                                        <WaterCard  waterData={waterDataLatest}></WaterCard>
+                                        <WaterCard waterData={waterDataLatest}></WaterCard>
                                     </div>
                                 </div>
                                 {/* Add charts/historical data here */}
@@ -164,10 +199,26 @@ const Results = () => {
                 return (
                     <div className={ResultsCss.tabContent}>
                         <h3>Στοιχεία Ανακύκλωσης - {dimosLabel}</h3>
-                        <div className={ResultsCss.comingSoon}>
-                            <GiRecycle className={ResultsCss.comingSoonIcon} />
-                            <p>Τα στοιχεία ανακύκλωσης θα είναι διαθέσιμα σύντομα</p>
-                        </div>
+                        {RecycleDataLatest ? (
+                            <div>
+                                {RecycleDataLatest.TYPE}
+                                {RecycleDataLatest.Value_for_the_Most_Recent_Month}
+                                <div>
+                                    {RecycleDataLatestperperson.TYPE}
+                                </div>
+                                <div>
+                                    {RecycleUsableGeneral.Ανακυκλώσιμα}
+                                    {RecycleUsableGeneral["Ανάκτηση Ογκωδών"]}
+
+
+                                </div>
+                            </div>
+                            
+                        
+                        ) : <div className={ResultsCss.comingSoon}>
+                            <IoMdWater className={ResultsCss.comingSoonIcon} />
+                            <p>Δεν υπάρχουν διαθέσιμα δεδομένα για την ποιότητα νερού στον δήμο αυτήν τη στιγμή</p>
+                        </div>}
                     </div>
                 );
 
