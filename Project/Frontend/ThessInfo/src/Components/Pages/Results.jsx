@@ -15,6 +15,8 @@ const Results = () => {
     const [dimosValue, setDimosValue] = useState(null);
     const [dimosLabel, setDimosLabel] = useState(null);
     const [dimosLabel2, setDimosLabel2] = useState(null);
+    const [dimosLabel3, setDimosLabel3] = useState(null);
+
 
     const [waterDataLatest, setWaterDataLatest] = useState(null);
     const [waterDataLastYear, setWaterDataLastYear] = useState(null);
@@ -23,6 +25,8 @@ const Results = () => {
     const [RecycleDataLatestperperson, setRecycleDataLatest2] = useState(null);
     const [RecycleUsableGeneral, setRecycleUsableGeneral] = useState(null);
 
+    const [AirDataLatest, setAirDataLatest] = useState(null);
+    const [AirDataYear, setAirDataYear] = useState(null);
 
     const [activeTab, setActiveTab] = useState('water');
     const [isSticky, setIsSticky] = useState(false);
@@ -39,7 +43,10 @@ const Results = () => {
         const queryParams = new URLSearchParams(location.search);
         const selectedDimosValue = queryParams.get('dimos');
         const selectedDimosLabel = queryParams.get('label');
-        const selectedDimosLabel2 = queryParams.get('test');
+        const selectedDimosLabel2 = queryParams.get('Recycle');
+        const selectedDimosLabel3 = queryParams.get('Air');
+
+        setDimosLabel3(selectedDimosLabel3);
         setDimosLabel2(selectedDimosLabel2);
         setDimosValue(selectedDimosValue);
         setDimosLabel(selectedDimosLabel);
@@ -74,17 +81,35 @@ const Results = () => {
                 setRecycleDataLatest(responseRecycleLastMonth.data);
                 setRecycleDataLatest2(responseRecycleLastMonthperrerson.data);
                 console.log(responseUsableRecycle);
-                
+
                 setRecycleUsableGeneral(responseUsableRecycle.data.results["24"]);
             } catch (error) {
                 console.error("Error fetching recycle data:", error);
             }
         };
 
+        const fetchAirData = async () => {
+            try {
+                const [responseAirLastMonth, responseAirYear] = await Promise.all([
+                    api.get(`airquality/area/${encodeURIComponent(dimosLabel3)}/latest-measurements/`),
+                    api.get(`airquality/area/${encodeURIComponent(dimosLabel3)}/group-by-year/`),
+                ]);
+
+                console.log("Air" + dimosLabel3, responseAirLastMonth, responseAirYear);
+
+                setAirDataLatest(responseAirLastMonth.data);
+                setAirDataYear(responseAirYear.data);
+
+            } catch (error) {
+                console.error("Error fetching recycle data:", error);
+            }
+        };
+
+        fetchAirData();
         fetchWaterData();
         fetchRecycleData();
 
-    }, [dimosLabel, dimosLabel2]);
+    }, [dimosLabel, dimosLabel2, dimosLabel3]);
 
 
     useEffect(() => {
@@ -213,8 +238,8 @@ const Results = () => {
 
                                 </div>
                             </div>
-                            
-                        
+
+
                         ) : <div className={ResultsCss.comingSoon}>
                             <IoMdWater className={ResultsCss.comingSoonIcon} />
                             <p>Δεν υπάρχουν διαθέσιμα δεδομένα για την ποιότητα νερού στον δήμο αυτήν τη στιγμή</p>
@@ -237,10 +262,23 @@ const Results = () => {
                 return (
                     <div className={ResultsCss.tabContent}>
                         <h3>Ποιότητα Αέρα - {dimosLabel}</h3>
-                        <div className={ResultsCss.comingSoon}>
-                            <MdAir className={ResultsCss.comingSoonIcon} />
-                            <p>Τα δεδομένα ποιότητας αέρα θα είναι διαθέσιμα σύντομα</p>
-                        </div>
+                        {AirDataLatest ? (
+                            <div>
+                                {AirDataLatest.area}
+
+                                <div>
+                                    {AirDataLatest.averages.co_conc}
+                                </div>
+                                <div>
+                                    {AirDataYear.monthly_averages.April.co_conc}
+                                </div>
+                            </div>
+
+
+                        ) : <div className={ResultsCss.comingSoon}>
+                            <IoMdWater className={ResultsCss.comingSoonIcon} />
+                            <p>Δεν υπάρχουν διαθέσιμα δεδομένα για την ποιότητα νερού στον δήμο αυτήν τη στιγμή</p>
+                        </div>}
                     </div>
                 );
 

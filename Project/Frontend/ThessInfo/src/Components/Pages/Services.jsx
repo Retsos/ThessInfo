@@ -37,6 +37,8 @@ const Services = () => {
         {
             value: 'thessaloniki',
             label: 'Άνω Τούμπα',
+            RecycleName:'a',
+            airName:'a',           
             icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
             icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
             icon3: <img src={noise} alt="Noise" className={ServicesCss.noiseIcon} />,
@@ -45,19 +47,24 @@ const Services = () => {
         {
             value: 'kalamaria',
             label: 'Καλαμαριά',
-            test2:'ΚΑΛΑΜΑΡΙΑ',
+            RecycleName:'ΚΑΛΑΜΑΡΙΑ',
+            airName:'a',
             icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
             icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />
         },
         {
             value: 'pylaia-hortiati',
             label: 'Πυλαία-Χορτιάτης',
+            RecycleName:'a',
+            airName:'Pulaia',
             icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
             icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />
         },
         {
             value: 'neapoli-sykies',
             label: 'Νεάπολη-Συκιές',
+            RecycleName:'a',
+            airName:'a',        
             icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
             icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />
         },
@@ -139,7 +146,7 @@ const Services = () => {
             return;
         }
         // Pass both value and label as query parameters
-        navigate(`/Results?dimos=${encodeURIComponent(selectedOption.value)}&label=${encodeURIComponent(selectedOption.label)}&test=${encodeURIComponent(selectedOption.test2)}`);
+        navigate(`/Results?dimos=${encodeURIComponent(selectedOption.value)}&label=${encodeURIComponent(selectedOption.label)}&Recycle=${encodeURIComponent(selectedOption.RecycleName)}&Air=${encodeURIComponent(selectedOption.airName)}`);
         setSelectedOption(null);
     };
 
@@ -163,7 +170,7 @@ const Services = () => {
                         />
                         {showMinLengthWarning && (
                             <div style={{ color: "rgba(211, 46, 46, 0.88)", marginTop: "5px" }}>
-                                Επιλέξτε τουλάχιστον 3 χαρακτήρες.
+                                Επιλέξτε τουλάχιστον 1.
                             </div>
                         )}
                         <button
