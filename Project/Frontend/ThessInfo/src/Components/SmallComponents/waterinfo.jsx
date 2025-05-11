@@ -51,7 +51,7 @@ const WaterCard = ({ waterData }) => {
                 <span
                   className={WaterCss.tooltipIcon}
                   data-bs-toggle="tooltip"
-                  data-bs-placement="right" // Changed from 'top' to 'right'
+                  data-bs-placement="right" 
                   title={tooltips[item.parameter] || "Δεν υπάρχουν πληροφορίες."}
                 >
                   <GrTooltip />

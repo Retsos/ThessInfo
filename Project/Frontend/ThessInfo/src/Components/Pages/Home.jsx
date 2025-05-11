@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbars/Navbar';
-import photo from '../../assets/menu-photo.jpg';
+import cloudImage from '../../assets/fog.png';
 import HomeCss from './Home.module.css';
 import Footer from '../Navbars/Footer';
 import { FaArrowRight, FaQuestionCircle } from 'react-icons/fa';
@@ -44,7 +44,7 @@ const Home = () => {
             <p>Συνεχής παρακολούθηση σε κρίσιμες υδάτινες περιοχές</p>
           </div>
           <div className={HomeCss.featureCard}>
-            <h3>🌫️ Ατμοσφαιρική Ρύπανση</h3>
+            <h3><img src={cloudImage} alt="" className={HomeCss.cardimages}/> Ατμοσφαιρική Ρύπανση</h3>
             <p>Δείκτες PM2.5, NO2 και O3 σε πραγματικό χρόνο</p>
           </div>
           <div className={HomeCss.featureCard}>

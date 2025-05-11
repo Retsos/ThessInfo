@@ -159,6 +159,14 @@
   .ctaIcon {
     font-size: 1.2rem;
   }
+  .cardimages{
+    width: 1em;           
+    height: auto;
+    vertical-align: middle;
+    margin-right: 0.3em;
+    border-radius: 8px;
+    filter: brightness(0.9) contrast(1.1);
+  }
   
   /* Responsive Design */
   @media (max-width: 768px) {

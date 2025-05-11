@@ -6,9 +6,11 @@ import api from '../../endpoints/api';
 import { IoMdWater } from "react-icons/io";
 import { GiRecycle } from "react-icons/gi";
 import { MdAir, MdCleanHands } from "react-icons/md";
-import { Tooltip } from '@mui/material';
 import { useLocation } from 'react-router-dom';
-import WaterCard from '../SmallComponents/waterinfo';
+import WaterInfo from '../SmallComponents/waterinfo';
+import MonthlyChart from '../SmallComponents/WaterCharts/MonthlyChart';
+import YearlyChart from '../SmallComponents/WaterCharts/YearlyChart';
+import ConclusionChart from '../SmallComponents/WaterCharts/PieChart';
 
 const Results = () => {
     const location = useLocation();
@@ -191,9 +193,12 @@ const Results = () => {
                 return (
                     <div className={ResultsCss.tabContent}>
                         <h3>Ποιότητα Νερού - {dimosLabel}</h3>
+
                         {waterDataLatest ? (
                             <div className={ResultsCss.waterQuality}>
+                                    
                                 <div className={ResultsCss.qualityInfo}>
+                                    
                                     <div className={ResultsCss.qualityIndicator}>
                                         {getQualityLevel(waterDataLatest.compliantCount).percentage}%
                                         <IoMdWater style={{
@@ -204,15 +209,35 @@ const Results = () => {
                                     <p className={ResultsCss.qualityDescription}>
                                         {getQualityLevel(waterDataLatest.compliantCount).tooltip}
                                     </p>
-                                    <div className={ResultsCss.waterinfo}>
-                                        <p className={ResultsCss.waterinfoTitle}>Λεπτομέρειες</p>
-                                        <WaterCard waterData={waterDataLatest}></WaterCard>
-                                    </div>
-                                </div>
-                                {/* Add charts/historical data here */}
-                                <p className='text-end'>Τελευταία μέτρηση: {waterDataLatest.month}/{waterDataLatest.year}</p>
+                                    
+                                    {/* Olo to segment */}
+                                    <div className={ResultsCss.SegmentSection}> 
 
-                            </div>
+                                        <div className={ResultsCss.waterinfo}> {/* Panw Aristera */}
+                                            <p className={ResultsCss.waterinfoTitle}>Λεπτομέρειες</p>
+                                            <WaterInfo waterData={waterDataLatest}></WaterInfo>
+                                        </div>
+
+                                        <div className={ResultsCss.waterinfo}> {/* Panw Deksia */}
+                                            <p className={ResultsCss.waterinfoTitle}>{ waterDataLatest.latest_data[0]?.Month || '' }</p>
+                                            <MonthlyChart waterData={waterDataLatest}></MonthlyChart>
+                                        </div>   
+
+                                        <div className={ResultsCss.waterinfo}>
+                                        <p className={ResultsCss.waterinfoTitle}>Εξέλιξη Παραμέτρων ανά Έτος</p>
+                                        <YearlyChart yearlyData={waterDataLastYear} />
+                                        </div>
+
+                                        <div className={ResultsCss.waterinfo}>
+                                            <ConclusionChart yearlyData={waterDataLastYear} />
+                                        </div>
+
+                                    </div>
+
+                                </div>        
+                                
+                                <p className='text-end' style={{backgroundColor: "Red"}}>Τελευταία μέτρηση: {waterDataLatest.month}/{waterDataLatest.year}</p>
+                                </div>
                         ) : <div className={ResultsCss.comingSoon}>
                             <IoMdWater className={ResultsCss.comingSoonIcon} />
                             <p>Δεν υπάρχουν διαθέσιμα δεδομένα για την ποιότητα νερού στον δήμο αυτήν τη στιγμή</p>

@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbars/Navbar';
 import ServicesCss from './Services.module.css';
 import Footer from '../Navbars/Footer';
-import Select from 'react-select';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,Link } from 'react-router-dom';
 import { FaHandHoldingWater } from "react-icons/fa";
 import { FaRecycle } from "react-icons/fa";
-import noise from "../../assets/noise.png"; // Corrected import
+import noise from "../../assets/noise.png";
+import Select, { components } from 'react-select';
+import { MdAir, MdCleanHands } from "react-icons/md";
 
 const Services = () => {
     const [selectedOption, setSelectedOption] = useState(null);
@@ -42,7 +43,9 @@ const Services = () => {
             icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
             icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
             icon3: <img src={noise} alt="Noise" className={ServicesCss.noiseIcon} />,
-
+            tooltip1: "Δεδομένα νερού",
+            tooltip2: "Δεδομένα ανακύκλωσης",
+            tooltip3: "Δεδομένα θορύβου"
         },
         {
             value: 'kalamaria',
@@ -50,7 +53,9 @@ const Services = () => {
             RecycleName:'ΚΑΛΑΜΑΡΙΑ',
             airName:'a',
             icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
-            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />
+            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
+            tooltip1: "Δεδομένα νερού",
+            tooltip2: "Δεδομένα ανακύκλωσης"
         },
         {
             value: 'pylaia-hortiati',
@@ -58,7 +63,9 @@ const Services = () => {
             RecycleName:'a',
             airName:'Pulaia',
             icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
-            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />
+            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
+            tooltip1: "Δεδομένα νερού",
+            tooltip2: "Δεδομένα ανακύκλωσης"
         },
         {
             value: 'neapoli-sykies',
@@ -66,7 +73,9 @@ const Services = () => {
             RecycleName:'a',
             airName:'a',        
             icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
-            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />
+            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
+            tooltip1: "Δεδομένα νερού",
+            tooltip2: "Δεδομένα ανακύκλωσης"
         },
     ];
 
@@ -81,6 +90,7 @@ const Services = () => {
                 borderColor: "#4CAF50"
             },
             padding: "4px 8px",
+            pointerEvents: 'auto',
             transition: "all 0.3s ease-in-out"
         }),
 
@@ -90,10 +100,16 @@ const Services = () => {
             backgroundColor: state.isSelected ? "#1e8449" : state.isFocused ? "#f4f4f4" : "#ffffff",
             display: 'flex',
             alignItems: 'center',
+            pointerEvents: 'auto',
             justifyContent: 'space-between',
             padding: '8px 16px',
             "&:hover": state.isSelected ? {} : { backgroundColor: "#e8f5e9" },
             transition: "background-color 0.2s ease-in-out"
+        }),
+
+        valueContainer: (provided) => ({
+            ...provided,
+            pointerEvents: 'all'
         }),
 
         singleValue: (provided) => ({
@@ -101,45 +117,102 @@ const Services = () => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            width: '100%'
+            width: '100%',
+            pointerEvents: 'auto',
         }),
 
         menu: (provided) => ({
             ...provided,
             boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
             borderRadius: "12px",
-            overflow: "hidden"
+            overflow: "hidden",
+            pointerEvents: 'auto',
         })
     };
-    //gia icon3 edw panw SOS
-    const formatOptionLabel = ({ label, icon, icon2, icon3 }) => (
-        <div style={{
-            display: 'flex',
+
+    const formatOptionLabel = ({ label, icon, icon2, icon3, tooltip1, tooltip2, tooltip3 }) => {
+        // Common style for the tooltip containers
+        const iconContainerStyle = {
+            display: 'inline-flex',
             alignItems: 'center',
-            justifyContent: 'space-between',
-            width: '100%'
-        }}>
-            <span>{label}</span>
+            justifyContent: 'center',
+            marginLeft: '4px',
+            position: 'relative',
+            cursor: 'help'
+        };
+
+        return (
             <div style={{
                 display: 'flex',
                 alignItems: 'center',
-                marginLeft: 'auto',
-                paddingRight: '12px',
-                gap: '8px'
+                justifyContent: 'space-between',
+                width: '100%'
             }}>
-                <div title="Δεδομένα νερού">{icon}</div>
-                <div title="Δεδομένα ανακύκλωσης">{icon2}</div>
-                {icon3 && <div title="Δεδομένα θορύβου">{icon3}</div>}
+                <span>{label}</span>
+                <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    marginLeft: 'auto',
+                }}>
+                    {icon && (
+                        <div 
+                            className={ServicesCss.tooltipContainer}
+                            style={iconContainerStyle}
+                            title={tooltip1}
+                        >
+                            {icon}
+                        </div>
+                    )}
+                    {icon2 && (
+                        <div 
+                            className={ServicesCss.tooltipContainer}
+                            style={iconContainerStyle}
+                            title={tooltip2}
+                        >
+                            {icon2}
+                        </div>
+                    )}
+                    {icon3 && (
+                        <div 
+                            className={ServicesCss.tooltipContainer}
+                            style={iconContainerStyle}
+                            title={tooltip3}
+                        >
+                            {icon3}
+                        </div>
+                    )}
+                </div>
             </div>
-        </div>
-    );
-
-    const handleChange = (selected) => {
-        setSelectedOption(selected);
-        setShowMinLengthWarning(false);
+        );
     };
 
-    // In Services.js, modify the handleSearchSubmit function
+    const CustomSingleValue = props => {
+        return (
+            <components.SingleValue
+                {...props}
+                innerProps={{
+                    ...props.innerProps,
+                    style: {
+                        ...(props.innerProps?.style || {}),
+                        pointerEvents: 'auto'
+                    }
+                }}
+            >
+                {formatOptionLabel(props.data)}
+            </components.SingleValue>
+        );
+    };
+
+    const CustomOption = props => {
+        return (
+            <components.Option {...props}>
+                {formatOptionLabel(props.data)}
+            </components.Option>
+        );
+    };
+
+    const handleChange = opt => setSelectedOption(opt);
+
     const handleSearchSubmit = () => {
         if (!selectedOption || selectedOption.label.trim().length < 3) {
             setShowMinLengthWarning(true);
@@ -153,16 +226,26 @@ const Services = () => {
     return (
         <>
             <div className={ServicesCss.pageContainer}>
-                <div className={`${ServicesCss.FullContainer} ${isSticky ? ServicesCss.sticky : ''}`}   >
+                <div className={`${ServicesCss.FullContainer} ${isSticky ? ServicesCss.sticky : ''}`}>
                     <Navbar></Navbar>
                 </div>
-                <div className={ServicesCss.wrapper}>
+
+                <div className={ServicesCss.hero}>
+                    <h2>Καλωσήρθες στην πλατφόρμα μας!</h2>
+                    <p>Επέλεξε τον δήμο ή την περιοχή σου για να δεις στοιχεία ποιότητας νερού, ανακύκλωσης, καθαριότητας και αέρα.</p>
+                </div>
+
+
+                <div className={ServicesCss.wrapper} >
                     <h1 className={ServicesCss.title}>Αναζήτησε Πληροφορίες για την Περιοχή σου</h1>
                     <div className={ServicesCss.selectContainer}>
                         <Select
                             options={options}
                             styles={CustomStyles}
-                            formatOptionLabel={formatOptionLabel}
+                            components={{ 
+                                SingleValue: CustomSingleValue, 
+                                Option: CustomOption 
+                            }}
                             isClearable
                             placeholder="Αναζήτηση Δήμου/Περιοχής"
                             value={selectedOption}
@@ -180,7 +263,36 @@ const Services = () => {
                         >
                             Αναζήτηση
                         </button>
+                        <p className={ServicesCss.hint}>
+                            Δεν βρίσκεις τον δήμο σου; Δες τον <Link to="/OdigosPerioxwn">οδηγό περιοχών</Link>.
+                        </p>
+
                     </div>
+
+                    <div className={ServicesCss.cards}>
+                        <div className={ServicesCss.card}>
+                            <FaHandHoldingWater color="#2196F3" size={32}/>
+                            <h4>Ποιότητα Νερού</h4>
+                            <p>Μέτρηση θολότητας, pH, χλωρίου κ.λπ.</p>
+                        </div>
+                        <div className={ServicesCss.card}>
+                            <FaRecycle color="#4CAF50" size={32}/>
+                            <h4>Ανακύκλωση</h4>
+                            <p>Ποσοστά ανακύκλωσης ανά κάτοικο.</p>
+                        </div>
+                        <div className={ServicesCss.card}>
+                            <MdCleanHands color="#f39c12" size={32}/>
+                            <h4>Καθαριότητα</h4>
+                            <p>Δείκτες καθαριότητας σε δημόσιους χώρους.</p>
+                        </div>
+                        <div className={ServicesCss.card}>
+                            <MdAir color="#5dade2" size={32}/>
+                            <h4>Ποιότητα Αέρα</h4>
+                            <p>PM2.5, CO, NO₂ κ.ά. ανά ζώνη.</p>
+                        </div>
+                    </div>
+
+
                 </div>
 
                 <Footer></Footer>
