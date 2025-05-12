@@ -149,6 +149,12 @@
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+    @media (max-width: 768px) {
+      font-size: 0.9rem;
+      padding: 0.8rem 1rem;
+      width: 225px !important; 
+    }
   }
   
   .ctaButton:hover {
@@ -184,6 +190,9 @@
     
     .descriptionSection h2 {
       font-size: 1.8rem;
+    }
+    .sectionTitle{
+      font-size: 1.5rem !important;
     }
   }
   

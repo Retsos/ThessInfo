@@ -55,11 +55,11 @@ const Home = () => {
 
         {/* Description Section */}
         <section className={HomeCss.descriptionSection}>
-          <h2>Γιατί να μας επιλέξετε;</h2>
+        <h2 className={HomeCss.sectionTitle}>Γιατί να μας επιλέξετε;</h2>          
           <div className={HomeCss.benefitsList}>
             <div className={HomeCss.benefitItem}>
               <FaArrowRight className={HomeCss.benefitIcon} />
-              <p>Συνεχής ενημέρωση μέσω ειδοποιήσεων</p>
+              <p>Συνεχής ενημέρωση των δεδομένων μας</p>
             </div>
             <div className={HomeCss.benefitItem}>
               <FaArrowRight className={HomeCss.benefitIcon} />

@@ -83,7 +83,7 @@ const MonthlyChart = ({ waterData }) => {
             label={{ value: 'Τιμή', angle: -90, position: 'insideLeft', fill: 'blue' }}
             tick={{ fill: "#444" }}
             axisLine={{ stroke: "#444" }}
-            domain={[0, maxValue * 1.1]} /*2 gia megalytero limit range mikrotero*/
+            domain={[0, 'dataMax']}
           />
 
           <YAxis
@@ -93,7 +93,7 @@ const MonthlyChart = ({ waterData }) => {
             tick={{ fill: "#444" }}
             axisLine={false}
             tickLine={false}
-            domain={[0, maxLimit * 1.05]} /*2 gia megalytero limit range mikrotero*/
+            domain={[0, 'dataMax']}
           />
 
           <Tooltip 

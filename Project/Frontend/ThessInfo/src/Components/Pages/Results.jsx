@@ -236,7 +236,7 @@ const Results = () => {
 
                                 </div>        
                                 
-                                <p className='text-end' style={{backgroundColor: "Red"}}>Τελευταία μέτρηση: {waterDataLatest.month}/{waterDataLatest.year}</p>
+                                <p className='text-end pt-5'>Τελευταία μέτρηση: {waterDataLatest.month}/{waterDataLatest.year}</p>
                                 </div>
                         ) : <div className={ResultsCss.comingSoon}>
                             <IoMdWater className={ResultsCss.comingSoonIcon} />
