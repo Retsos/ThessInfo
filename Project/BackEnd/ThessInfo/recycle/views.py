@@ -173,43 +173,60 @@ def recycling_viewperperson(request):
 
 
 def average_view(request):
-    all_data = load_all_data()  # Φόρτωση δεδομένων
-    results = []  # Λίστα αποτελεσμάτων για κάθε υποκατηγορία
+    all_data = load_all_data()
+    results = []
 
     for entry in all_data:
-        # Φιλτράρουμε μόνο τα entries με τον επιθυμητό ΤΥΠΟΣ
         if entry.get("ΤΥΠΟΣ") != "ΑΞΙΟΠΟΙΗΣΙΜΑ ΥΛΙΚΑ (kg)":
             continue
 
-        averages = {}
+        monthly_data = {}
         for key, value in entry.items():
-            # Παράβλεψη πεδίων που δεν αφορούν τιμές
             if key in ["ΤΥΠΟΣ", "ΚΑΤΗΓΟΡΙΑ"]:
                 continue
-            # Ελέγχουμε αν το key έχει το format "Μήνας-Έτος" και υπάρχει τιμή
             if '-' in key and value.strip():
-                parts = key.split('-')
-                if len(parts) == 2:
-                    year = parts[1].strip()
-                    try:
-                        num = float(value.replace(',', ''))
-                    except ValueError:
-                        continue
-                    averages.setdefault(year, []).append(num)
+                month, year = map(str.strip, key.split('-'))
+                try:
+                    num = float(value.replace(',', ''))
+                except ValueError:
+                    continue
+                if year not in monthly_data:
+                    monthly_data[year] = {}
+                monthly_data[year][month] = num
         
-        # Υπολογισμός μέσου όρου για κάθε έτος της εγγραφής
-        avg_by_year = {yr: round(sum(vals) / len(vals), 2) for yr, vals in averages.items() if vals}
         results.append({
-            'ΚΑΤΗΓΟΡΙΑ': entry.get('ΚΑΤΗΓΟΡΙΑ'),
-            'Μέσοι Όροι': avg_by_year
+            'ΚΑΤΗΓΟΡΙΑ': entry['ΚΑΤΗΓΟΡΙΑ'],
+            'Μηνιαία Δεδομένα': monthly_data
         })
-    
-    # Ομαδοποίηση αποτελεσμάτων κατά έτος
+
+    # Βρίσκουμε τους μήνες με δεδομένα (κοινούς για όλες τις κατηγορίες)
     grouped = {}
     for item in results:
-        for year, avg in item['Μέσοι Όροι'].items():
+        for year, months in item['Μηνιαία Δεδομένα'].items():
             if year not in grouped:
-                grouped[year] = {}
-            grouped[year][item['ΚΑΤΗΓΟΡΙΑ']] = avg
+                # Αρχικοποίηση με μοναδικούς μήνες (από την πρώτη κατηγορία)
+                grouped[year] = {
+                    'Μέσοι Όροι': {},
+                    'Πλήθος Μηνών': len(months),  # Μόνο ο αριθμός, π.χ. 5
+                    'Μηνιαία Δεδομένα': {}
+                }
+                # Αποθήκευση όλων των μηνών (προαιρετικό)
+                for month in months:
+                    grouped[year]['Μηνιαία Δεδομένα'][month] = {}
+            
+            # Προσθήκη δεδομένων ανά κατηγορία
+            for month, value in months.items():
+                grouped[year]['Μηνιαία Δεδομένα'][month][item['ΚΑΤΗΓΟΡΙΑ']] = value
+    
+    # Υπολογισμός μέσου όρου ανά κατηγορία
+    for year, data in grouped.items():
+        for month, categories in data['Μηνιαία Δεδομένα'].items():
+            for category, value in categories.items():
+                if category not in data['Μέσοι Όροι']:
+                    data['Μέσοι Όροι'][category] = []
+                data['Μέσοι Όροι'][category].append(value)
+        
+        for category, values in data['Μέσοι Όροι'].items():
+            data['Μέσοι Όροι'][category] = round(sum(values) / len(values), 2)
 
     return JsonResponse({'results': grouped})

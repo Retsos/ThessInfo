@@ -76,8 +76,8 @@ const Results = () => {
         const fetchRecycleData = async () => {
             try {
                 const [responseRecycleLastMonth, responseRecycleLastMonthperrerson, responseUsableRecycle] = await Promise.all([
-                    api.get(`recycle/recycling/?region=${encodeURIComponent(dimosLabel2)}&year=24`),
-                    api.get(`recycle/recycling2/?region=${encodeURIComponent(dimosLabel2)}&year=24`),
+                    api.get(`recycle/recycling-ota/?region=${encodeURIComponent(dimosLabel2)}&year=24`),
+                    api.get(`recycle/recycling-perperson/?region=${encodeURIComponent(dimosLabel2)}&year=24`),
                     api.get(`recycle/recycling-good/`),
                 ]);
                 setRecycleDataLatest(responseRecycleLastMonth.data);
