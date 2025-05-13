@@ -8,6 +8,15 @@ const Navbar = () => {
     const [isClosing, setIsClosing] = useState(false);
     const location = useLocation();
 
+    // Control body overflow when offcanvas is shown
+    useEffect(() => {
+        if (isOffcanvasShown) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'auto';
+        }
+    }, [isOffcanvasShown]);
+
     const CustomLink = ({ to, children, ...props }) => {
         const isActive = location.pathname === to;
         return (
@@ -62,8 +71,8 @@ const Navbar = () => {
                         <div className={NavbarCss.offcanvasBody}>
                             <ul className={NavbarCss.ulMobile}>
                                 <CustomLink to="/" onClick={handleCloseOffcanvas}>Αρχική</CustomLink>
-                                <CustomLink to="/" onClick={handleCloseOffcanvas}>Υπηρεσίες</CustomLink>
-                                <CustomLink to="/" onClick={handleCloseOffcanvas}>Επικοινωνία</CustomLink>
+                                <CustomLink to="/Services" onClick={handleCloseOffcanvas}>Υπηρεσίες</CustomLink>
+                                <CustomLink to="/Contact" onClick={handleCloseOffcanvas}>Επικοινωνία</CustomLink>
                             </ul>
                         </div>
                     </div>

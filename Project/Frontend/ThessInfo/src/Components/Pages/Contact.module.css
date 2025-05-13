@@ -90,13 +90,16 @@
     align-items: center;
     border-radius: 10px;
     gap: 10px;
-    font-size: 1.1rem;
+    font-size: 1.1rem !important;
     color: white;
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 
     @media (max-width: 576px) {
         max-width: 200px;
-        font-size: 1rem;
+        font-size: 1rem !important;
+    }
+    @media (max-width: 400px) {
+        max-width: 180px;
     }
 }
 
