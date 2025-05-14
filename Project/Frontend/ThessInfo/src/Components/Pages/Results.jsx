@@ -7,10 +7,12 @@ import { IoMdWater } from "react-icons/io";
 import { GiRecycle } from "react-icons/gi";
 import { MdAir, MdCleanHands } from "react-icons/md";
 import { useLocation } from 'react-router-dom';
-import WaterInfo from '../SmallComponents/waterinfo';
+import WaterInfo from '../SmallComponents/WaterCharts/waterinfo';
 import MonthlyChart from '../SmallComponents/WaterCharts/MonthlyChart';
 import YearlyChart from '../SmallComponents/WaterCharts/YearlyChart';
 import ConclusionChart from '../SmallComponents/WaterCharts/PieChart';
+import RecycleCard from '../SmallComponents/RecycleCharts/recycleinfo';
+import RecycleYearly from '../SmallComponents/RecycleCharts/RecycleYearly';
 
 const Results = () => {
     const location = useLocation();
@@ -82,9 +84,10 @@ const Results = () => {
                 ]);
                 setRecycleDataLatest(responseRecycleLastMonth.data);
                 setRecycleDataLatest2(responseRecycleLastMonthperrerson.data);
+                console.log(RecycleDataLatestperperson);
                 console.log(responseUsableRecycle);
 
-                setRecycleUsableGeneral(responseUsableRecycle.data.results["24"]);
+                setRecycleUsableGeneral(responseUsableRecycle.data.results["24"]); //ΘΕΛΟΥΜΕ ΚΑΙ 23?????? ΥΠΑΡΧΕΙ!!!
             } catch (error) {
                 console.error("Error fetching recycle data:", error);
             }
@@ -127,7 +130,7 @@ const Results = () => {
 
     useEffect(() => {
         console.log("Updated Water Data Last Year:", waterDataLastYear);
-        console.log("recycleeeee:", RecycleUsableGeneral);
+        console.log("recycleeeee general:", RecycleUsableGeneral);
 
     }, [waterDataLastYear, RecycleDataLatest]);
 
@@ -196,9 +199,9 @@ const Results = () => {
 
                         {waterDataLatest ? (
                             <div className={ResultsCss.waterQuality}>
-                                    
+
                                 <div className={ResultsCss.qualityInfo}>
-                                    
+
                                     <div className={ResultsCss.qualityIndicator}>
                                         {getQualityLevel(waterDataLatest.compliantCount).percentage}%
                                         <IoMdWater style={{
@@ -209,35 +212,35 @@ const Results = () => {
                                     <p className={ResultsCss.qualityDescription}>
                                         {getQualityLevel(waterDataLatest.compliantCount).tooltip}
                                     </p>
-                                    
-                                    {/* Olo to segment */}
-                                    <div className={ResultsCss.SegmentSection}> 
 
-                                        <div className={ResultsCss.waterinfo}> {/* Panw Aristera */}
-                                            <p className={ResultsCss.waterinfoTitle}>Λεπτομέρειες</p>
+                                    {/* Olo to segment */}
+                                    <div className={ResultsCss.SegmentSection}>
+
+                                        <div className={ResultsCss.info}> {/* Panw Aristera */}
+                                            <p className={ResultsCss.infoTitle}>Λεπτομέρειες</p>
                                             <WaterInfo waterData={waterDataLatest}></WaterInfo>
                                         </div>
 
-                                        <div className={ResultsCss.waterinfo}> {/* Panw Deksia */}
-                                            <p className={ResultsCss.waterinfoTitle}>{ waterDataLatest.latest_data[0]?.Month || '' }</p>
+                                        <div className={ResultsCss.info}> {/* Panw Deksia */}
+                                            <p className={ResultsCss.infoTitle}>{waterDataLatest.latest_data[0]?.Month || ''}</p>
                                             <MonthlyChart waterData={waterDataLatest}></MonthlyChart>
-                                        </div>   
-
-                                        <div className={ResultsCss.waterinfo}>
-                                        <p className={ResultsCss.waterinfoTitle}>Εξέλιξη Παραμέτρων ανά Έτος</p>
-                                        <YearlyChart yearlyData={waterDataLastYear} />
                                         </div>
 
-                                        <div className={ResultsCss.waterinfo}>
+                                        <div className={ResultsCss.info}>
+                                            <p className={ResultsCss.infoTitle}>Εξέλιξη Παραμέτρων ανά Έτος</p>
+                                            <YearlyChart yearlyData={waterDataLastYear} />
+                                        </div>
+
+                                        <div className={ResultsCss.info}>
                                             <ConclusionChart yearlyData={waterDataLastYear} />
                                         </div>
 
                                     </div>
 
-                                </div>        
-                                
-                                <p className='text-end pt-5'>Τελευταία μέτρηση: {waterDataLatest.month}/{waterDataLatest.year}</p>
                                 </div>
+
+                                <p className='text-end pt-5'>Τελευταία μέτρηση: {waterDataLatest.month}/{waterDataLatest.year}</p>
+                            </div>
                         ) : <div className={ResultsCss.comingSoon}>
                             <IoMdWater className={ResultsCss.comingSoonIcon} />
                             <p>Δεν υπάρχουν διαθέσιμα δεδομένα για την ποιότητα νερού στον δήμο αυτήν τη στιγμή</p>
@@ -249,19 +252,26 @@ const Results = () => {
                 return (
                     <div className={ResultsCss.tabContent}>
                         <h3>Στοιχεία Ανακύκλωσης - {dimosLabel}</h3>
+
                         {RecycleDataLatest ? (
-                            <div>
+                            <div className={ResultsCss.SegmentSection}>
                                 {RecycleDataLatest.TYPE}
+                                <br />
                                 {RecycleDataLatest.Value_for_the_Most_Recent_Month}
                                 <div>
                                     {RecycleDataLatestperperson.TYPE}
                                 </div>
-                                <div>
-                                    {RecycleUsableGeneral.Ανακυκλώσιμα}
-                                    {RecycleUsableGeneral["Ανάκτηση Ογκωδών"]}
 
-
+                                <div className={ResultsCss.info}> 
+                                    <RecycleCard recycleData={RecycleUsableGeneral}></RecycleCard>
                                 </div>
+                                <div className={ResultsCss.info}> 
+                                    <RecycleYearly recycleData={RecycleUsableGeneral}></RecycleYearly>
+                                </div>
+                                {/* <div> ΔΕΝ ΛΕΙΤΟΥΡΓΕΙΙΙΙ
+                                    {RecycleUsableGeneral.Ανακυκλώσιμα}hello
+                                    {RecycleUsableGeneral["Ανάκτηση Ογκωδών"]}
+                                </div> */}
                             </div>
 
 

@@ -38,6 +38,11 @@
     margin-left: 5px;
     flex-shrink: 0;
 }
+.iconNeutral{
+    color: grey;
+    margin-left: 5px;
+    flex-shrink: 0;
+}
 
 .tooltipIcon {
     margin-left: 10px;
