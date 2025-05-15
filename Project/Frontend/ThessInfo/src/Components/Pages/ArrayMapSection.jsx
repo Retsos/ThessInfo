@@ -1,40 +1,29 @@
+// src/Components/Pages/ArrayMapSection.jsx
 import React, { useState, useEffect } from 'react';
-import Styles from './ArrayMapSection'
-import Navbar from '../Navbars/Navbar'
-import Footer from '../Navbars/Footer'
+import 'leaflet/dist/leaflet.css';
+import Styles from './ArrayMapSection.module.css';
+import Navbar from '../Navbars/Navbar';
+import Footer from '../Navbars/Footer';
+import Map from '../SmallComponents/map';
 
 export default function ArrayMapSection() {
-
   const [isSticky, setIsSticky] = useState(false);
 
-
   useEffect(() => {
-    const handleScroll = () => {
-      const initialPageHeight = window.innerHeight;
-      const twentyPercentPoint = initialPageHeight * 0.20;
-      const scrollPosition = window.scrollY;
-
-      if (scrollPosition > twentyPercentPoint) {
-        setIsSticky(true);
-      } else {
-        setIsSticky(false);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    const handler = () => setIsSticky(window.scrollY > window.innerHeight * 0.2);
+    window.addEventListener('scroll', handler, { passive: true });
+    return () => window.removeEventListener('scroll', handler);
   }, []);
 
   return (
     <div className={Styles.pageContainer}>
-      <div className={`${Styles.FullContainer} ${isSticky ? Styles.sticky : ''}`}   >
-        <Navbar></Navbar>
+      <div className={`${Styles.FullContainer} ${isSticky ? Styles.sticky : ''}`}>
+        <Navbar />
       </div>
 
+      <Map/>
 
-      <Footer></Footer>
+      <Footer />
     </div>
-  )
+  );
 }

@@ -62,69 +62,71 @@ const MonthlyChart = ({ waterData }) => {
 
       {/* ——— Dual Axis Chart ——— */}
       <div style={{ width: '100%', height: 400, marginTop: 24 }}>
-      <ResponsiveContainer>
-        <ComposedChart data={chartData} margin={{ top: 5, right: 20, bottom: 90, left: 10 }}>
-          <CartesianGrid stroke="#e0e0e0" strokeDasharray="3 3" />
+        <ResponsiveContainer>
+          <ComposedChart data={chartData} margin={{ top: 5, right: 20, bottom: 90, left: 10 }}>
+            <CartesianGrid stroke="#e0e0e0" strokeDasharray="3 3" />
 
-          <XAxis
-            dataKey="parameter"
-            interval={0}
-            angle={-45}
-            textAnchor="end"
-            height={60}
-            tick={{ fill: "#444",
-              fontSize: 12       
-             }}
-            axisLine={{ stroke: "#444" }}
-          />
+            <XAxis
+              dataKey="parameter"
+              interval={0}
+              angle={-45}
+              textAnchor="end"
+              height={60}
+              tick={{ fill: "#444", fontSize: 12 }}
+              axisLine={{ stroke: "#444" }}
+            />
 
-          <YAxis
-            yAxisId="left"
-            label={{ value: 'Τιμή', angle: -90, position: 'insideLeft', fill: 'blue' }}
-            tick={{ fill: "#444" }}
-            axisLine={{ stroke: "#444" }}
-            domain={[0, 'dataMax']}
-          />
+            <YAxis
+              yAxisId="left"
+              label={{ value: 'Τιμή', angle: -90, position: 'insideLeft', fill: 'blue' }}
+              tick={{ fill: "#444" }}
+              axisLine={{ stroke: "#444" }}
+              domain={[0, 'dataMax']}
+            />
 
-          <YAxis
-            yAxisId="right"
-            orientation="right"
-            label={{ value: 'Όριο', angle: 90, position: 'insideRight', fill: '#444' }}
-            tick={{ fill: "#444" }}
-            axisLine={false}
-            tickLine={false}
-            domain={[0, 'dataMax']}
-          />
+            <YAxis
+              yAxisId="right"
+              orientation="right"
+              label={{
+                value: 'Όριο',
+                angle: 90,
+                position: 'insideRight',
+                fill: '#ff7300'
+              }}
+              tick={{ fill: "#ff7300" }}
+              axisLine={{ stroke: "#ff7300" }}
+              tickLine={{ stroke: "#ff7300" }}
+              domain={[0, 'dataMax']}
+            />
 
-          <Tooltip 
-            wrapperStyle={{ borderRadius: 4 }}
-            contentStyle={{ backgroundColor: '#f9f9f9', borderColor: '#ddd' }}
-          />
+            <Tooltip
+              wrapperStyle={{ borderRadius: 4 }}
+              contentStyle={{ backgroundColor: '#f9f9f9', borderColor: '#ddd' }}
+            />
 
-          <Legend verticalAlign="top" iconType="circle" />
+            <Legend verticalAlign="top" iconType="circle" />
 
-          {/* εδώ άλλαξα το fill */}
-          <Bar
-            yAxisId="left"
-            dataKey="value"
-            name="Τιμή"
-            barSize={24}
-            fill="#5793f2"
-          />
+            <Bar
+              yAxisId="left"
+              dataKey="value"
+              name="Τιμή"
+              barSize={24}
+              fill="#5793f2"
+            />
 
-          {/* και το stroke+dot */}
-          <Line
-            yAxisId="right"
-            type="monotone"
-            dataKey="limit"
-            name="Όριο"
-            stroke="#ff7300"
-            strokeDasharray="5 5"
-            dot={{ r: 4, fill: "#ff7300" }}
-            connectNulls
-          />
-        </ComposedChart>
-      </ResponsiveContainer>
+            <Line
+              yAxisId="right"
+              type="monotone"
+              dataKey="limit"
+              name="Όριο"
+              stroke="#ff7300"
+              strokeDasharray="5 5"
+              dot={{ r: 4, fill: "#ff7300" }}
+              connectNulls
+            />
+          </ComposedChart>
+        </ResponsiveContainer>
+
 
       </div>
     </>

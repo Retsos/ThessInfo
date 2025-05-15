@@ -225,7 +225,7 @@ const Services = () => {
         {
             value: 'Πυλαία (ΙΚΕΑ)',
             label: 'Πυλαία (ΙΚΕΑ)',
-            RecycleName: 'ΠΥΛΑΙΑ-ΧΟΡΤΙΑΤΗΣ',
+            RecycleName: 'a',
             airName: 'Pulaia',
             icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
             icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,

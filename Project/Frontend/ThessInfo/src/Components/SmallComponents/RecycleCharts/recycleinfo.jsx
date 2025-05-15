@@ -1,3 +1,4 @@
+// RecycleLatest.jsx
 import React from 'react';
 import RecycleCss from './RecycleInfo.module.css';
 import { GrTooltip } from 'react-icons/gr';
@@ -9,7 +10,6 @@ const GREEK_MONTH_ORDER = {
   'Νοε': 11, 'Δεκ': 12
 };
 
-// `recycleData` shape: { 'Μηνιαία Δεδομένα': {...} }
 const RecycleLatest = ({ recycleData = {} }) => {
   const monthlyData = recycleData['Μηνιαία Δεδομένα'] || {};
   const months = Object.keys(monthlyData);
@@ -21,18 +21,23 @@ const RecycleLatest = ({ recycleData = {} }) => {
     );
   }
 
-  // Determine latest month by Greek month order
-  const sorted = months.sort((a, b) => (GREEK_MONTH_ORDER[a] || 0) - (GREEK_MONTH_ORDER[b] || 0));
+  // pick latest month
+  const sorted = months.sort((a, b) => GREEK_MONTH_ORDER[a] - GREEK_MONTH_ORDER[b]);
   const latestMonth = sorted[sorted.length - 1];
   const latestData = monthlyData[latestMonth];
 
   return (
     <div className={RecycleCss.card}>
+      {/* τίτλος */}
+      <h4 className={RecycleCss.cardTitle}>
+        Συνολικές Ποσότητες Ανακύκλωσης ({latestMonth})
+      </h4>
+
       <ul className={RecycleCss.list}>
         {Object.entries(latestData).map(([param, value]) => (
           <li key={param} className={RecycleCss.listItem}>
-            <p>
-                <strong>{param}</strong>: {value?.toLocaleString()}
+            <p className={RecycleCss.paramName}>
+              <strong>{param}</strong>: {value?.toLocaleString() || '–'}
             </p>
             <span
               className={RecycleCss.tooltipIcon}
