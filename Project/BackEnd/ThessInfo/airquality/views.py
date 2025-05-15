@@ -24,83 +24,89 @@ def compute_averages(records):
         totals["so2_conc"] += r.get("so2_conc", 0)
     return {k: round(v / count, 2) for k, v in totals.items()}
 
+
+
 class AreaLatestAnalysisView(View):
     """
     Returns the averages for the latest month of a given area,
-    using only the data from the latest year folder.
-    Example URL: /api/area/Pulaia/latest-measurements/
+    along with the same month in the previous year, grouped by year.
     """
     def get(self, request, area):
-        # Load only data for the specified area from the latest year folder.
-        data = load_all_data(area=area, latest_year_only=True)
+        # Load all available data
+        data = load_all_data(area=area, latest_year_only=False)
         if not data:
             return JsonResponse({"error": f"No data found for area: {area}"}, status=404)
 
-        # Convert the "time" field to a datetime object.
+        # Parse timestamps
         for record in data:
             record["parsed_time"] = datetime.strptime(record["time"], "%Y-%m-%d %H:%M:%S")
 
-        # Identify the latest record among this data.
+        # Find latest record's year/month
         latest_record = max(data, key=lambda r: r["parsed_time"])
         latest_year = latest_record["parsed_time"].year
         latest_month = latest_record["parsed_time"].month
 
-        # Filter records for the latest month.
-        last_month_records = [
-            r for r in data 
-            if r["parsed_time"].year == latest_year and r["parsed_time"].month == latest_month
-        ]
+        # Prepare year data
+        response_data = {"area": area}
 
-        # Compute averages for the latest month.
-        averages = compute_averages(last_month_records)
-
-        # Prepare response including area, month, and year.
-        response_data = {
-            "area": area,
-            "year": latest_year,
-            "month": latest_month,
-            "averages": averages
-        }
+        for year in [latest_year, latest_year - 1]:
+            year_records = [
+                r for r in data
+                if r["parsed_time"].year == year and r["parsed_time"].month == latest_month
+            ]
+            if year_records:
+                response_data[str(year)] = {
+                    "month": latest_month,
+                    "averages": compute_averages(year_records)
+                }
 
         return JsonResponse(response_data)
 
+
+
+
 class AreaYearlyAnalysisView(View):
     """
-    Returns the monthly averages for the latest year of a given area,
-    using only the data from the latest year folder.
+    Returns the monthly averages for the latest year and previous year of a given area.
     Example URL: /api/area/Pulaia/group-by-year/
     """
     def get(self, request, area):
-        # Load only data for the specified area from the latest year folder.
-        data = load_all_data(area=area, latest_year_only=True)
+        # Load all data for the area
+        data = load_all_data(area=area, latest_year_only=False)
         if not data:
             return JsonResponse({"error": f"No data found for area: {area}"}, status=404)
 
-        # Convert the "time" field to datetime objects.
+        # Parse the "time" field
         for record in data:
             record["parsed_time"] = datetime.strptime(record["time"], "%Y-%m-%d %H:%M:%S")
 
-        # Identify the latest year from the data.
+        # Find the latest year in the dataset
         latest_record = max(data, key=lambda r: r["parsed_time"])
         latest_year = latest_record["parsed_time"].year
+        previous_year = latest_year - 1
 
-        # Group records by month within that year.
-        records_by_month = defaultdict(list)
+        # Group data by year and month
+        grouped_by_year_month = defaultdict(lambda: defaultdict(list))
         for r in data:
-            if r["parsed_time"].year == latest_year:
-                records_by_month[r["parsed_time"].month].append(r)
+            year = r["parsed_time"].year
+            month = r["parsed_time"].month
+            if year in [latest_year, previous_year]:
+                grouped_by_year_month[year][month].append(r)
 
-        yearly_averages = {}
-        for month in range(1, 13):
-            month_records = records_by_month.get(month, [])
-            month_avg = compute_averages(month_records) if month_records else {}
-            yearly_averages[calendar.month_name[month]] = month_avg
-
-        # Prepare the final response including year and area.
+        # Prepare response
         response_data = {
-            "area": area,
-            "year": latest_year,
-            "monthly_averages": yearly_averages
+            "area": area
         }
+
+        for year in [latest_year, previous_year]:
+            monthly_averages = {}
+            for month in range(1, 13):
+                records = grouped_by_year_month[year].get(month, [])
+                avg = compute_averages(records) if records else {}
+                monthly_averages[calendar.month_name[month]] = avg
+
+            response_data[str(year)] = {
+                "monthly_averages": monthly_averages
+            }
 
         return JsonResponse(response_data)

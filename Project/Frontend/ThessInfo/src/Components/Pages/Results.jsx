@@ -72,7 +72,6 @@ const Results = () => {
                 setWaterDataLastYear(responseWaterLastYear.data || {});
                 setWaterDataLatest(responseWaterLastMonth.data || null);
             } catch (error) {
-                console.error("Error fetching water data:", error);
                 setWaterDataLatest(null);
                 setWaterDataLastYear(null);
             }
@@ -87,11 +86,10 @@ const Results = () => {
                 ]);
                 setRecycleDataLatest(responseRecycleLastMonth.data);
                 setRecycleDataLatest2(responseRecycleLastMonthperrerson.data);
-                console.log(responseUsableRecycle);
-
                 setRecycleUsableGeneral(responseUsableRecycle.data.results["24"]); //ΘΕΛΟΥΜΕ ΚΑΙ 23?????? ΥΠΑΡΧΕΙ!!!    NAI YPARXEI 
+
             } catch (error) {
-                console.error("Error fetching recycle data:", error);
+               // console.error("Error fetching recycle data:", error);
             }
 
         };
@@ -103,13 +101,11 @@ const Results = () => {
                     api.get(`airquality/area/${encodeURIComponent(dimosLabel3)}/group-by-year/`),
                 ]);
 
-                console.log("Air" + dimosLabel3, responseAirLastMonth, responseAirYear);
-
                 setAirDataLatest(responseAirLastMonth.data);
                 setAirDataYear(responseAirYear.data);
 
             } catch (error) {
-                console.error("Error fetching recycle data:", error);
+              //  console.error("Error fetching recycle data:", error);
             }
         };
 
@@ -133,14 +129,14 @@ const Results = () => {
 
 
     useEffect(() => {
-        console.log("Updated Water Data Last Year:", waterDataLastYear);
-        console.log("recycleeeee general:", RecycleUsableGeneral);
-        console.log("ASDADAD", RecycleDataLatestperperson);
-        console.log(RecycleDataLatest)
+        console.log("Aeraaaa ola:", AirDataLatest);
+        console.log("AERA SINOPTIKA", AirDataYear);
+       /* console.log("ASDADAD", RecycleDataLatestperperson);
+        console.log(RecycleDataLatest)*/
 
 
 
-    }, [waterDataLastYear, RecycleDataLatest, RecycleDataLatestperperson]);
+    }, [AirDataLatest, AirDataYear, RecycleDataLatestperperson]);
 
 
     const getQualityLevel = (compliantCount) => {
@@ -329,15 +325,16 @@ const Results = () => {
                         <h3>Ποιότητα Αέρα - {dimosLabel}</h3>
                         {AirDataLatest ? (
                             <div>
-                                {AirDataLatest.area}
-
-                                <div>
-                                    {AirDataLatest.averages.co_conc}
-                                </div>
-                                <div>
-                                    {AirDataYear.monthly_averages.April.co_conc}
-                                </div>
+                             
+                           SYNOPTIKA TOU XRONOU ME MO         {AirDataLatest[2024].averages.no2_conc
+}
+                                <br />
+                              ANALITIKA GIA KATHE MHNA  {AirDataYear[2024].monthly_averages.April.no2_conc}
                             </div>
+
+
+
+
 
 
                         ) : <div className={ResultsCss.comingSoon}>
