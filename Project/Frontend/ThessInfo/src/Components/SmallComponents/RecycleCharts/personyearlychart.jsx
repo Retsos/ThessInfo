@@ -31,13 +31,15 @@ const PersonYearlyChart = ({ data }) => {
     const stats = data.Yearly_Stats[activeYear]?.Detailed_Monthly_Data || {};
     return GREEK_MONTH_ORDER.map(m => ({
       month: m,
-      value: stats[m] != null ? stats[m] : 0
+      value: stats[m] != null ? stats[m] : null
     }));
   }, [activeYear, data]);
 
   return (
     <div className={styles.container}>
-        <h4 className={styles.title}>ΜΟ Ανακύκλωσης σε kg/Κάτοικο</h4>
+        <h4 className={styles.title}> 
+          Ανακύκλωσιμα σε kg/Κάτοικο
+        </h4>
 
       {/* tabs */}
       <div className={styles.tabs}>

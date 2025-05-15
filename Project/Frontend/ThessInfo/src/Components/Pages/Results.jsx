@@ -14,6 +14,9 @@ import ConclusionChart from '../SmallComponents/WaterCharts/PieChart';
 import RecycleCard from '../SmallComponents/RecycleCharts/recycleinfo';
 import RecycleYearly from '../SmallComponents/RecycleCharts/RecycleYearly';
 import PersonYearlyChart from '../SmallComponents/RecycleCharts/personyearlychart';
+import OtaYearlyChart from '../SmallComponents/RecycleCharts/OtaYearlyChart';
+import PersonOTAChart from '../SmallComponents/RecycleCharts/PersonOTAChart';
+
 const Results = () => {
     const location = useLocation();
     const [dimosValue, setDimosValue] = useState(null);
@@ -133,6 +136,8 @@ const Results = () => {
         console.log("Updated Water Data Last Year:", waterDataLastYear);
         console.log("recycleeeee general:", RecycleUsableGeneral);
         console.log("ASDADAD", RecycleDataLatestperperson);
+        console.log(RecycleDataLatest)
+
 
 
     }, [waterDataLastYear, RecycleDataLatest, RecycleDataLatestperperson]);
@@ -273,10 +278,9 @@ const Results = () => {
                                     <br />
                                     pios einai o teleutaios mhnas = {RecycleDataLatestperperson.Yearly_Stats[2024].Most_Recent_Month}
                                     <br />
-                                    o mesos oros mexri ton teleutaio mhna = {RecycleDataLatest.Yearly_Stats[2024].Value_for_the_Most_Recent_Month} */}
 
                                     {/* WORKS{console.log("what is this shit",RecycleDataLatestperperson)} */}
-                                    
+
                                     <div className={ResultsCss.info}>
                                         <RecycleCard recycleData={RecycleUsableGeneral}></RecycleCard>
                                     </div>
@@ -286,6 +290,15 @@ const Results = () => {
                                     <div className={ResultsCss.info}>
                                         <PersonYearlyChart data={RecycleDataLatestperperson}></PersonYearlyChart>
                                     </div>
+                                    <div className={ResultsCss.info}>
+                                        <OtaYearlyChart data={RecycleDataLatest} />
+                                    </div>
+                                    <div className={ResultsCss.info}>
+                                        <PersonOTAChart
+                                            personData={RecycleDataLatestperperson}  
+                                            otaData={RecycleDataLatest}             
+                                        />             
+                                   </div>
                                 </div>
                                 <p className='text-end pt-5'>Τελευταία μέτρηση: {RecycleDataLatest.Yearly_Stats[2024].Most_Recent_Month}</p>
 
