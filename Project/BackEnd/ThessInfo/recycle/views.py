@@ -1,174 +1,191 @@
 from django.http import JsonResponse
 from .utils import load_all_data
 from django.shortcuts import render
-
+from collections import defaultdict
+import re
 
 def recycling_view(request):
     region = request.GET.get('region')
-    year = request.GET.get('year')
-    
+
     if not region:
         return JsonResponse(
             {'error': 'Παρακαλώ δώστε το όνομα της περιοχής ως query parameter (region).'},
             status=400
         )
-    
-    if not year:
-        return JsonResponse(
-            {'error': 'Παρακαλώ δώστε το έτος ως query parameter (year).'},
-            status=400
-        )
-    
+
     all_data = load_all_data()
-    
+
+    # Φιλτράρισμα μόνο ανά περιοχή και τύπο
     filtered_data = [
-        record for record in all_data
-        if record.get("ΠΕΡΙΟΧΗ", "").upper() == region.upper() and
-           record.get("ΤΥΠΟΣ") == "ΕΙΣΕΡΧΟΜΕΝΑ ΑΝΑΚΥΚΛΩΣΙΜΑ ΥΛΙΚΑ ΣΤΟ ΚΕΝΤΡΟ ΔΙΑΛΟΓΗΣ (kg/ΟΤΑ)" and
-           any(key.endswith('-' + year) for key in record.keys())
+        rec for rec in all_data
+        if rec.get("ΠΕΡΙΟΧΗ", "").upper() == region.upper()
+           and rec.get("ΤΥΠΟΣ") == "ΕΙΣΕΡΧΟΜΕΝΑ ΑΝΑΚΥΚΛΩΣΙΜΑ ΥΛΙΚΑ ΣΤΟ ΚΕΝΤΡΟ ΔΙΑΛΟΓΗΣ (kg/ΟΤΑ)"
     ]
-    
     if not filtered_data:
         return JsonResponse(
-            {'error': f'Δεν βρέθηκαν δεδομένα για την περιοχή {region} με δεδομένα του έτους {year}.'},
+            {'error': f'Δεν βρέθηκαν δεδομένα για την περιοχή {region}.'},
             status=404
         )
-    
-    record = filtered_data[0]
-    total = 0.0
-    count = 0
-    
+
+    # Συγχώνευση όλων των records για την περιοχή
+    merged = defaultdict(str)
+    for rec in filtered_data:
+        for key, val in rec.items():
+            if val:
+                merged[key] = val
+
     months_order = {
         "Ιαν": 1, "Φεβ": 2, "Μαρ": 3, "Απρ": 4, "Μαϊ": 5, "Ιουν": 6,
         "Ιουλ": 7, "Αυγ": 8, "Σεπ": 9, "Οκτ": 10, "Νοε": 11, "Δεκ": 12
     }
-    
-    month_keys = sorted(
-        [key for key in record.keys() if key.endswith('-' + year)],
-        key=lambda x: months_order.get(x.split('-')[0], 0)
-    )
-    
-    monthly_data = {}  # Αποθήκευση όλων των μηνών
-    
-    most_recent_month = None
-    most_recent_value = None
-    
-    for key in month_keys:
-        value = record.get(key, "").strip()
-        if value:
-            try:
-                num = float(value.replace(",", "."))
-                month_name = key.split('-')[0]
-                monthly_data[month_name] = num  # Αποθήκευση τιμής
+    pattern = re.compile(r'^(?P<month>Ιαν|Φεβ|Μαρ|Απρ|Μαϊ|Ιουν|Ιουλ|Αυγ|Σεπ|Οκτ|Νοε|Δεκ)-(?P<year>\d{2,4})$')
 
-                if num > 0:  # Μόνο θετικές τιμές λαμβάνονται υπόψη στον μέσο όρο
-                    total += num
-                    count += 1
+    # Οργάνωση των δεδομένων ανά έτος → μήνα
+    yearly_data = {}
+    for key, raw in merged.items():
+        m = pattern.match(key)
+        if not m:
+            continue
+        month = m.group('month')
+        yr = m.group('year')
+        year = '20' + yr if len(yr) == 2 else yr
+        try:
+            num = float(raw.replace(',', '.'))
+        except (ValueError, AttributeError):
+            num = None
+        yearly_data.setdefault(year, {})[month] = num
 
-                # Βρίσκουμε την πιο πρόσφατη τιμή
-                most_recent_month = month_name
-                most_recent_value = num
-            except ValueError:
-                monthly_data[month_name] = None  # Αν η τιμή δεν είναι αριθμός, αποθηκεύουμε `null`
-    
-    average = total / count if count > 0 else None
+    # Δημιουργία τελικής δομής με στατιστικά ανά έτος
+    stats = {}
+    for year, months in yearly_data.items():
+        vals = [v for v in months.values() if v is not None and v > 0]
+        avg = sum(vals)/len(vals) if vals else None
 
-    results = {
-    
-        "REGION": record.get("ΠΕΡΙΟΧΗ"),
-        "TYPE": record.get("ΤΥΠΟΣ"),
-        f"Average_RECYCLING_for_the_year_{year}": average,
-        "Most_Recent_Month": most_recent_month,
-        "Value_for_the_Most_Recent_Month": most_recent_value,
-        "Detailed_Monthly_Data": monthly_data  # All data per month, including `null`
+        # πιο πρόσφατος μήνας εντός του έτους
+        recent_month = None
+        recent_val = None
+        for mon, v in months.items():
+            if v is None:
+                continue
+            if (recent_month is None or months_order[mon] > months_order[recent_month]):
+                recent_month, recent_val = mon, v
+
+        stats[year] = {
+            f"Average_RECYCLING_for_year": avg,
+            "Most_Recent_Month": recent_month,
+            "Value_for_the_Most_Recent_Month": recent_val,
+            "Detailed_Monthly_Data": months
+        }
+
+    return JsonResponse({
+        "REGION": region,
+        "TYPE": "ΕΙΣΕΡΧΟΜΕΝΑ ΑΝΑΚΥΚΛΩΣΙΜΑ ΥΛΙΚΑ ΣΤΟ ΚΕΝΤΡΟ ΔΙΑΛΟΓΗΣ (kg/ΟΤΑ)",
+        "Yearly_Stats": stats
+    })
 
 
-    }
-    
-    return JsonResponse(results)
 
 
+
+
+import re
+from collections import defaultdict
+from django.http import JsonResponse
 
 def recycling_viewperperson(request):
     region = request.GET.get('region')
-    year = request.GET.get('year')
-    
+    # … (οι πρώτες γραμμές ίδιος έλεγχος/φιλτράρισμα) …
+    year_param = request.GET.get('year')  # παραμένει αν θες φιλτράρισμα αλλά δεν το χρησιμοποιούμε
+
     if not region:
         return JsonResponse(
             {'error': 'Παρακαλώ δώστε το όνομα της περιοχής ως query parameter (region).'},
             status=400
         )
-    
-    if not year:
-        return JsonResponse(
-            {'error': 'Παρακαλώ δώστε το έτος ως query parameter (year).'},
-            status=400
-        )
-    
+
     all_data = load_all_data()
-    
-    filtered_data = [
-        record for record in all_data
-        if record.get("ΠΕΡΙΟΧΗ", "").upper() == region.upper() and
-           record.get("ΤΥΠΟΣ") == "ΕΙΣΕΡΧΟΜΕΝΑ ΑΝΑΚΥΚΛΩΣΙΜΑ ΥΛΙΚΑ ΣΤΟ ΚΕΝΤΡΟ ΔΙΑΛΟΓΗΣ (kg/Κάτοικο)" and
-           any(key.endswith('-' + year) for key in record.keys())
+
+    # Φιλτράρισμα μόνο ανά περιοχή και τύπο kg/Κάτοικο
+    filtered = [
+        rec for rec in all_data
+        if rec.get("ΠΕΡΙΟΧΗ", "").upper() == region.upper()
+           and rec.get("ΤΥΠΟΣ") == "ΕΙΣΕΡΧΟΜΕΝΑ ΑΝΑΚΥΚΛΩΣΙΜΑ ΥΛΙΚΑ ΣΤΟ ΚΕΝΤΡΟ ΔΙΑΛΟΓΗΣ (kg/Κάτοικο)"
     ]
-    
-    if not filtered_data:
+    if not filtered:
         return JsonResponse(
-            {'error': f'Δεν βρέθηκαν δεδομένα για την περιοχή {region} με δεδομένα του έτους {year}.'},
+            {'error': f'Δεν βρέθηκαν δεδομένα για την περιοχή {region}.'},
             status=404
         )
-    
-    record = filtered_data[0]
-    
+
+
+    # Συγχώνευση όλων των records για την περιοχή
+    merged = defaultdict(str)
+    for rec in filtered:
+        for key, val in rec.items():
+            if val:
+                merged[key] = val
+
+    # Ταξινόμηση μηνών
     months_order = {
         "Ιαν": 1, "Φεβ": 2, "Μαρ": 3, "Απρ": 4, "Μαϊ": 5, "Ιουν": 6,
         "Ιουλ": 7, "Αυγ": 8, "Σεπ": 9, "Οκτ": 10, "Νοε": 11, "Δεκ": 12
     }
-    
-    month_keys = sorted(
-        [key for key in record.keys() if key.endswith('-' + year)],
-        key=lambda x: months_order.get(x.split('-')[0], 0)
+    # Πιάσιμο πεδίων μήνας-έτος (2 ή 4 ψηφία)
+    pattern = re.compile(
+        r'^(?P<month>Ιαν|Φεβ|Μαρ|Απρ|Μαϊ|Ιουν|Ιουλ|Αυγ|Σεπ|Οκτ|Νοε|Δεκ)-(?P<year>\d{2,4})$'
     )
-    
-    monthly_values = {}
-    valid_values = []
-    most_recent_value = None
-    most_recent_month = None
-    
-    for key in month_keys:
-        month = key.split('-')[0]
-        value = record.get(key, "").strip()
-        
-        if value:  # Αν η τιμή δεν είναι κενή
-            try:
-                num = float(value.replace(",", "."))
-                if num > 0:
-                    valid_values.append(num)
-                    monthly_values[month] = num
-                    most_recent_value = num
-                    most_recent_month = month
-                else:
-                    monthly_values[month] = None  # Αν η τιμή είναι 0 ή αρνητική, αγνοείται
-            except ValueError:
-                monthly_values[month] = None  # Αν δεν μπορεί να μετατραπεί σε αριθμό
-        else:
-            monthly_values[month] = None  # Αν η τιμή είναι κενή ("")
 
-    average = sum(valid_values) / len(valid_values) if valid_values else None
+    # Οργάνωση δεδομένων ανά έτος → μήνα, με drop των 0
+    yearly = {}
+    for key, raw in merged.items():
+        m = pattern.match(key)
+        if not m:
+            continue
+        month = m.group('month')
+        yr = m.group('year')
+        year = '20' + yr if len(yr) == 2 else yr
 
-    results = {
-        "REGION": record.get("ΠΕΡΙΟΧΗ"),
-        "TYPE": record.get("ΤΥΠΟΣ"),
-        f"Average RECYCLING for the year {year}": average,
-        "Most Recent Month": most_recent_month,
-        "Value for the Most Recent Month": most_recent_value,
-        "Detailed Monthly Data": monthly_values  # All data per month, including `null`
-}
+        try:
+            num = float(raw.replace(',', '.'))
+        except (ValueError, AttributeError):
+            num = None
 
-    
-    return JsonResponse(results)
+        # Αν η τιμή είναι ακριβώς 0, skip (δεν το αποθηκεύουμε)
+        if num == 0:
+            continue
+
+        # Αποθήκευση: είτε θετικό αριθμό, είτε None
+        yearly.setdefault(year, {})[month] = num
+
+    # Δημιουργία στατιστικών ανά έτος
+    stats = {}
+    for year, months in yearly.items():
+        vals = [v for v in months.values() if v is not None and v > 0]
+        avg = sum(vals)/len(vals) if vals else None
+
+        recent_month = None
+        recent_val = None
+        for mon, v in months.items():
+            if v is None:
+                continue
+            if recent_month is None or months_order[mon] > months_order[recent_month]:
+                recent_month, recent_val = mon, v
+
+        stats[year] = {
+            f"Average_RECYCLING_per_person_year_{year}": avg,
+            "Most_Recent_Month": recent_month,
+            "Value_for_the_Most_Recent_Month": recent_val,
+            "Detailed_Monthly_Data": months
+        }
+
+    return JsonResponse({
+        "REGION": region,
+        "TYPE": "ΕΙΣΕΡΧΟΜΕΝΑ ΑΝΑΚΥΚΛΩΣΙΜΑ ΥΛΙΚΑ ΣΤΟ ΚΕΝΤΡΟ ΔΙΑΛΟΓΗΣ (kg/Κάτοικο)",
+        "Yearly_Stats": stats
+    })
+
+
+
 
 
 

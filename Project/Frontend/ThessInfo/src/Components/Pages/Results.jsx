@@ -78,19 +78,19 @@ const Results = () => {
         const fetchRecycleData = async () => {
             try {
                 const [responseRecycleLastMonth, responseRecycleLastMonthperrerson, responseUsableRecycle] = await Promise.all([
-                    api.get(`recycle/recycling-ota/?region=${encodeURIComponent(dimosLabel2)}&year=24`),
+                    api.get(`recycle/recycling-ota/?region=${encodeURIComponent(dimosLabel2)}`),
                     api.get(`recycle/recycling-perperson/?region=${encodeURIComponent(dimosLabel2)}&year=24`),
                     api.get(`recycle/recycling-good/`),
                 ]);
                 setRecycleDataLatest(responseRecycleLastMonth.data);
                 setRecycleDataLatest2(responseRecycleLastMonthperrerson.data);
-                console.log(RecycleDataLatestperperson);
                 console.log(responseUsableRecycle);
 
-                setRecycleUsableGeneral(responseUsableRecycle.data.results["24"]); //ΘΕΛΟΥΜΕ ΚΑΙ 23?????? ΥΠΑΡΧΕΙ!!!
+                setRecycleUsableGeneral(responseUsableRecycle.data.results["24"]); //ΘΕΛΟΥΜΕ ΚΑΙ 23?????? ΥΠΑΡΧΕΙ!!!    NAI YPARXEI 
             } catch (error) {
                 console.error("Error fetching recycle data:", error);
             }
+
         };
 
         const fetchAirData = async () => {
@@ -114,6 +114,7 @@ const Results = () => {
         fetchWaterData();
         fetchRecycleData();
 
+
     }, [dimosLabel, dimosLabel2, dimosLabel3]);
 
 
@@ -131,8 +132,10 @@ const Results = () => {
     useEffect(() => {
         console.log("Updated Water Data Last Year:", waterDataLastYear);
         console.log("recycleeeee general:", RecycleUsableGeneral);
+                                            console.log("ASDADAD",RecycleDataLatestperperson);
 
-    }, [waterDataLastYear, RecycleDataLatest]);
+
+    }, [waterDataLastYear, RecycleDataLatest,RecycleDataLatestperperson]);
 
 
     const getQualityLevel = (compliantCount) => {
@@ -255,12 +258,25 @@ const Results = () => {
 
                         {RecycleDataLatest ? (
                             <div className={ResultsCss.SegmentSection}>
-                                {RecycleDataLatest.TYPE}
+                                Posa skoupidia phgan sto kentro dialogis ton teleutaio mhna
                                 <br />
-                                {RecycleDataLatest.Value_for_the_Most_Recent_Month}
+                                {RecycleDataLatest.Yearly_Stats[2024].Value_for_the_Most_Recent_Month} 
+                                <br />
+                                pios einai o teleutaios mhnas = {RecycleDataLatest.Yearly_Stats[2024].Most_Recent_Month}
+                                <br />
+                                o mesos oros mexri ton teleutaio mhna = {RecycleDataLatest.Yearly_Stats[2024].Average_RECYCLING_for_year}
+                                <br />
                                 <div>
-                                    {RecycleDataLatestperperson.TYPE}
+                                    Posa skoupidia phgan sto kentro dialogis ton teleutaio mhna apo kathe katoiko
                                 </div>
+                                {RecycleDataLatestperperson.Yearly_Stats[2024].Average_RECYCLING_per_person_year}
+                                <br />
+                                pios einai o teleutaios mhnas = {RecycleDataLatestperperson.Yearly_Stats[2024].Most_Recent_Month}
+                                <br />
+                                 o mesos oros mexri ton teleutaio mhna = {RecycleDataLatest.Yearly_Stats[2024].Value_for_the_Most_Recent_Month}
+
+
+
 
                                 <div className={ResultsCss.info}> 
                                     <RecycleCard recycleData={RecycleUsableGeneral}></RecycleCard>
