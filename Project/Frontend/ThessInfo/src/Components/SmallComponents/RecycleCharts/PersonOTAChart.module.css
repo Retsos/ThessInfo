@@ -1,0 +1,30 @@
+.wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+.chartBox {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  padding: 1rem;
+}
+.title {
+  text-align: center;
+  margin-bottom: 0.5rem;
+  color: #2e7d32;
+  font-size: 1rem;
+}
+.title2{
+    text-align: center;
+  margin-bottom: 0.5rem;
+  color: #2196F3;
+  font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+  .wrapper {
+    grid-template-columns: 1fr;
+  }
+}

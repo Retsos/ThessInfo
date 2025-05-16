@@ -6,6 +6,7 @@ import calendar
 
 from .utils import load_all_data, POLLUTANT_LIMITS
 
+
 def compute_averages(records):
     pollutants = ["no2_conc", "o3_conc", "co_conc", "no_conc", "so2_conc"]
     totals = {p: 0.0 for p in pollutants}
@@ -25,10 +26,14 @@ def compute_averages(records):
 
 
 class AreaLatestAnalysisView(View):
-    def get(self, request, area, year):
-        data = load_all_data(area=area, year=year)
+    """
+    Returns the averages for the latest month of a given area,
+    along with the same month in the previous year, grouped by year.
+    """
+    def get(self, request, area):
+        data = load_all_data(area=area, latest_year_only=False)
         if not data:
-            return JsonResponse({"error": f"No data found for area: {area} in year {year}"}, status=404)
+            return JsonResponse({"error": f"No data found for area: {area}"}, status=404)
 
         for record in data:
             record["parsed_time"] = datetime.strptime(record["time"], "%Y-%m-%d %H:%M:%S")
@@ -37,48 +42,56 @@ class AreaLatestAnalysisView(View):
         latest_year = latest_record["parsed_time"].year
         latest_month = latest_record["parsed_time"].month
 
-        last_month_records = [
-            r for r in data
-            if r["parsed_time"].year == latest_year and r["parsed_time"].month == latest_month
-        ]
+        response_data = {"area": area}
 
-        averages = compute_averages(last_month_records)
+        for year in [latest_year, latest_year - 1]:
+            year_records = [
+                r for r in data
+                if r["parsed_time"].year == year and r["parsed_time"].month == latest_month
+            ]
+            if year_records:
+                response_data[str(year)] = {
+                    "month": latest_month,
+                    "averages": compute_averages(year_records)
+                }
 
-        return JsonResponse({
-            "area": area,
-            "year": latest_year,
-            "month": calendar.month_name[latest_month],
-            "averages": averages,
-            "limits": POLLUTANT_LIMITS
-        })
+        response_data["limits"] = POLLUTANT_LIMITS
+        return JsonResponse(response_data)
 
 
 class AreaYearlyAnalysisView(View):
-    def get(self, request, area, year):
-        data = load_all_data(area=area, year=year)
+    """
+    Returns the monthly averages for the latest year and previous year of a given area.
+    """
+    def get(self, request, area):
+        data = load_all_data(area=area, latest_year_only=False)
         if not data:
-            return JsonResponse({"error": f"No data found for area: {area} in year {year}"}, status=404)
+            return JsonResponse({"error": f"No data found for area: {area}"}, status=404)
 
+        for record in data:
+            record["parsed_time"] = datetime.strptime(record["time"], "%Y-%m-%d %H:%M:%S")
+
+        latest_record = max(data, key=lambda r: r["parsed_time"])
+        latest_year = latest_record["parsed_time"].year
+        previous_year = latest_year - 1
+
+        grouped_by_year_month = defaultdict(lambda: defaultdict(list))
         for r in data:
-            r["parsed_time"] = datetime.strptime(r["time"], "%Y-%m-%d %H:%M:%S")
+            year = r["parsed_time"].year
+            month = r["parsed_time"].month
+            if year in [latest_year, previous_year]:
+                grouped_by_year_month[year][month].append(r)
 
-        records_by_month = defaultdict(list)
-        for r in data:
-            if r["parsed_time"].year == year:
-                records_by_month[r["parsed_time"].month].append(r)
+        response_data = {"area": area}
+        for year in [latest_year, previous_year]:
+            monthly_averages = {}
+            for month in range(1, 13):
+                records = grouped_by_year_month[year].get(month, [])
+                avg = compute_averages(records) if records else {}
+                monthly_averages[calendar.month_name[month]] = avg
+            response_data[str(year)] = {"monthly_averages": monthly_averages}
 
-        yearly_averages = {}
-        for month in range(1, 13):
-            month_records = records_by_month.get(month, [])
-            month_avg = compute_averages(month_records) if month_records else {}
-            yearly_averages[calendar.month_name[month]] = month_avg
-
-        return JsonResponse({
-            "area": area,
-            "year": year,
-            "monthly_averages": yearly_averages,
-            "limits": POLLUTANT_LIMITS
-        })
+        return JsonResponse(response_data)
 
 
 class AreaMonthlyAnalysisView(View):
@@ -148,7 +161,8 @@ class BestAreasPerMonthView(View):
             "best_areas_per_month": result,
             "limits": POLLUTANT_LIMITS
         })
-    
+
+
 class AreaAnnualAverageView(View):
     def get(self, request, area, year):
         data = load_all_data(area=area, year=year)
@@ -158,9 +172,7 @@ class AreaAnnualAverageView(View):
         for r in data:
             r["parsed_time"] = datetime.strptime(r["time"], "%Y-%m-%d %H:%M:%S")
 
-        # Filter just in case
         year_data = [r for r in data if r["parsed_time"].year == year]
-
         if not year_data:
             return JsonResponse({"error": f"No data available for {area} in {year}"}, status=404)
 
@@ -173,6 +185,7 @@ class AreaAnnualAverageView(View):
             "limits": POLLUTANT_LIMITS
         })
 
+
 class AreaYearlyGroupedView(View):
     def get(self, request, area, year):
         data = load_all_data(area=area, year=year)
@@ -182,27 +195,24 @@ class AreaYearlyGroupedView(View):
         for r in data:
             r["parsed_time"] = datetime.strptime(r["time"], "%Y-%m-%d %H:%M:%S")
 
-        # Group records by month
         records_by_month = defaultdict(list)
         for r in data:
             if r["parsed_time"].year == year:
                 records_by_month[r["parsed_time"].month].append(r)
 
-        # Create response format
         monthly_averages = {}
         for month in range(1, 13):
             records = records_by_month.get(month, [])
             monthly_averages[calendar.month_name[month]] = compute_averages(records) if records else {}
 
-        response = {
+        return JsonResponse({
             "area": area,
             str(year): {
                 "monthly_averages": monthly_averages
             },
             "limits": POLLUTANT_LIMITS
-        }
+        })
 
-        return JsonResponse(response)
 
 class AreaMultiYearAveragesView(View):
     def get(self, request, area):
@@ -213,14 +223,12 @@ class AreaMultiYearAveragesView(View):
         for r in data:
             r["parsed_time"] = datetime.strptime(r["time"], "%Y-%m-%d %H:%M:%S")
 
-        # Organize data by year and month
         year_month_records = defaultdict(lambda: defaultdict(list))
         for r in data:
             year = r["parsed_time"].year
             month = r["parsed_time"].month
             year_month_records[year][month].append(r)
 
-        # Build response
         yearly_data = {}
         for year in sorted(year_month_records.keys()):
             monthly_averages = {}
@@ -236,4 +244,3 @@ class AreaMultiYearAveragesView(View):
             **yearly_data,
             "limits": POLLUTANT_LIMITS
         })
-

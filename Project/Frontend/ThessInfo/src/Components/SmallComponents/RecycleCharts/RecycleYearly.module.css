@@ -1,0 +1,17 @@
+/* YearlyAveragesChart.module.css */
+.chartCard {
+  max-width: 650px;
+  margin: 2rem auto 1rem;
+  padding: 0;
+}
+
+.chartTitle {
+  margin: 0 0 1rem;
+  font-size: 1.25rem;
+  text-align: center;
+  color: #1e8449;
+
+  @media (max-width: 480px) {
+  font-size: 1.1rem;
+}
+}

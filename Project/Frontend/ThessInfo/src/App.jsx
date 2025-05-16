@@ -5,7 +5,8 @@ import Services from "./Components/Pages/Services";
 import LearnMore from "./Components/Pages/LearnMore";
 import Results from "./Components/Pages/Results";
 import ScrollToTop from "./Components/SmallComponents/ScrollToTop";
-import OdigosPerioxwn from "./Components/Pages/OdigosPerioxwn";
+import ArrayMapSection from "./Components/Pages/ArrayMapSection";
+
 
 function App() {
 
@@ -18,7 +19,7 @@ function App() {
           <Route path="/LearnMore" element={<LearnMore />} />
           <Route path="/Services" element={<Services />} />
           <Route path="/Results" element={<Results />} />
-          <Route path="/OdigosPerioxwn" element={<OdigosPerioxwn />} />
+          <Route path="/ArrayMapSection" element={<ArrayMapSection />} />
         </Routes>
       </ScrollToTop>
     </>

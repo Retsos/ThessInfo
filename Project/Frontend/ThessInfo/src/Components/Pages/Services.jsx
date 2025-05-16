@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useMemo } from 'react';
 import Navbar from '../Navbars/Navbar';
 import ServicesCss from './Services.module.css';
 import Footer from '../Navbars/Footer';
-import { useNavigate,Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { FaHandHoldingWater } from "react-icons/fa";
 import { FaRecycle } from "react-icons/fa";
 import noise from "../../assets/noise.png";
@@ -34,12 +34,157 @@ const Services = () => {
         };
     }, []);
 
-    const options = [
+    const rawOptions = [
         {
-            value: 'thessaloniki',
+            value: '40 Εκκλησιές',
+            label: '40 Εκκλησιές',
+            RecycleName: 'a',
+            airName: 'a',
+            icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
+            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
+            icon3: <img src={noise} alt="Noise" className={ServicesCss.noiseIcon} />,
+            tooltip1: "Δεδομένα νερού",
+            tooltip2: "Δεδομένα ανακύκλωσης",
+            tooltip3: "Δεδομένα θορύβου"
+        },
+        {
+            value: 'Ανάληψη',
+            label: 'Ανάληψη',
+            RecycleName: 'a',
+            airName: 'a',
+            icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
+            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
+            icon3: <img src={noise} alt="Noise" className={ServicesCss.noiseIcon} />,
+            tooltip1: "Δεδομένα νερού",
+            tooltip2: "Δεδομένα ανακύκλωσης",
+            tooltip3: "Δεδομένα θορύβου"
+        },
+
+        {
+            value: 'thessaloniki',//???????????
             label: 'Άνω Τούμπα',
-            RecycleName:'a',
-            airName:'a',           
+            RecycleName: 'a',
+            airName: 'a',
+            icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
+            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
+            icon3: <img src={noise} alt="Noise" className={ServicesCss.noiseIcon} />,
+            tooltip1: "Δεδομένα νερού",
+            tooltip2: "Δεδομένα ανακύκλωσης",
+            tooltip3: "Δεδομένα θορύβου"
+        },
+        {
+            value: 'ΔΕΘ-ΧΑΝΘ',
+            label: 'ΔΕΘ-ΧΑΝΘ',
+            RecycleName: 'a',
+            airName: 'a',
+            icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
+            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
+            icon3: <img src={noise} alt="Noise" className={ServicesCss.noiseIcon} />,
+            tooltip1: "Δεδομένα νερού",
+            tooltip2: "Δεδομένα ανακύκλωσης",
+            tooltip3: "Δεδομένα θορύβου"
+        },
+        {
+            value: 'Κάτω Τούμπα',
+            label: 'Κάτω Τούμπα',
+            RecycleName: 'a',
+            airName: 'a',
+            icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
+            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
+            icon3: <img src={noise} alt="Noise" className={ServicesCss.noiseIcon} />,
+            tooltip1: "Δεδομένα νερού",
+            tooltip2: "Δεδομένα ανακύκλωσης",
+            tooltip3: "Δεδομένα θορύβου"
+        },
+        {
+            value: 'Κέντρο πόλης',
+            label: 'Κέντρο πόλης',
+            RecycleName: 'a',
+            airName: 'a',
+            icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
+            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
+            icon3: <img src={noise} alt="Noise" className={ServicesCss.noiseIcon} />,
+            tooltip1: "Δεδομένα νερού",
+            tooltip2: "Δεδομένα ανακύκλωσης",
+            tooltip3: "Δεδομένα θορύβου"
+        },
+        {
+            value: 'Κωνσταντινουπολίτικα',
+            label: 'Κωνσταντινουπολίτικα',
+            RecycleName: 'a',
+            airName: 'a',
+            icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
+            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
+            icon3: <img src={noise} alt="Noise" className={ServicesCss.noiseIcon} />,
+            tooltip1: "Δεδομένα νερού",
+            tooltip2: "Δεδομένα ανακύκλωσης",
+            tooltip3: "Δεδομένα θορύβου"
+        },
+        {
+            value: 'Νέα Παραλία',
+            label: 'Νέα Παραλία',
+            RecycleName: 'a',
+            airName: 'a',
+            icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
+            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
+            icon3: <img src={noise} alt="Noise" className={ServicesCss.noiseIcon} />,
+            tooltip1: "Δεδομένα νερού",
+            tooltip2: "Δεδομένα ανακύκλωσης",
+            tooltip3: "Δεδομένα θορύβου"
+        },
+        {
+            value: 'Ντεπώ',
+            label: 'Ντεπώ',
+            RecycleName: 'a',
+            airName: 'a',
+            icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
+            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
+            icon3: <img src={noise} alt="Noise" className={ServicesCss.noiseIcon} />,
+            tooltip1: "Δεδομένα νερού",
+            tooltip2: "Δεδομένα ανακύκλωσης",
+            tooltip3: "Δεδομένα θορύβου"
+        },
+        {
+            value: 'Παναγία Φανερωμένη',
+            label: 'Παναγία Φανερωμένη',
+            RecycleName: 'a',
+            airName: 'a',
+            icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
+            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
+            icon3: <img src={noise} alt="Noise" className={ServicesCss.noiseIcon} />,
+            tooltip1: "Δεδομένα νερού",
+            tooltip2: "Δεδομένα ανακύκλωσης",
+            tooltip3: "Δεδομένα θορύβου"
+        },
+        {
+            value: 'ΘΕΡΜΑΪΚΟΣ',
+            label: 'ΘΕΡΜΑΪΚΟΣ',
+            RecycleName: 'ΘΕΡΜΑΪΚΟΣ',
+            airName: 'a',
+            icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
+            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
+            icon3: <img src={noise} alt="Noise" className={ServicesCss.noiseIcon} />,
+            tooltip1: "Δεδομένα νερού",
+            tooltip2: "Δεδομένα ανακύκλωσης",
+            tooltip3: "Δεδομένα θορύβου"
+        },
+        {
+            value: 'Θέρμη',
+            label: 'Θέρμη',
+            RecycleName: 'ΘΕΡΜΗ',
+            airName: 'a',
+            icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
+            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
+            icon3: <img src={noise} alt="Noise" className={ServicesCss.noiseIcon} />,
+            tooltip1: "Δεδομένα νερού",
+            tooltip2: "Δεδομένα ανακύκλωσης",
+            tooltip3: "Δεδομένα θορύβου"
+        },
+        {
+            value: 'Σχολή Τυφλών',
+            label: 'Σχολή Τυφλών',
+            RecycleName: 'a',
+            airName: 'a',
             icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
             icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
             icon3: <img src={noise} alt="Noise" className={ServicesCss.noiseIcon} />,
@@ -50,18 +195,38 @@ const Services = () => {
         {
             value: 'kalamaria',
             label: 'Καλαμαριά',
-            RecycleName:'ΚΑΛΑΜΑΡΙΑ',
-            airName:'a',
+            RecycleName: 'ΚΑΛΑΜΑΡΙΑ',
+            airName: 'a',
             icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
             icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
             tooltip1: "Δεδομένα νερού",
             tooltip2: "Δεδομένα ανακύκλωσης"
         },
         {
-            value: 'pylaia-hortiati',
-            label: 'Πυλαία-Χορτιάτης',
-            RecycleName:'a',
-            airName:'Pulaia',
+            value: 'Πλατεία Δημοκρατίας',
+            label: 'Πλατεία Δημοκρατίας',
+            RecycleName: 'a',
+            airName: 'Pulaia',
+            icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
+            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
+            tooltip1: "Δεδομένα νερού",
+            tooltip2: "Δεδομένα ανακύκλωσης"
+        },
+        {
+            value: 'Πυλαία',
+            label: 'Πυλαία',
+            RecycleName: 'ΠΥΛΑΙΑ-ΧΟΡΤΙΑΤΗΣ',
+            airName: 'Pulaia',
+            icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
+            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
+            tooltip1: "Δεδομένα νερού",
+            tooltip2: "Δεδομένα ανακύκλωσης"
+        },
+        {
+            value: 'Πυλαία (ΙΚΕΑ)',
+            label: 'Πυλαία (ΙΚΕΑ)',
+            RecycleName: 'a',
+            airName: 'Pulaia',
             icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
             icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
             tooltip1: "Δεδομένα νερού",
@@ -70,14 +235,68 @@ const Services = () => {
         {
             value: 'neapoli-sykies',
             label: 'Νεάπολη-Συκιές',
-            RecycleName:'a',
-            airName:'a',        
+            RecycleName: 'a',
+            airName: 'a',
+            icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
+            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
+            tooltip1: "Δεδομένα νερού",
+            tooltip2: "Δεδομένα ανακύκλωσης"
+        },
+        {
+            value: 'Σφαγεία',
+            label: 'Σφαγεία',
+            RecycleName: 'a',
+            airName: 'a',
+            icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
+            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
+            icon3: <img src={noise} alt="Noise" className={ServicesCss.noiseIcon} />,
+            tooltip1: "Δεδομένα νερού",
+            tooltip2: "Δεδομένα ανακύκλωσης",
+            tooltip3: "Δεδομένα θορύβου"
+        },
+        {
+            value: 'Τριανδρία',
+            label: 'Τριανδρία',
+            RecycleName: 'a',
+            airName: 'a',
+            icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
+            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
+            icon3: <img src={noise} alt="Noise" className={ServicesCss.noiseIcon} />,
+            tooltip1: "Δεδομένα νερού",
+            tooltip2: "Δεδομένα ανακύκλωσης",
+            tooltip3: "Δεδομένα θορύβου"
+        },
+        {
+            value: 'Ξηροκρήνη',
+            label: 'Ξηροκρήνη',
+            RecycleName: 'a',
+            airName: 'a',
+            icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
+            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
+            icon3: <img src={noise} alt="Noise" className={ServicesCss.noiseIcon} />,
+            tooltip1: "Δεδομένα νερού",
+            tooltip2: "Δεδομένα ανακύκλωσης",
+            tooltip3: "Δεδομένα θορύβου"
+        },
+        {
+            value: 'Χαριλάου',
+            label: 'Χαριλάου',
+            RecycleName: 'a',
+            airName: 'a',
             icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
             icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
             tooltip1: "Δεδομένα νερού",
             tooltip2: "Δεδομένα ανακύκλωσης"
         },
     ];
+
+    // 2) useMemo για αλφαβητική ταξινόμηση ανά label
+    const options = useMemo(
+        () => [...rawOptions].sort((a, b) =>
+            a.label.localeCompare(b.label, 'el', { sensitivity: 'base' })
+        ),
+        [rawOptions]
+    );
 
     const CustomStyles = {
         control: (provided, state) => ({
@@ -155,7 +374,7 @@ const Services = () => {
                     marginLeft: 'auto',
                 }}>
                     {icon && (
-                        <div 
+                        <div
                             className={ServicesCss.tooltipContainer}
                             style={iconContainerStyle}
                             title={tooltip1}
@@ -164,7 +383,7 @@ const Services = () => {
                         </div>
                     )}
                     {icon2 && (
-                        <div 
+                        <div
                             className={ServicesCss.tooltipContainer}
                             style={iconContainerStyle}
                             title={tooltip2}
@@ -173,7 +392,7 @@ const Services = () => {
                         </div>
                     )}
                     {icon3 && (
-                        <div 
+                        <div
                             className={ServicesCss.tooltipContainer}
                             style={iconContainerStyle}
                             title={tooltip3}
@@ -242,9 +461,9 @@ const Services = () => {
                         <Select
                             options={options}
                             styles={CustomStyles}
-                            components={{ 
-                                SingleValue: CustomSingleValue, 
-                                Option: CustomOption 
+                            components={{
+                                SingleValue: CustomSingleValue,
+                                Option: CustomOption
                             }}
                             isClearable
                             placeholder="Αναζήτηση Δήμου/Περιοχής"
@@ -264,29 +483,29 @@ const Services = () => {
                             Αναζήτηση
                         </button>
                         <p className={ServicesCss.hint}>
-                            Δεν βρίσκεις τον δήμο σου; Δες τον <Link to="/OdigosPerioxwn">οδηγό περιοχών</Link>.
+                            Δεν βρίσκεις τον δήμο σου; Δες τον <Link to="/ArrayMapSection">οδηγό περιοχών</Link>.
                         </p>
 
                     </div>
 
                     <div className={ServicesCss.cards}>
                         <div className={ServicesCss.card}>
-                            <FaHandHoldingWater color="#2196F3" size={32}/>
+                            <FaHandHoldingWater color="#2196F3" size={32} />
                             <h4>Ποιότητα Νερού</h4>
                             <p>Μέτρηση θολότητας, pH, χλωρίου κ.λπ.</p>
                         </div>
                         <div className={ServicesCss.card}>
-                            <FaRecycle color="#4CAF50" size={32}/>
+                            <FaRecycle color="#4CAF50" size={32} />
                             <h4>Ανακύκλωση</h4>
                             <p>Ποσοστά ανακύκλωσης ανά κάτοικο.</p>
                         </div>
                         <div className={ServicesCss.card}>
-                            <MdCleanHands color="#f39c12" size={32}/>
+                            <MdCleanHands color="#f39c12" size={32} />
                             <h4>Καθαριότητα</h4>
                             <p>Δείκτες καθαριότητας σε δημόσιους χώρους.</p>
                         </div>
                         <div className={ServicesCss.card}>
-                            <MdAir color="#5dade2" size={32}/>
+                            <MdAir color="#5dade2" size={32} />
                             <h4>Ποιότητα Αέρα</h4>
                             <p>PM2.5, CO, NO₂ κ.ά. ανά ζώνη.</p>
                         </div>
