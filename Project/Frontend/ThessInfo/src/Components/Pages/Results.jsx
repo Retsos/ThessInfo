@@ -329,7 +329,10 @@ const Results = () => {
                            SYNOPTIKA TOU XRONOU ME MO         {AirDataLatest[2024].averages.no2_conc
 }
                                 <br />
-                              ANALITIKA GIA KATHE MHNA  {AirDataYear[2024].monthly_averages.April.no2_conc}
+                              ANALITIKA GIA KATHE MHNA  {AirDataYear[2023].monthly_averages.April.averages.no2_conc}
+                                <br />
+
+                               POLI KALO PARA POLU {AirDataYear[2024].monthly_averages.April.compliant_count}
                             </div>
 
 

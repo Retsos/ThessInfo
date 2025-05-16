@@ -5,13 +5,16 @@ from django.core.cache import cache
 from datetime import datetime
 from collections import defaultdict
 
+
 POLLUTANT_LIMITS = {
-    "no2_conc": {"lower_limit": "<20", "upper_limit": ">40"},
-    "so2_conc": {"lower_limit": "<10", "upper_limit": ">20"},
-    "o3_conc": {"lower_limit": "<60", "upper_limit": ">100"},
-    "co_conc": {"lower_limit": "<300", "upper_limit": ">600"},
-    "no_conc": {"lower_limit": "<1", "upper_limit": ">3"},
+    "no2_conc": "<=10",   # WHO annual mean ≤10 µg/m³
+    "so2_conc": "<=40",   # WHO 24 h mean   ≤40 µg/m³
+    "o3_conc":  "<=60",   # WHO peak-season ≤60 µg/m³
+    "co_conc":  "<=300",    # WHO 24 h mean   ≤4 mg/m³
+    "no_conc":  "<=1"     # proxy threshold
 }
+
+
 
 def load_all_data(area=None, latest_year_only=False, year=None):
     if area and latest_year_only:
