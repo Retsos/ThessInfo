@@ -25,6 +25,10 @@
     @media (max-width: 768px) {
         font-size: 14px;
     }
+
+    @media (max-width: 400px) {
+        font-size: 12px;
+    }
 }
 
 .iconSuccess {
@@ -38,7 +42,8 @@
     margin-left: 5px;
     flex-shrink: 0;
 }
-.iconNeutral{
+
+.iconNeutral {
     color: grey;
     margin-left: 5px;
     flex-shrink: 0;

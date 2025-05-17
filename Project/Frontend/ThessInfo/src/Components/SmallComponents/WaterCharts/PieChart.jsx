@@ -66,7 +66,6 @@ const ConclusionChart = ({ yearlyData }) => {
 
   return (
     <div style={{ textAlign: 'center' }}>
-      <h4>Σύνοψη Έτους {latestYear}</h4>
 
       <div style={{ width: 260, height: 200, margin: '0 auto' }}>
         <ResponsiveContainer width="100%" height="100%">

@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useMemo } from 'react';
 import Navbar from '../Navbars/Navbar';
 import ResultsCss from './Results.module.css';
 import Footer from '../Navbars/Footer';
 import api from '../../endpoints/api';
 import { IoMdWater } from "react-icons/io";
 import { GiRecycle } from "react-icons/gi";
-import { MdAir, MdCleanHands } from "react-icons/md";
+import { MdAir } from "react-icons/md";
 import { useLocation } from 'react-router-dom';
 import WaterInfo from '../SmallComponents/WaterCharts/waterinfo';
 import MonthlyChart from '../SmallComponents/WaterCharts/MonthlyChart';
@@ -42,7 +42,6 @@ const Results = () => {
     const tabs = [
         { id: 'water', label: 'Ποιότητα Νερού', icon: <IoMdWater /> },
         { id: 'recycle', label: 'Ανακύκλωση', icon: <GiRecycle /> },
-        { id: 'cleanliness', label: 'Καθαριότητα', icon: <MdCleanHands /> },
         { id: 'air', label: 'Ποιότητα Αέρα', icon: <MdAir /> }
     ];
 
@@ -89,7 +88,7 @@ const Results = () => {
                 setRecycleUsableGeneral(responseUsableRecycle.data.results["24"]); //ΘΕΛΟΥΜΕ ΚΑΙ 23?????? ΥΠΑΡΧΕΙ!!!    NAI YPARXEI 
 
             } catch (error) {
-               // console.error("Error fetching recycle data:", error);
+                // console.error("Error fetching recycle data:", error);
             }
 
         };
@@ -105,7 +104,7 @@ const Results = () => {
                 setAirDataYear(responseAirYear.data);
 
             } catch (error) {
-              //  console.error("Error fetching recycle data:", error);
+                //  console.error("Error fetching recycle data:", error);
             }
         };
 
@@ -129,10 +128,10 @@ const Results = () => {
 
 
     useEffect(() => {
-        console.log("Aeraaaa ola:", AirDataLatest);
-        console.log("AERA SINOPTIKA", AirDataYear);
-       /* console.log("ASDADAD", RecycleDataLatestperperson);
-        console.log(RecycleDataLatest)*/
+        console.log("Aeraaaa ola:", AirDataYear);
+        console.log("AERA SINOPTIKA", AirDataLatest);
+         console.log("ASDADAD", RecycleDataLatestperperson);
+         console.log(RecycleDataLatest)
 
 
 
@@ -193,6 +192,20 @@ const Results = () => {
         };
     };
 
+    const latestYear = useMemo(() => {
+        if (!waterDataLastYear) return null;
+        const ks = Object.keys(waterDataLastYear)
+            .filter(k => /^\d{4}$/.test(k))
+            .map(Number);
+        return ks.length ? String(Math.max(...ks)) : null;
+    }, [waterDataLastYear]);
+
+    const lastyearRecycle = useMemo(()=>{
+        if (!RecycleDataLatest) return null;
+        const years = Object.keys(RecycleDataLatest.Yearly_Stats);       // ['2023','2024']
+        const numericYears = years.map(y => parseInt(y, 10));          // [2023, 2024]
+        return  Math.max(...numericYears); 
+    },[RecycleDataLatest]);
 
     const renderTabContent = () => {
         switch (activeTab) {
@@ -220,22 +233,24 @@ const Results = () => {
                                     {/* Olo to segment */}
                                     <div className={ResultsCss.SegmentSection}>
 
-                                        <div className={ResultsCss.info}> {/* Panw Aristera */}
+                                        <div className={`shadow ${ResultsCss.info}`}>
                                             <p className={ResultsCss.infoTitle}>Λεπτομέρειες</p>
                                             <WaterInfo waterData={waterDataLatest}></WaterInfo>
                                         </div>
 
-                                        <div className={ResultsCss.info}> {/* Panw Deksia */}
+                                        <div className={`shadow ${ResultsCss.info}`}> {/* Panw Deksia */}
                                             <p className={ResultsCss.infoTitle}>{waterDataLatest.latest_data[0]?.Month || ''}</p>
                                             <MonthlyChart waterData={waterDataLatest}></MonthlyChart>
                                         </div>
 
-                                        <div className={ResultsCss.info}>
+                                        <div className={`shadow ${ResultsCss.info}`}>
                                             <p className={ResultsCss.infoTitle}>Εξέλιξη Παραμέτρων ανά Έτος</p>
                                             <YearlyChart yearlyData={waterDataLastYear} />
                                         </div>
 
-                                        <div className={ResultsCss.info}>
+                                        <div className={`shadow ${ResultsCss.info}`}>
+                                            <p className={ResultsCss.infoTitle}>Εξέλιξη Παραμέτρων {latestYear}</p>
+
                                             <ConclusionChart yearlyData={waterDataLastYear} />
                                         </div>
 
@@ -277,26 +292,26 @@ const Results = () => {
 
                                     {/* WORKS{console.log("what is this shit",RecycleDataLatestperperson)} */}
 
-                                    <div className={ResultsCss.info}>
+                                    <div className={`shadow ${ResultsCss.info}`}>
                                         <RecycleCard recycleData={RecycleUsableGeneral}></RecycleCard>
                                     </div>
-                                    <div className={ResultsCss.info}>
+                                    <div className={`shadow ${ResultsCss.info}`}>
                                         <RecycleYearly recycleData={RecycleUsableGeneral}></RecycleYearly>
                                     </div>
-                                    <div className={ResultsCss.info}>
+                                    <div className={`shadow ${ResultsCss.info}`}>
                                         <PersonYearlyChart data={RecycleDataLatestperperson}></PersonYearlyChart>
                                     </div>
-                                    <div className={ResultsCss.info}>
+                                    <div className={`shadow ${ResultsCss.info}`}>
                                         <OtaYearlyChart data={RecycleDataLatest} />
                                     </div>
-                                    <div className={ResultsCss.info}>
+                                    <div className={`shadow ${ResultsCss.info}`}>
                                         <PersonOTAChart
-                                            personData={RecycleDataLatestperperson}  
-                                            otaData={RecycleDataLatest}             
-                                        />             
-                                   </div>
+                                            personData={RecycleDataLatestperperson}
+                                            otaData={RecycleDataLatest}
+                                        />
+                                    </div>
                                 </div>
-                                <p className='text-end pt-5'>Τελευταία μέτρηση: {RecycleDataLatest.Yearly_Stats[2024].Most_Recent_Month}</p>
+                                <p className='text-end pt-5'>Τελευταία μέτρηση: {RecycleDataLatest.Yearly_Stats[2024].Most_Recent_Month}/{lastyearRecycle}</p>
 
                             </div>
 
@@ -305,17 +320,6 @@ const Results = () => {
                             <IoMdWater className={ResultsCss.comingSoonIcon} />
                             <p>Δεν υπάρχουν διαθέσιμα δεδομένα για την ποιότητα νερού στον δήμο αυτήν τη στιγμή</p>
                         </div>}
-                    </div>
-                );
-
-            case 'cleanliness':
-                return (
-                    <div className={ResultsCss.tabContent}>
-                        <h3>Δείκτης Καθαριότητας - {dimosLabel}</h3>
-                        <div className={ResultsCss.comingSoon}>
-                            <MdCleanHands className={ResultsCss.comingSoonIcon} />
-                            <p>Ο δείκτης καθαριότητας θα είναι διαθέσιμος σύντομα</p>
-                        </div>
                     </div>
                 );
 
@@ -325,28 +329,18 @@ const Results = () => {
                         <h3>Ποιότητα Αέρα - {dimosLabel}</h3>
                         {AirDataLatest ? (
                             <div>
-                             
-                           SYNOPTIKA TOU XRONOU ME MO         {AirDataLatest[2024].averages.no2_conc
-}
+                                SYNOPTIKA TOU XRONOU ME MO {AirDataLatest[2024].averages.no2_conc}
                                 <br />
-                              ANALITIKA GIA KATHE MHNA  {AirDataYear[2023].monthly_averages.April.averages.no2_conc}
+                                ANALITIKA GIA KATHE MHNA  {AirDataYear[2023].monthly_averages.April.averages.no2_conc}
                                 <br />
-
-                               POLI KALO PARA POLU {AirDataYear[2024].monthly_averages.April.compliant_count}
+                                POLI KALO PARA POLU {AirDataYear[2024].monthly_averages.April.compliant_count}
                             </div>
-
-
-
-
-
-
                         ) : <div className={ResultsCss.comingSoon}>
                             <IoMdWater className={ResultsCss.comingSoonIcon} />
                             <p>Δεν υπάρχουν διαθέσιμα δεδομένα για την ποιότητα νερού στον δήμο αυτήν τη στιγμή</p>
                         </div>}
                     </div>
                 );
-
             default:
                 return null;
         }

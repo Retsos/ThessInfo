@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   ResponsiveContainer,
   ComposedChart,
@@ -19,7 +19,17 @@ const MonthlyChart = ({ waterData }) => {
         .forEach(el => window.bootstrap && new window.bootstrap.Tooltip(el));
     }
   }, [waterData]);
+  const isMobile = useIsMobile(480);
 
+  function useIsMobile(breakpoint = 480) {
+    const [isMobile, setIsMobile] = useState(window.innerWidth < breakpoint);
+    useEffect(() => {
+      const onResize = () => setIsMobile(window.innerWidth < breakpoint);
+      window.addEventListener('resize', onResize);
+      return () => window.removeEventListener('resize', onResize);
+    }, [breakpoint]);
+    return isMobile;
+  }
   // Προετοιμάζουμε το chartData και υπολογίζουμε maxValue, maxLimit
   const { chartData, maxValue, maxLimit } = useMemo(() => {
     if (!waterData?.analysis) {
@@ -56,47 +66,63 @@ const MonthlyChart = ({ waterData }) => {
   if (!chartData.length) {
     return <p>Δεν υπάρχουν δεδομένα για το chart.</p>;
   }
+  // π.χ. στο MonthlyChart.jsx πάνω από το component
+  const ABBREVS = {
+    'Θολότητα NTU': 'Θολ.',
+    'Χρώμα': 'Χρ.',
+    'Αργίλιο': 'Αργ.',
+    'Χλωριούχα': 'Χλωρ.',
+    'Αγωγιμότητα': 'Αγωγ.',
+    'Συγκέντρωση ιόντων υδρογόνου': 'pH',
+    'Υπολειμματικό χλώριο': 'Υπλ.Χλ.'
+  };
 
   return (
     <>
 
       {/* ——— Dual Axis Chart ——— */}
       <div style={{ width: '100%', height: 400, marginTop: 24 }}>
-        <ResponsiveContainer>
-          <ComposedChart data={chartData} margin={{ top: 5, right: 20, bottom: 90, left: 10 }}>
+        <ResponsiveContainer width="100%" height={isMobile ? 350 : 400}>
+          <ComposedChart
+            data={chartData}
+            margin={{
+              top: 5,
+              right: isMobile ? -20 : 20,
+              bottom: isMobile ? -40 : 60,
+              left: -20
+            }}
+          >
             <CartesianGrid stroke="#e0e0e0" strokeDasharray="3 3" />
 
             <XAxis
               dataKey="parameter"
-              interval={0}
-              angle={-45}
+              interval={isMobile ? 1 : 0}          
+              angle={isMobile ? -30 : -45}        
               textAnchor="end"
-              height={60}
-              tick={{ fill: "#444", fontSize: 12 }}
+              height={isMobile ? 50 : 60}
+              tick={{ fill: "#444", fontSize: isMobile ? 10 : 12 }}
               axisLine={{ stroke: "#444" }}
+              tickFormatter={param => ABBREVS[param] || param}  /* όπως πριν */
             />
 
             <YAxis
               yAxisId="left"
-              label={{ value: 'Τιμή', angle: -90, position: 'insideLeft', fill: 'blue' }}
-              tick={{ fill: "#444" }}
+              label={isMobile ? null : { value: 'Τιμή', angle: -90, position: 'insideLeft', fill: 'blue' }}
+              tick={{ fill: "#444", fontSize: isMobile ? 10 : 12 }}
               axisLine={{ stroke: "#444" }}
               domain={[0, 'dataMax']}
+              tickCount={isMobile ? 4 : 8}         // λιγότερα επίπεδα
             />
 
             <YAxis
               yAxisId="right"
               orientation="right"
-              label={{
-                value: 'Όριο',
-                angle: 90,
-                position: 'insideRight',
-                fill: '#ff7300'
-              }}
-              tick={{ fill: "#ff7300" }}
-              axisLine={{ stroke: "#ff7300" }}
-              tickLine={{ stroke: "#ff7300" }}
+              label={isMobile ? null : { value: 'Όριο', angle: 90, position: 'insideRight', fill: '#ff7300' }}
+              tick={{ fill: "#ff7300", fontSize: isMobile ? 10 : 12 }}
+              axisLine={false}
+              tickLine={false}
               domain={[0, 'dataMax']}
+              tickCount={isMobile ? 4 : 8}
             />
 
             <Tooltip
@@ -104,13 +130,15 @@ const MonthlyChart = ({ waterData }) => {
               contentStyle={{ backgroundColor: '#f9f9f9', borderColor: '#ddd' }}
             />
 
-            <Legend verticalAlign="top" iconType="circle" />
+            {/* κρύβουμε τη Legend σε κινητά ή την κατεβάζουμε κάτω */}
+            {!isMobile && <Legend verticalAlign="top" iconType="circle" />}
+            {isMobile && <Legend verticalAlign="bottom" height={30} iconType="circle" />}
 
             <Bar
               yAxisId="left"
               dataKey="value"
               name="Τιμή"
-              barSize={24}
+              barSize={isMobile ? 16 : 24}
               fill="#5793f2"
             />
 
@@ -121,7 +149,7 @@ const MonthlyChart = ({ waterData }) => {
               name="Όριο"
               stroke="#ff7300"
               strokeDasharray="5 5"
-              dot={{ r: 4, fill: "#ff7300" }}
+              dot={{ r: isMobile ? 2 : 4, fill: "#ff7300" }}
               connectNulls
             />
           </ComposedChart>

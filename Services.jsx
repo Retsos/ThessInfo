@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import Navbar from '../Navbars/Navbar';
+import React, { useState, useEffect,useMemo } from 'react';
+import Navbar from './Project/Frontend/ThessInfo/src/Components/Navbars/Navbar';
 import ServicesCss from './Services.module.css';
-import Footer from '../Navbars/Footer';
+import Footer from './Project/Frontend/ThessInfo/src/Components/Navbars/Footer';
 import { useNavigate, Link } from 'react-router-dom';
-import { FaHandHoldingWater, FaTrophy } from "react-icons/fa";
+import { FaHandHoldingWater } from "react-icons/fa";
 import { FaRecycle } from "react-icons/fa";
 import noise from "../../assets/noise.png";
 import Select, { components } from 'react-select';
-import { MdAir, } from "react-icons/md";
+import { MdAir, MdCleanHands } from "react-icons/md";
 
 const Services = () => {
     const [selectedOption, setSelectedOption] = useState(null);
@@ -488,67 +488,29 @@ const Services = () => {
 
                     </div>
 
-                    <section>
-
-                        <h3 className={`text-center ${ServicesCss.sectionTitle}`}>Υπηρεσίες Περιβάλλοντος</h3>
-                        <div className={ServicesCss.cards}>
-                            <div className={ServicesCss.card}>
-                                <FaHandHoldingWater color="#2196F3" size={32} />
-                                <h4>Ποιότητα Νερού</h4>
-                                <p>Μέτρηση θολότητας, pH, χλωρίου κ.λπ.</p>
-                            </div>
-                            <div className={ServicesCss.card}>
-                                <FaRecycle color="#4CAF50" size={32} />
-                                <h4>Ανακύκλωση</h4>
-                                <p>Ποσοστά ανακύκλωσης ανά κάτοικο.</p>
-                            </div>
-                            <div className={ServicesCss.card}>
-                                <MdAir color="#5dade2" size={32} />
-                                <h4>Ποιότητα Αέρα</h4>
-                                <p>PM2.5, CO, NO₂ κ.ά. ανά ζώνη.</p>
-                            </div>
+                    <div className={ServicesCss.cards}>
+                        <div className={ServicesCss.card}>
+                            <FaHandHoldingWater color="#2196F3" size={32} />
+                            <h4>Ποιότητα Νερού</h4>
+                            <p>Μέτρηση θολότητας, pH, χλωρίου κ.λπ.</p>
                         </div>
-
-                    </section>
-
-                    <section>
-
-                        <h3 className={`text-center ${ServicesCss.sectionTitle}`}>Top 5% Περιοχών</h3>
-                        <div className={ServicesCss.TopCards}>
-
-                            <div className={ServicesCss.card}>
-                                <FaTrophy color="#2196F3" size={32} />
-                                <h4 className={ServicesCss.cardTitleSmall}>
-                                    Top 5 % νερού
-                                </h4>
-                                <p className={ServicesCss.cardTextSmall}>
-                                    Περιοχές με το πιο καθαρό νερό στη Θεσσαλονίκη
-                                </p>
-                            </div>
-
-                            <div className={ServicesCss.card}>
-                                <FaTrophy color="#4CAF50" size={32} />
-                                <h4 className={ServicesCss.cardTitleSmall}>
-                                    Top 5 % ανακύκλωσης
-                                </h4>
-                                <p className={ServicesCss.cardTextSmall}>
-                                    Περιοχές με τα υψηλότερα kg/κάτοικο
-                                </p>
-                            </div>
-
-                            <div className={ServicesCss.card}>
-                                <FaTrophy color="#5dade2" size={32} />
-                                <h4 className={ServicesCss.cardTitleSmall}>
-                                    Top 5 % αέρα
-                                </h4>
-                                <p className={ServicesCss.cardTextSmall}>
-                                    Ζώνες με τα χαμηλότερα PM2.5
-                                </p>
-                            </div>
-
+                        <div className={ServicesCss.card}>
+                            <FaRecycle color="#4CAF50" size={32} />
+                            <h4>Ανακύκλωση</h4>
+                            <p>Ποσοστά ανακύκλωσης ανά κάτοικο.</p>
                         </div>
+                        <div className={ServicesCss.card}>
+                            <MdCleanHands color="#f39c12" size={32} />
+                            <h4>Καθαριότητα</h4>
+                            <p>Δείκτες καθαριότητας σε δημόσιους χώρους.</p>
+                        </div>
+                        <div className={ServicesCss.card}>
+                            <MdAir color="#5dade2" size={32} />
+                            <h4>Ποιότητα Αέρα</h4>
+                            <p>PM2.5, CO, NO₂ κ.ά. ανά ζώνη.</p>
+                        </div>
+                    </div>
 
-                    </section>
 
                 </div>
 

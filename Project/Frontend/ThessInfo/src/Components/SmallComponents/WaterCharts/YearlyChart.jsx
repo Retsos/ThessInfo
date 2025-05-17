@@ -1,4 +1,6 @@
+// src/Components/SmallComponents/YearlyChart.jsx
 import React, { useMemo } from 'react';
+import { useMediaQuery } from 'react-responsive';
 import {
   ResponsiveContainer,
   LineChart,
@@ -9,16 +11,11 @@ import {
   Tooltip,
   Legend
 } from 'recharts';
-import styles from './YearlyChart.module.css'; // όποιο CSS έχεις
+import styles from './YearlyChart.module.css';
 
 const COLORS = [
-  '#8884d8',  // Θολότητα NTU
-  '#82ca9d',  // Χρώμα
-  '#ffc658',  // Αργίλιο
-  '#ff7300',  // Χλωριούχα
-  '#413ea0',  // Αγωγιμότητα
-  '#00c49f',  // Συγκέντρωση ιόντων υδρογόνου
-  '#ff8042'   // Υπολειμματικό χλώριο
+  '#8884d8', '#82ca9d', '#ffc658',
+  '#ff7300', '#413ea0', '#00c49f', '#ff8042'
 ];
 
 const paramNames = {
@@ -31,137 +28,118 @@ const paramNames = {
   'Υπολειμματικό χλώριο': 'Υπολειμματικό χλώριο'
 };
 
-// Custom tooltip component with improved null handling
+// abbreviate >1000 to “k”
+const abbreviate = v =>
+  v >= 1000 ? (v/1000).toFixed(1) + ' k' : v;
+
+// Sort tooltip entries by value desc, nulls last
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active) return null;
 
-  // Δημιουργούμε έναν πίνακα με όλες τις παραμέτρους
-  const allEntries = Object.keys(paramNames).map((param, idx) => {
-    // ψάχνουμε αν υπάρχει αυτή η παράμετρος στο payload
-    const found = payload?.find(p => p.dataKey === param);
+  const entries = Object.keys(paramNames).map((key, idx) => {
+    const found = payload?.find(p => p.dataKey === key);
     return {
-      dataKey: param,
-      name:    param,
-      stroke:  COLORS[idx % COLORS.length],
-      // αν δεν υπάρχει, βάζουμε null
-      value:   found?.value != null ? found.value : null
+      key,
+      color: COLORS[idx % COLORS.length],
+      value: found?.value ?? null
     };
-  });
-
-  // ταξινούμε κατά φθίνουσα value, βάζοντας τα null στο τέλος
-  allEntries.sort((a, b) => {
-    const va = a.value ?? -Infinity;
-    const vb = b.value ?? -Infinity;
-    return vb - va;
-  });
+  })
+  .sort((a,b) => (b.value ?? -Infinity) - (a.value ?? -Infinity));
 
   return (
-    <div className="bg-white p-4 border border-gray-200 rounded shadow-md">
-      <p className="font-bold text-lg mb-2">{label}</p>
-      {allEntries.map((entry) => {
-        const display = entry.value != null
-          ? entry.value.toFixed(2)
-          : 'Δεν υπάρχει μέτρηση';
-        return (
-          <p key={entry.dataKey} style={{ color: entry.stroke, margin: '2px 0' }}>
-            <strong>{entry.name}:</strong> {display}
-          </p>
-        );
-      })}
+    <div className={styles.tooltip}>
+      <strong className={styles.tooltipTitle}>{label}</strong>
+      {entries.map(e => (
+        <div key={e.key} className={styles.tooltipRow}>
+          <span
+            className={styles.tooltipDot}
+            style={{ background: e.color }}
+          />
+          <span className={styles.tooltipName}>{e.key}:</span>
+          <span className={styles.tooltipValue}>
+            {e.value != null
+              ? e.value.toFixed(2)
+              : 'Δεν υπάρχει μέτρηση'}
+          </span>
+        </div>
+      ))}
     </div>
   );
 };
 
-const YearlyChart = ({ yearlyData }) => {
-  // 1. Get years
+export default function YearlyChart({ yearlyData }) {
+  // hide axes under 400px
+  const isNarrow = useMediaQuery({ query: '(max-width:400px)' });
+
   const years = useMemo(() =>
     Object.keys(yearlyData)
       .filter(k => /^\d{4}$/.test(k))
-      .sort((a, b) => +a - +b),
+      .sort((a,b) => +a - +b),
     [yearlyData]
   );
 
-  // 2. Get all parameter names from all years
   const params = useMemo(() => {
-    const all = new Set();
-    Object.keys(yearlyData)
-      .filter(k => /^\d{4}$/.test(k))
-      .forEach(year => {
-        Object.keys(yearlyData[year].parameters)
-          .forEach(p => all.add(p));
-      });
-    return Array.from(all);
-  }, [yearlyData]);
-
-  // 3. Create chart data with proper null handling
-  const chartData = useMemo(() => {
-    return years.map(year => {
-      const entry = { year };
-      params.forEach(param => {
-        // Always include the parameter even if null
-        entry[param] = yearlyData[year]?.parameters[param]?.average ?? null;
-      });
-      return entry;
+    const s = new Set();
+    years.forEach(y => {
+      Object.keys(yearlyData[y].parameters).forEach(p => s.add(p));
     });
-  }, [years, params, yearlyData]);
+    return Array.from(s);
+  }, [years, yearlyData]);
 
-  // Create a separate object to hold the latest year's values for display
-  const latestYear = years[years.length - 1];
-  const latestValues = {};
-  
-  if (latestYear && yearlyData[latestYear]) {
-    params.forEach(param => {
-      latestValues[param] = yearlyData[latestYear]?.parameters[param]?.average ?? null;
-    });
-  }
+  const chartData = useMemo(() =>
+    years.map(year => {
+      const row = { year };
+      params.forEach(p => {
+        row[p] = yearlyData[year].parameters[p]?.average ?? null;
+      });
+      return row;
+    }),
+  [years, params, yearlyData]);
 
   if (!chartData.length) {
-    return <p className="text-center p-4">Δεν υπάρχουν δεδομένα για αυτό το chart.</p>;
+    return <p className={styles.empty}>Δεν υπάρχουν δεδομένα για το chart.</p>;
   }
 
   return (
-    <div className="border rounded-lg shadow-lg p-4 bg-white">
-      
-      <div className="mb-6">
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart
-            data={chartData}
-            margin={{ top: 16, right: 32, bottom: 32, left: 32 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis
-              dataKey="year"
-              tick={{ fontSize: 14, fill: '#333' }}
-              axisLine={{ stroke: '#333' }}
-              label={{ value: 'Έτος', position: 'insideBottom', offset: -24 }}
+    <div className={styles.container}>
+      <ResponsiveContainer width="100%" height={350}>
+        <LineChart data={chartData} margin={{ top: -5, right:5, bottom:10, left:15 }}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis
+            dataKey="year"
+            tick={{ fill:'#333', fontSize:12 }}
+            axisLine={{ stroke:'#333' }}
+            label={{ value:'Έτος', position:'insideBottom', offset:-10 }}
+          />
+          <YAxis
+            hide={isNarrow}
+            tickCount={5}
+            tickFormatter={abbreviate}
+            label={{
+              value:'Μέση Τιμή',
+              angle:-90,
+              position:'insideLeft',
+              offset:-5
+            }}
+            tick={{ fill:'#333', fontSize:12 }}
+            axisLine={{ stroke:'#333' }}
+          />
+          <Tooltip content={<CustomTooltip />} />
+          <Legend verticalAlign="top" wrapperStyle={{ paddingBottom: 5 ,fontSize:13 }} />
+          {params.map((p, i) => (
+            <Line
+              key={p}
+              dataKey={p}
+              name={p}
+              stroke={COLORS[i % COLORS.length]}
+              dot={{ r:4 }}
+              activeDot={{ r:6 }}
+              connectNulls={false}
+              isAnimationActive={false}
             />
-            <YAxis
-              tick={{ fontSize: 14, fill: '#333' }}
-              axisLine={{ stroke: '#333' }}
-              label={{ value: 'Μέση Τιμή', angle: -90, position: 'insideLeft', offset: -8 }}
-            />
-            <Tooltip content={<CustomTooltip />} />
-            <Legend verticalAlign="top" wrapperStyle={{ paddingBottom: 16 }} />
-            
-            {params.map((param, idx) => (
-              <Line
-                key={param}
-                type="monotone"
-                dataKey={param}
-                name={param}
-                stroke={COLORS[idx % COLORS.length]}
-                dot={{ r: 4 }}
-                activeDot={{ r: 6 }}
-                connectNulls={false}
-                isAnimationActive={false}
-              />
-            ))}
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-      
+          ))}
+        </LineChart>
+      </ResponsiveContainer>
     </div>
   );
-};
-
-export default YearlyChart;
+}
