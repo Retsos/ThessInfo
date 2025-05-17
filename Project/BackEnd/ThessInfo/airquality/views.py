@@ -21,11 +21,11 @@ class AreaLatestAnalysisView(View):
     """
     # One limit per pollutant (WHO-based)
     POLLUTANT_LIMITS = {
-        "no2_conc": "<=10",   # WHO annual mean ≤10 µg/m³
-        "so2_conc": "<=40",   # WHO 24 h mean   ≤40 µg/m³
-        "o3_conc":  "<=60",   # WHO peak-season ≤60 µg/m³
+        "no2_conc": "<=9.5",   # WHO annual mean ≤10 µg/m³
+        "so2_conc": "<=10",   # WHO 24 h mean   ≤40 µg/m³
+        "o3_conc":  "<=50",   # WHO peak-season ≤60 µg/m³
         "co_conc":  "<=4",    # WHO 24 h mean   ≤4 mg/m³
-        "no_conc":  "<=1"     # proxy threshold
+        "no_conc":  "<=1.5"     # proxy threshold
     }
 
     def get(self, request, area):
@@ -36,7 +36,11 @@ class AreaLatestAnalysisView(View):
 
         # Parse timestamps
         for record in data:
+            # 1) parse το timestamp
             record["parsed_time"] = datetime.strptime(record["time"], "%Y-%m-%d %H:%M:%S")
+            # 2) διαιρώ το co_conc με 1000 (από µg/m³ → mg/m³)
+            if "co_conc" in record and record["co_conc"] is not None:
+                record["co_conc"] = record["co_conc"] / 1000.0
 
         # Find latest record's year/month
         latest_record = max(data, key=lambda r: r["parsed_time"])
@@ -97,11 +101,11 @@ class AreaYearlyAnalysisView(View):
     """
     # Single WHO-based limit per pollutant
     POLLUTANT_LIMITS = {
-        "no2_conc": "<=10",  # WHO annual mean ≤10 µg/m³
-        "so2_conc": "<=40",  # WHO 24 h mean   ≤40 µg/m³
-        "o3_conc":  "<=60",  # WHO peak-season ≤60 µg/m³
-        "co_conc":  "<=4",   # WHO 24 h mean   ≤4 mg/m³
-        "no_conc":  "<=1"    # proxy threshold
+        "no2_conc": "<=9.5",   # WHO annual mean ≤10 µg/m³
+        "so2_conc": "<=10",   # WHO 24 h mean   ≤40 µg/m³
+        "o3_conc":  "<=50",   # WHO peak-season ≤60 µg/m³
+        "co_conc":  "<=4",    # WHO 24 h mean   ≤4 mg/m³
+        "no_conc":  "<=1.5"     # proxy threshold
     }
 
     def get(self, request, area):
@@ -111,7 +115,16 @@ class AreaYearlyAnalysisView(View):
 
         # parse timestamps
         for r in data:
+            # 1) parse timestamp
             r["parsed_time"] = datetime.strptime(r["time"], "%Y-%m-%d %H:%M:%S")
+            # 2) normalize CO: from µg/m³ to mg/m³
+            co = r.get("co_conc")
+            if co is not None:
+                try:
+                    r["co_conc"] = co / 1000.0
+                except (TypeError, ValueError):
+                    # αν δεν είναι αριθμός, απλώς το αφήνουμε ως έχει ή το θέτουμε σε None
+                    r["co_conc"] = None
 
         # figure out which years to include
         latest_year = max(r["parsed_time"] for r in data).year
@@ -172,11 +185,11 @@ class BestAreasPerYearComplianceView(View):
     
     # Ένα όριο ανά ρύπο, βάσει WHO (annual για NO₂, 24 h για SO₂/CO, peak-season για O₃).
     POLLUTANT_LIMITS = {
-        "no2_conc": "<=10",   # WHO annual mean ≤10 µg/m³
-        "so2_conc": "<=40",   # WHO 24 h mean   ≤40 µg/m³
-        "o3_conc":  "<=60",   # WHO peak-season ≤60 µg/m³
+        "no2_conc": "<=9.5",   # WHO annual mean ≤10 µg/m³
+        "so2_conc": "<=10",   # WHO 24 h mean   ≤40 µg/m³
+        "o3_conc":  "<=50",   # WHO peak-season ≤60 µg/m³
         "co_conc":  "<=4",    # WHO 24 h mean   ≤4 mg/m³
-        "no_conc":  "<=1"     # proxy threshold
+        "no_conc":  "<=1.5"     # proxy threshold
     }
 
     def get(self, request):
@@ -190,6 +203,19 @@ class BestAreasPerYearComplianceView(View):
         # 2) Group by year → area → records
         yearly_area_records = defaultdict(lambda: defaultdict(list))
         for r in data:
+            # 1) βεβαιώσου ότι έχει parsed_time (αν δεν το έχεις ήδη κάνει πιο πριν)
+            if "parsed_time" not in r:
+                r["parsed_time"] = datetime.strptime(r["time"], "%Y-%m-%d %H:%M:%S")
+
+            # 2) normalize το co_conc (µg/m³ → mg/m³)
+            co = r.get("co_conc")
+            if co is not None:
+                try:
+                    r["co_conc"] = co / 1000.0
+                except (TypeError, ValueError):
+                    r["co_conc"] = None
+
+            # 3) ομαδοποίηση κατά έτος και περιοχή
             y = r["parsed_time"].year
             a = r["area"]
             yearly_area_records[y][a].append(r)

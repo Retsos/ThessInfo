@@ -253,3 +253,103 @@ class YearlyAnalysisView(View):
                 return numeric_value <= limit_value
         except Exception:
             return True
+        
+
+class RegionsLatestCompliantCountView(View):
+    def get(self, request):
+        all_data = load_all_data()
+
+        regions = {
+            entry.get('Category', '').strip()
+            for entry in all_data
+            if entry.get('Category')
+        }
+
+        temp_list = []
+
+        for region in regions:
+            region_entries = [
+                e for e in all_data
+                if e.get('Category', '').strip().lower() == region.lower()
+            ]
+
+
+            years = sorted({
+                e.get('Year')
+                for e in region_entries
+                if e.get('Year') is not None
+            })
+            if not years:
+                continue
+
+            last_year = years[-1]
+
+
+            last_year_entries = [
+                e for e in region_entries
+                if e.get('Year') == last_year
+            ]
+            total_count = len(last_year_entries)
+
+
+            compliant_count = 0
+            for entry in last_year_entries:
+                num = self.extract_numeric(entry.get('Τιμή', ''))
+                limit = entry.get('Παραμετρική τιμή1', '')
+                if num is not None and self.is_within_limits(num, limit):
+                    compliant_count += 1
+
+
+            rate = compliant_count / total_count if total_count > 0 else 0
+
+            temp_list.append({
+                'name': region,
+                'lastYear': last_year,
+                'compliantCount': f"{compliant_count}/{total_count}",
+                '_rate': rate
+            })
+
+
+        sorted_list = sorted(temp_list, key=lambda x: x['_rate'], reverse=True)
+
+
+        output = [
+            {k: v for k, v in item.items() if k != '_rate'}
+            for item in sorted_list
+        ]
+
+        return JsonResponse(output, safe=False)
+
+
+    @staticmethod
+    def extract_numeric(value: str):
+        try:
+            v = value.strip()
+            if re.search(r'[Α-Ωα-ωA-Za-z]', v):
+                return None
+            v = v.replace(',', '.')
+            m = re.search(r'\d+(?:\.\d+)?', v)
+            return float(m.group()) if m else None
+        except Exception:
+            return None
+
+
+    @staticmethod
+    def is_within_limits(numeric_value: float, limit_expr: str) -> bool:
+        try:
+            lim = limit_expr.lower().replace(" ", "")
+            if 'και' in lim:
+                low, high = lim.split('και')
+                lb = float(re.sub(r'[^0-9\.]', '', low).replace(',', '.'))
+                ub = float(re.sub(r'[^0-9\.]', '', high).replace(',', '.'))
+                return lb <= numeric_value <= ub
+            if '≥' in lim:
+                lb = float(re.sub(r'[^0-9\.]', '', lim).replace(',', '.'))
+                return numeric_value >= lb
+            if '≤' in lim:
+                ub = float(re.sub(r'[^0-9\.]', '', lim).replace(',', '.'))
+                return numeric_value <= ub
+            val = float(re.sub(r'[^0-9\.]', '', limit_expr).replace(',', '.'))
+            return numeric_value <= val
+        except Exception:
+            return True
