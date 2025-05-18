@@ -12,7 +12,7 @@ const tooltips = {
   "Χλωριούχα": "Τα χλωριούχα δείχνουν την παρουσία αλάτων. Όριο: ≤ 250 mg/l.",
   "Αγωγιμότητα": "Δείχνει τη συγκέντρωση διαλυμένων αλάτων. Όριο: ≤ 2500 μS/cm.",
   "Συγκέντρωση ιόντων υδρογόνου": "Το pH δείχνει αν το νερό είναι όξινο ή αλκαλικό. Ιδανικό: 6.5 - 9.5.",
-  "Υπολειμματικό χλώριο": "Δείχνει την ποσότητα χλωρίου που παραμένει μετά την απολύμανση. Όριο: ≤ 0.2 mg/l."
+  "Υπολειμματικό χλώριο": "Δείχνει την ποσότητα χλωρίου που παραμένει μετά την απολύμανση. Όριο: ≥ 0.2 mg/l."
 };
 
 const WaterCard = ({ waterData }) => {
@@ -28,8 +28,7 @@ const WaterCard = ({ waterData }) => {
 
   return (
     <div className={WaterCss.card}>
-            <h4 className={WaterCss.chartTitle}>{waterData.latest_data[0]?.Month || ''}({waterData.latest_data[0]?.Year || ''})</h4>
-      
+      <h4 className={WaterCss.chartTitle}>Λεπτομέρειες για: {waterData.latest_data[0]?.Month || ''}({waterData.latest_data[0]?.Year || ''})</h4>
       <ul className={WaterCss.list}>
         {analysis.map((item, idx) => {
           const { parameter, value, unit, limit, is_compliant } = item;

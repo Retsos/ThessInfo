@@ -1,3 +1,4 @@
+// src/Components/SmallComponents/ConclusionChart.jsx
 import React, { useMemo } from 'react';
 import {
   ResponsiveContainer,
@@ -6,69 +7,75 @@ import {
   Cell,
   Tooltip
 } from 'recharts';
+import styles from './PieChart.module.css'; // φτιάξε ένα ανάλογο CSS
 
-const ConclusionChart = ({ yearlyData }) => {
+const COLORS = ['#4CAF50', '#FF4C4C', '#CCCCCC'];
+
+export default function ConclusionChart({ yearlyData }) {
   // 1) Βρίσκουμε το πιο πρόσφατο έτος
   const latestYear = useMemo(() => {
     if (!yearlyData) return null;
-    const years = Object.keys(yearlyData)
+    const yrs = Object.keys(yearlyData)
       .filter(k => /^\d{4}$/.test(k))
       .map(Number)
       .sort((a, b) => b - a);
-    return years[0] ? String(years[0]) : null;
+    return yrs.length ? String(yrs[0]) : null;
   }, [yearlyData]);
-  if (!latestYear) return <p>Δεν υπάρχουν δεδομένα για το έτος.</p>;
 
-  // 2) Παίρνουμε το object με παραμέτρους
+  if (!latestYear) {
+    return <p className={styles.empty}>Δεν υπάρχουν δεδομένα για το έτος.</p>;
+  }
+
+  // 2) Παίρνουμε τις παραμέτρους του έτους
   const params = yearlyData[latestYear].parameters || {};
 
-  // 3) Υπολογίζουμε counts σε επίπεδο **events**
+  // 3) Υπολογισμοί counts
+  const {
+    expectedEvents,
+    recordedEvents,
+    compliantCount,
+    nonCompliantCount,
+    missingCount
+  } = useMemo(() => {
+    let expected = 0, recorded = 0, compliant = 0;
 
-  //ΛΙΓΟ SUS O KΩΔΙΚΑΣ ΕΔΩ ΤΣΕΚΑΡΕ ΤΟ ΕΦΟΣΟΝ ΦΤΙΑΞΕΙΣ ΤΑ A/N
-  const { expectedEvents, recordedEvents, compliantCount, nonCompliantCount, missingCount } =
-    useMemo(() => {
-        let expected = 0;
-        let recorded = 0;
-        let compliant = 0;
+    Object.values(params).forEach(p => {
+      const tot = p.total_count || 0;
+      const rec = Array.isArray(p.values) ? p.values.length : tot;
+      const comp = p.compliant_count || 0;
+      expected += tot;
+      recorded += rec;
+      compliant += comp;
+    });
 
-        Object.values(params).forEach(p => {
-          const tot = p.total_count || 0; //Αν για κάποιο λόγο δεν υπάρχει (undefined ή null), με το || 0 βάζουμε 0 ως default
-          const rec = Array.isArray(p.values) ? p.values.length : tot;
-          const comp = p.compliant_count || 0; //πόσες από αυτές τις μετρήσεις συμμόρφωθούν στα όρια αν δεν υπάρχει, βάζουμε 0.
+    const missing = expected - recorded;
+    const nonCompliant = recorded - compliant;
 
-          
+    return {
+      expectedEvents: expected,
+      recordedEvents: recorded,
+      compliantCount: compliant,
+      nonCompliantCount: nonCompliant,
+      missingCount: missing
+    };
+  }, [params]);
 
-          expected += tot;      // άθροισμα των συνολικών αναμενόμενων events
-          recorded += rec;      // όσα events όντως μετρήθηκαν
-          compliant += comp;    // όσα από αυτά συμμορφώθηκαν
-        });
-
-        const missing = expected - recorded;           // events που δεν μετρήθηκαν
-        const nonCompliant = recorded - compliant;     // events που απέτυχαν
-
-      return {
-        expectedEvents: expected,
-        recordedEvents: recorded,
-        compliantCount: compliant,
-        nonCompliantCount: nonCompliant,
-        missingCount: missing
-      };
-    }, [params]);
-
-  // 4) Δεδομένα pie με τρία slices
+  // 4) Data για το Pie
   const pieData = [
-    { name: 'Συμμορφώνεται',     value: compliantCount },
-    { name: 'Μη συμμορφώνεται',  value: nonCompliantCount },
-    { name: 'Χωρίς δεδομένα',    value: missingCount }
+    { name: 'Συμμορφώνεται',    value: compliantCount },
+    { name: 'Μη συμμορφώνεται', value: nonCompliantCount },
+    { name: 'Χωρίς δεδομένα',   value: missingCount }
   ];
 
-  const COLORS = ['#4CAF50', '#FF4C4C', '#CCCCCC'];
-
   return (
-    <div style={{ textAlign: 'center' }}>
+    <div className={styles.container}>
+      {/* ——— Νέος τίτλος ——— */}
+      <h3 className={styles.chartTitle}>
+        Σύνοψη Μετρήσεων {latestYear}
+      </h3>
 
-      <div style={{ width: 260, height: 200, margin: '0 auto' }}>
-        <ResponsiveContainer width="100%" height="100%">
+      <div className={styles.chartWrapper}>
+        <ResponsiveContainer width="100%" height={200}>
           <PieChart>
             <Pie
               data={pieData}
@@ -88,15 +95,13 @@ const ConclusionChart = ({ yearlyData }) => {
         </ResponsiveContainer>
       </div>
 
-      <p style={{ margin: '0.5rem 0', lineHeight: 1.5 }}>
-        <strong>Αναμενόμενες μετρήσεις:</strong> {expectedEvents}<br/>
-        <strong>Μετρήσεις με δεδομένα:</strong> {recordedEvents}<br/>
-        <strong>Συμμόρφωση:</strong> {compliantCount}<br/>
-        <strong>Αποτυχίες:</strong> {nonCompliantCount}<br/>
-        <strong>Χωρίς δεδομένα:</strong> {missingCount}
-      </p>
+      <ul className={styles.statsList}>
+        <li><strong>Αναμενόμενες μετρήσεις:</strong> {expectedEvents}</li>
+        <li><strong>Μετρήσεις με δεδομένα:</strong> {recordedEvents}</li>
+        <li><strong>Συμμόρφωση:</strong> {compliantCount}</li>
+        <li><strong>Αποτυχίες:</strong> {nonCompliantCount}</li>
+        <li><strong>Χωρίς δεδομένα:</strong> {missingCount}</li>
+      </ul>
     </div>
   );
-};
-
-export default ConclusionChart;
+}

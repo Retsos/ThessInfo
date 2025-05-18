@@ -24,23 +24,23 @@ const paramNames = {
   'Αργίλιο': 'Αργίλιο',
   'Χλωριούχα': 'Χλωριούχα',
   'Αγωγιμότητα': 'Αγωγιμότητα',
-  'Συγκέντρωση ιόντων υδρογόνου': 'Συγκέντρωση ιόντων υδρογόνου',
-  'Υπολειμματικό χλώριο': 'Υπολειμματικό χλώριο'
+  'Συγκέντρωση ιόντων υδρογόνου': 'pH',
+  'Υπολειμματικό χλώριο': 'Υπολ. Χλώριο'
 };
 
-// abbreviate >1000 to “k”
+// συντόμευση μεγάλων αριθμών
 const abbreviate = v =>
-  v >= 1000 ? (v/1000).toFixed(1) + ' k' : v;
+  v >= 1000 ? (v/1000).toFixed(1) + 'k' : v;
 
-// Sort tooltip entries by value desc, nulls last
+// custom tooltip: ταξινόμηση κατά φθίνουσα τιμή, null τελευταίο
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active) return null;
-
-  const entries = Object.keys(paramNames).map((key, idx) => {
+  // χτίζω array { key, color, value }
+  const entries = Object.keys(paramNames).map((key,i) => {
     const found = payload?.find(p => p.dataKey === key);
     return {
       key,
-      color: COLORS[idx % COLORS.length],
+      color: COLORS[i % COLORS.length],
       value: found?.value ?? null
     };
   })
@@ -48,18 +48,20 @@ const CustomTooltip = ({ active, payload, label }) => {
 
   return (
     <div className={styles.tooltip}>
-      <strong className={styles.tooltipTitle}>{label}</strong>
+      <div className={styles.tooltipTitle}>{label}</div>
       {entries.map(e => (
         <div key={e.key} className={styles.tooltipRow}>
           <span
             className={styles.tooltipDot}
-            style={{ background: e.color }}
+            style={{ backgroundColor: e.color }}
           />
-          <span className={styles.tooltipName}>{e.key}:</span>
+          <span className={styles.tooltipName}>
+            {paramNames[e.key]}:
+          </span>
           <span className={styles.tooltipValue}>
             {e.value != null
               ? e.value.toFixed(2)
-              : 'Δεν υπάρχει μέτρηση'}
+              : '–'}
           </span>
         </div>
       ))}
@@ -67,10 +69,13 @@ const CustomTooltip = ({ active, payload, label }) => {
   );
 };
 
-export default function YearlyChart({ yearlyData }) {
-  // hide axes under 400px
-  const isNarrow = useMediaQuery({ query: '(max-width:400px)' });
 
+export default function YearlyChart({ yearlyData }) {
+  // responsive breakpoints
+  const isNarrow = useMediaQuery({ query: '(max-width:480px)' });
+  const hideLegend = useMediaQuery({ query: '(max-width:360px)' });
+
+  // χρόνια
   const years = useMemo(() =>
     Object.keys(yearlyData)
       .filter(k => /^\d{4}$/.test(k))
@@ -78,14 +83,16 @@ export default function YearlyChart({ yearlyData }) {
     [yearlyData]
   );
 
+  // παράμετροι
   const params = useMemo(() => {
     const s = new Set();
-    years.forEach(y => {
-      Object.keys(yearlyData[y].parameters).forEach(p => s.add(p));
-    });
+    years.forEach(y =>
+      Object.keys(yearlyData[y].parameters).forEach(p => s.add(p))
+    );
     return Array.from(s);
   }, [years, yearlyData]);
 
+  // data array
   const chartData = useMemo(() =>
     years.map(year => {
       const row = { year };
@@ -97,47 +104,79 @@ export default function YearlyChart({ yearlyData }) {
   [years, params, yearlyData]);
 
   if (!chartData.length) {
-    return <p className={styles.empty}>Δεν υπάρχουν δεδομένα για το chart.</p>;
+    return <p className={styles.empty}>Δεν υπάρχουν δεδομένα.</p>;
   }
 
   return (
-    <div className={styles.container}>
-      <ResponsiveContainer width="100%" height={350}>
-        <LineChart data={chartData} margin={{ top: -5, right:5, bottom:10, left:15 }}>
+    <div className={styles.wrapper}>
+      {/* 1. Τίτλος */}
+      <h3 className={styles.chartTitle}>
+        Εξέλιξη Παραμέτρων ανά Έτος
+      </h3>
+
+      <ResponsiveContainer width="100%" height={isNarrow ? 250 : 350}>
+        <LineChart
+          data={chartData}
+          margin={{
+            top: 5,
+            right: isNarrow ? 5 : 20,
+            bottom: isNarrow ? 20 : 10,
+            left: isNarrow ? 5 : 15
+          }}
+        >
           <CartesianGrid strokeDasharray="3 3" />
+
           <XAxis
             dataKey="year"
-            tick={{ fill:'#333', fontSize:12 }}
-            axisLine={{ stroke:'#333' }}
-            label={{ value:'Έτος', position:'insideBottom', offset:-10 }}
+            tick={{ fill: '#333', fontSize: isNarrow ? 10 : 12 }}
+            axisLine={{ stroke: '#333' }}
+            label={
+              isNarrow
+                ? null
+                : { value: 'Έτος', position:'insideBottom', offset:-5 }
+            }
           />
+
           <YAxis
             hide={isNarrow}
             tickCount={5}
             tickFormatter={abbreviate}
-            label={{
-              value:'Μέση Τιμή',
-              angle:-90,
-              position:'insideLeft',
-              offset:-5
-            }}
+            label={
+              isNarrow
+                ? null
+                : {
+                    value: 'Μέση Τιμή',
+                    angle: -90,
+                    position: 'insideLeft',
+                    offset: -5
+                  }
+            }
             tick={{ fill:'#333', fontSize:12 }}
             axisLine={{ stroke:'#333' }}
           />
+
           <Tooltip content={<CustomTooltip />} />
-          <Legend verticalAlign="top" wrapperStyle={{ paddingBottom: 5 ,fontSize:13 }} />
-          {params.map((p, i) => (
+          
+          {!hideLegend && (
+            <Legend
+              verticalAlign="top"
+              wrapperStyle={{ paddingBottom:4, fontSize:11 }}
+            />
+          )}
+
+          {params.map((p,i) => (
             <Line
               key={p}
               dataKey={p}
-              name={p}
+              name={paramNames[p] || p}
               stroke={COLORS[i % COLORS.length]}
-              dot={{ r:4 }}
-              activeDot={{ r:6 }}
+              dot={isNarrow ? false : { r: 3 }}
+              activeDot={isNarrow ? false : { r: 5 }}
               connectNulls={false}
               isAnimationActive={false}
             />
           ))}
+
         </LineChart>
       </ResponsiveContainer>
     </div>

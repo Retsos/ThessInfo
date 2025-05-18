@@ -132,8 +132,8 @@ const Results = () => {
 
 
     useEffect(() => {
-        console.log("Aeraaaa ola:", AirDataYear);
-        console.log("AERA SINOPTIKA", AirDataLatest);
+        // console.log("Aeraaaa ola:", AirDataYear);
+        // console.log("AERA SINOPTIKA", AirDataLatest);
         //  console.log("ASDADAD", RecycleDataLatestperperson);
         //  console.log(RecycleDataLatest)
 
@@ -235,6 +235,8 @@ const Results = () => {
                                     </p>
 
                                     <div className={ResultsCss.SegmentSection}>
+                                            {console.log(waterDataLastYear)}
+                                            {console.log(waterDataLatest)}
 
                                         <div className={`shadow ${ResultsCss.info}`}>
                                             <WaterInfo waterData={waterDataLatest}></WaterInfo>
