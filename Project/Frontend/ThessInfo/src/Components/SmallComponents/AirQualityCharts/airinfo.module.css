@@ -1,0 +1,118 @@
+/* airinfo.module.css */
+
+.card {
+  width: 100%;
+  max-width: 600px;
+  margin: 2rem auto 1rem;
+  padding: 1.5rem;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+}
+
+.cardTitle {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: #2992a2;
+
+  @media (max-width: 480px) {
+    font-size: 1.25rem;
+  }
+}
+
+.subTitle {
+  display: inline-block;
+  margin-left: 0.5rem;
+  font-size: 1.1rem;
+}
+
+/* όλη η λίστα */
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* κάθε γραμμή της λίστας */
+.listItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f9f9f9;
+  /* ελαφρώς γκρι φόντο */
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}
+
+/* όνομα παραμέτρου + τιμή */
+.parameter {
+  font-size: 1rem;
+  color: #333333;
+
+  @media (max-width: 768px) {
+    font-size: 0.95rem;
+  }
+
+  @media (max-width: 576px) {
+    font-size: 0.9rem;
+  }
+}
+
+/* το icon του tooltip */
+.tooltipIcon {
+  font-size: 1.2rem;
+  color: #888888;
+  margin-left: 0.75rem;
+  transition: color 0.2s;
+
+  &:hover {
+    color: #2992a2;
+    /* αλλάζει τυρκουάζ στο hover */
+  }
+
+  @media (max-width: 768px) {
+    font-size: 1rem;
+    margin-left: 0.5rem;
+  }
+}
+
+.listIcons {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.statusIcon {
+  font-size: 1.2rem;
+  color: #2ecc71;
+  /* πράσινο για εντός ορίου – αλλάζεις αν εκτός */
+}
+
+.noData {
+  font-size: 1rem;
+  color: #888888;
+}
+
+/* αν θέλεις custom tooltip (π.χ. χωρίς Bootstrap) */
+.tooltip {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  max-width: 220px;
+  white-space: normal;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.tooltipIcon:hover .tooltip {
+  opacity: 1;
+}

@@ -55,7 +55,7 @@ const RecycleYearly = ({ recycleData = {} }) => {
   };
 
   return (
-    <Card variant="outlined" className={styles.chartCard}>
+    <Card  className={styles.chartCard} elevation={0}>
       <CardContent>
         <Typography variant="h6" align="center" gutterBottom>
           Μέσοι Όροι Ανακύκλωσης (Έτος)

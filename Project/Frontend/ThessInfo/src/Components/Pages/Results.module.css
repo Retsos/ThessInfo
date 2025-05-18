@@ -111,23 +111,16 @@
     color: #adb5bd;
     margin-bottom: 1rem;
 }
-.infoTitle{
-    font-size: 2rem;
-    @media (max-width: 768px){
-        font-size: 1.5rem;
-    }
-    @media (max-width: 400px){
-        font-size: 1.15rem;
-    }
-}
 .info{
     max-width: 800px;
     width: 100%;
+    border: none;
+    background-color: white;
 }
 .SegmentSection{
     display: grid;
     grid-template-columns: 2fr  2fr;
-    gap: 2rem;
+    gap: 1.5rem;
     justify-items: center;
 
     @media (max-width: 1200px){

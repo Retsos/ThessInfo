@@ -1,0 +1,51 @@
+
+.container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+.empty {
+  text-align: center;
+  color: #666;
+  padding: 1rem;
+}
+.tooltip {
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+.tooltipTitle {
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+}
+.tooltipRow {
+  display: flex;
+  align-items: center;
+  margin-top: 0.25rem;
+}
+.tooltipDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 0.5rem;
+}
+.tooltipName {
+  flex: 1;
+  font-size: 0.9rem;
+  color: #333;
+}
+.tooltipValue {
+  font-size: 0.9rem;
+  color: #222;
+}
+.title {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: #2992a2;     /* σκούρο μπλε για contrast */
+
+  @media (max-width: 480px) {
+    font-size: 1.25rem;
+  }
+}

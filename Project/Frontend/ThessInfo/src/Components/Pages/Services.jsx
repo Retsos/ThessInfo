@@ -519,30 +519,30 @@ const Services = () => {
                             <div className={ServicesCss.card}>
                                 <FaTrophy color="#2196F3" size={32} />
                                 <h4 className={ServicesCss.cardTitleSmall}>
-                                    Top 5 % νερού
+                                    Καλύτερη περιοχή νερού
                                 </h4>
                                 <p className={ServicesCss.cardTextSmall}>
-                                    Περιοχές με το πιο καθαρό νερό στη Θεσσαλονίκη
+                                    Περιοχή με το πιο καθαρό νερό στη Θεσσαλονίκη
                                 </p>
                             </div>
 
                             <div className={ServicesCss.card}>
                                 <FaTrophy color="#4CAF50" size={32} />
                                 <h4 className={ServicesCss.cardTitleSmall}>
-                                    Top 5 % ανακύκλωσης
+                                    Καλύτερη περιοχή ανακύκλωσης
                                 </h4>
                                 <p className={ServicesCss.cardTextSmall}>
-                                    Περιοχές με τα υψηλότερα kg/κάτοικο
+                                    Περιοχή με τα υψηλότερα kg/κάτοικο
                                 </p>
                             </div>
 
                             <div className={ServicesCss.card}>
                                 <FaTrophy color="#5dade2" size={32} />
                                 <h4 className={ServicesCss.cardTitleSmall}>
-                                    Top 5 % αέρα
+                                    Καλύτερη περιοχή αέρα
                                 </h4>
                                 <p className={ServicesCss.cardTextSmall}>
-                                    Ζώνες με τα χαμηλότερα PM2.5
+                                    Ζώνη με τα χαμηλότερα PM2.5
                                 </p>
                             </div>
 

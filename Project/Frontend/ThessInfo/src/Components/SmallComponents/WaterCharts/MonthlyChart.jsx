@@ -10,7 +10,7 @@ import {
   Bar,
   Line
 } from 'recharts';
-
+import styles from './MonthlyChart.module.css';
 const MonthlyChart = ({ waterData }) => {
   // Bootstrap tooltips
   useEffect(() => {
@@ -81,6 +81,7 @@ const MonthlyChart = ({ waterData }) => {
     <>
 
       {/* ——— Dual Axis Chart ——— */}
+      <h4 className={styles.chartTitle}>{waterData.latest_data[0]?.Month || ''}({waterData.latest_data[0]?.Year || ''})</h4>
       <div style={{ width: '100%', height: 400, marginTop: 24 }}>
         <ResponsiveContainer width="100%" height={isMobile ? 350 : 400}>
           <ComposedChart
@@ -88,7 +89,7 @@ const MonthlyChart = ({ waterData }) => {
             margin={{
               top: 5,
               right: isMobile ? -20 : 20,
-              bottom: isMobile ? -40 : 60,
+              bottom: isMobile ? -40 : -20,
               left: -20
             }}
           >
