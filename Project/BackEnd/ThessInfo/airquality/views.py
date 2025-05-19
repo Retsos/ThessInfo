@@ -61,6 +61,7 @@ class AreaLatestAnalysisView(View):
 
         # Build response
         response_data = {
+            "name": "airdata",
             "area": area,
             "limits": self.POLLUTANT_LIMITS
         }
@@ -149,6 +150,7 @@ class AreaYearlyAnalysisView(View):
 
         # build response
         resp = {
+            "name": "airdata",
             "area": area,
             "limits": self.POLLUTANT_LIMITS
         }
@@ -251,6 +253,7 @@ class BestAreaLatestYearComplianceView(View):
                 compliant += 1
 
         result = {
+            "name": "airdata",
             "year": max(r["parsed_time"].year for r in data),
             "area": area,
             "no2_avg": round(avgs.get("no2_conc", 0), 2),
@@ -337,6 +340,11 @@ class MonthlyComplianceAverageView(View):
                     "compliant_count": avg_compliance
                 }
 
+        result = {
+            "name": "airdata",
+            **result
+        }
+
         return JsonResponse(result)
 
 class WorstAreaComplianceView(View):
@@ -413,6 +421,7 @@ class WorstAreaComplianceView(View):
         worst = max(area_data, key=lambda d: d["no2_avg"])
 
         return JsonResponse({
+            "name": "airdata",
             "year": year,
             "area": worst["area"],
             "no2_avg": worst["no2_avg"],
