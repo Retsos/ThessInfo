@@ -339,6 +339,85 @@ class MonthlyComplianceAverageView(View):
 
         return JsonResponse(result)
 
+class WorstAreaComplianceView(View):
+    """
+    Returns the worst area (highest annual NO₂ average) for the most recent year,
+    along with its compliant_count.
+    """
+
+    POLLUTANT_LIMITS = {
+        "no2_conc": "<=9.5",
+        "so2_conc": "<=10",
+        "o3_conc":  "<=50",
+        "co_conc":  "<=4",
+        "no_conc":  "<=1.5"
+    }
+
+    def get(self, request):
+        # Load only the most recent year's data
+        data = load_all_data(latest_year_only=True)
+        if not data:
+            return JsonResponse({"error": "No data found"}, status=404)
+
+        data = parse_timestamps(data)
+
+        # Get year from first record
+        year = max(r["parsed_time"].year for r in data if "parsed_time" in r)
+
+        # Normalize CO units (µg/m³ → mg/m³)
+        for r in data:
+            co = r.get("co_conc")
+            if co is not None:
+                try:
+                    r["co_conc"] = co / 1000.0
+                except (TypeError, ValueError):
+                    r["co_conc"] = None
+
+        # Group by area
+        area_records = defaultdict(list)
+        for r in data:
+            area = r["area"]
+            area_records[area].append(r)
+
+        def check_limit(value, limit_str):
+            if limit_str.startswith("<="):
+                return value <= float(limit_str[2:])
+            if limit_str.startswith("<"):
+                return value < float(limit_str[1:])
+            if limit_str.startswith(">="):
+                return value >= float(limit_str[2:])
+            if limit_str.startswith(">"):
+                return value > float(limit_str[1:])
+            raise ValueError(f"Unknown limit format: {limit_str}")
+
+        total_pollutants = len(self.POLLUTANT_LIMITS)
+        area_data = []
+
+        for area, records in area_records.items():
+            avgs = compute_averages(records)
+            compliant = 0
+            for pol, limit_str in self.POLLUTANT_LIMITS.items():
+                if pol in avgs and check_limit(avgs[pol], limit_str):
+                    compliant += 1
+            no2_avg = round(avgs.get("no2_conc", 0), 2)
+            area_data.append({
+                "area": area,
+                "no2_avg": no2_avg,
+                "compliant_count": f"{compliant}/{total_pollutants}"
+            })
+
+        if not area_data:
+            return JsonResponse({"error": "No valid area data"}, status=404)
+
+        # Worst area: highest NO2 average
+        worst = max(area_data, key=lambda d: d["no2_avg"])
+
+        return JsonResponse({
+            "year": year,
+            "area": worst["area"],
+            "no2_avg": worst["no2_avg"],
+            "compliant_count": worst["compliant_count"]
+        })
 
 
 
