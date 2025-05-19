@@ -342,7 +342,8 @@ const Results = () => {
                         <h3>Ποιότητα Αέρα - {dimosLabel}</h3>
                         {AirDataLatest ? (
                             <div className='pt-5'>
-
+                                    {console.log(AirDataYear)}
+                                    {console.log(AirDataLatest)}
                                 <div className={ResultsCss.SegmentSection}>
                                     <div className={`shadow ${ResultsCss.info}`}>
                                         <AirLatest airData={AirDataYear}></AirLatest>
