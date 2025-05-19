@@ -513,7 +513,7 @@ const Services = () => {
 
                     <section>
 
-                        <h3 className={`text-center ${ServicesCss.sectionTitle}`}>Top 5% Περιοχών</h3>
+                        <h3 className={`text-center ${ServicesCss.sectionTitle}`}>Οι περιοχές με τα καλύτερα στατιστικά</h3>
                         <div className={ServicesCss.TopCards}>
 
                             <div className={ServicesCss.card}>

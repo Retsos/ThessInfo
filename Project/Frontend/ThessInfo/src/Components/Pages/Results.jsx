@@ -19,7 +19,8 @@ import PersonOTAChart from '../SmallComponents/RecycleCharts/PersonOTAChart';
 import AirLatest from '../SmallComponents/AirQualityCharts/airinfo';
 import AirYearlyChart from '../SmallComponents/AirQualityCharts/YearlyChart';
 import MonthlyStackedBar from '../SmallComponents/AirQualityCharts/MonthlyStackedBar';
-import MonthlyComplianceChart  from '../SmallComponents/AirQualityCharts/MonthlyComplianceChart';
+import MonthlyComplianceChart from '../SmallComponents/AirQualityCharts/MonthlyComplianceChart';
+import LoadingIndicator from '../SmallComponents/loadingcomp';
 
 const Results = () => {
     const location = useLocation();
@@ -41,6 +42,9 @@ const Results = () => {
 
     const [activeTab, setActiveTab] = useState('water');
     const [isSticky, setIsSticky] = useState(false);
+
+
+    const [loading, setLoading] = useState(true);
 
     // Tabs configuration
     const tabs = [
@@ -64,59 +68,82 @@ const Results = () => {
 
 
     useEffect(() => {
-        if (!dimosLabel || !dimosLabel2) return;
+        if (!dimosLabel || !dimosLabel2 || !dimosLabel3) return;
 
-        const fetchWaterData = async () => {
-            try {
-                const [responseWaterLastMonth, responseWaterLastYear] = await Promise.all([
-                    api.get(`water/api/latest-measurements/?region=${encodeURIComponent(dimosLabel)}`),
-                    api.get(`water/api/group-by-year/?region=${encodeURIComponent(dimosLabel)}`)
-                ]);
-                setWaterDataLastYear(responseWaterLastYear.data || {});
-                setWaterDataLatest(responseWaterLastMonth.data || null);
-            } catch (error) {
+        const fetchAll = async () => {
+            setLoading(true);
+            // ετοιμάζουμε όλα τα αιτήματα
+            const calls = [
+                api.get(`airquality/area/${encodeURIComponent(dimosLabel3)}/latest-measurements/`),
+                api.get(`airquality/area/${encodeURIComponent(dimosLabel3)}/group-by-year/`),
+                api.get(`water/api/latest-measurements/?region=${encodeURIComponent(dimosLabel)}`),
+                api.get(`water/api/group-by-year/?region=${encodeURIComponent(dimosLabel)}`),
+                api.get(`recycle/recycling-ota/?region=${encodeURIComponent(dimosLabel2)}`),
+                api.get(`recycle/recycling-perperson/?region=${encodeURIComponent(dimosLabel2)}&year=24`),
+                api.get(`recycle/recycling-good/`)
+            ];
+
+            // περιμένουμε όλα να ολοκληρωθούν, είτε με success είτε με failure
+            const results = await Promise.allSettled(calls);
+
+            // 0: air latest
+            if (results[0].status === 'fulfilled') {
+                setAirDataLatest(results[0].value.data);
+            } else {
+                setAirDataLatest(null);
+            }
+            // 1: air by year
+            if (results[1].status === 'fulfilled') {
+                setAirDataYear(results[1].value.data);
+            } else {
+                setAirDataYear(null);
+            }
+            // 2: water latest
+            if (results[2].status === 'fulfilled') {
+                setWaterDataLatest(results[2].value.data);
+            } else {
                 setWaterDataLatest(null);
+            }
+            // 3: water by year
+            if (results[3].status === 'fulfilled') {
+                setWaterDataLastYear(results[3].value.data);
+            } else {
                 setWaterDataLastYear(null);
             }
-        };
-
-        const fetchRecycleData = async () => {
-            try {
-                const [responseRecycleLastMonth, responseRecycleLastMonthperrerson, responseUsableRecycle] = await Promise.all([
-                    api.get(`recycle/recycling-ota/?region=${encodeURIComponent(dimosLabel2)}`),
-                    api.get(`recycle/recycling-perperson/?region=${encodeURIComponent(dimosLabel2)}&year=24`),
-                    api.get(`recycle/recycling-good/`),
-                ]);
-                setRecycleDataLatest(responseRecycleLastMonth.data);
-                setRecycleDataLatest2(responseRecycleLastMonthperrerson.data);
-                setRecycleUsableGeneral(responseUsableRecycle.data.results["24"]); //ΘΕΛΟΥΜΕ ΚΑΙ 23?????? ΥΠΑΡΧΕΙ!!!    NAI YPARXEI 
-
-            } catch (error) {
-                // console.error("Error fetching recycle data:", error);
+            // 4: recycle ota
+            if (results[4].status === 'fulfilled') {
+                setRecycleDataLatest(results[4].value.data);
+            } else {
+                setRecycleDataLatest(null);
+            }
+            // 5: recycle per person
+            if (results[5].status === 'fulfilled') {
+                setRecycleDataLatest2(results[5].value.data);
+            } else {
+                setRecycleDataLatest2(null);
+            }
+            // 6: recycle good (usable general)
+            if (results[6].status === 'fulfilled') {
+                const allGood = results[6].value.data.results || {};
+                // βρίσκουμε το μεγαλύτερο έτος μέσα στο results object
+                const yearKeys = Object.keys(allGood).filter(k => /^\d+$/.test(k));
+                if (yearKeys.length) {
+                    const latestYearKey = yearKeys
+                        .map(k => parseInt(k, 10))
+                        .sort((a, b) => b - a)[0]
+                        .toString();
+                    setRecycleUsableGeneral(allGood[latestYearKey]);
+                } else {
+                    setRecycleUsableGeneral(null);
+                }
+            } else {
+                setRecycleUsableGeneral(null);
             }
 
+            setLoading(false);
         };
 
-        const fetchAirData = async () => {
-            try {
-                const [responseAirLastMonth, responseAirYear] = await Promise.all([
-                    api.get(`airquality/area/${encodeURIComponent(dimosLabel3)}/latest-measurements/`),
-                    api.get(`airquality/area/${encodeURIComponent(dimosLabel3)}/group-by-year/`),
-                ]);
-
-                setAirDataLatest(responseAirLastMonth.data);
-                setAirDataYear(responseAirYear.data);
-
-            } catch (error) {
-                //  console.error("Error fetching recycle data:", error);
-            }
-        };
-
-        fetchAirData();
-        fetchWaterData();
-        fetchRecycleData();
-
-
+        fetchAll();
     }, [dimosLabel, dimosLabel2, dimosLabel3]);
 
 
@@ -211,6 +238,8 @@ const Results = () => {
         return Math.max(...numericYears);
     }, [RecycleDataLatest]);
 
+
+
     const renderTabContent = () => {
         switch (activeTab) {
             case 'water':
@@ -235,8 +264,6 @@ const Results = () => {
                                     </p>
 
                                     <div className={ResultsCss.SegmentSection}>
-                                            {console.log(waterDataLastYear)}
-                                            {console.log(waterDataLatest)}
 
                                         <div className={`shadow ${ResultsCss.info}`}>
                                             <WaterInfo waterData={waterDataLatest}></WaterInfo>
@@ -321,15 +348,15 @@ const Results = () => {
                                         <AirLatest airData={AirDataYear}></AirLatest>
                                     </div>
 
-                                    
+
                                     <div className={`shadow ${ResultsCss.info}`}>
                                         <AirYearlyChart yearlyData={AirDataLatest}></AirYearlyChart>
                                     </div>
 
-                                     <div className={`shadow ${ResultsCss.info}`}>
+                                    <div className={`shadow ${ResultsCss.info}`}>
                                         <MonthlyStackedBar airData={AirDataYear}></MonthlyStackedBar>
-                                    </div> 
-                                    
+                                    </div>
+
                                     <div className={`shadow ${ResultsCss.info}`}>
                                         <MonthlyComplianceChart airData={AirDataYear}></MonthlyComplianceChart>
                                     </div>
@@ -357,24 +384,31 @@ const Results = () => {
             </div>
 
             <div className={ResultsCss.contentWrapper}>
-                <h2 className={ResultsCss.pageTitle}>Δεδομένα για τον Δήμο {dimosLabel}</h2>
 
-                {/* Tab Navigation */}
-                <nav className={ResultsCss.tabNavigation}>
-                    {tabs.map(tab => (
-                        <button
-                            key={tab.id}
-                            className={`${ResultsCss.tabButton} ${activeTab === tab.id ? ResultsCss.activeTab : ''}`}
-                            onClick={() => setActiveTab(tab.id)}
-                        >
-                            {tab.icon}
-                            <span>{tab.label}</span>
-                        </button>
-                    ))}
-                </nav>
+                {loading ?
 
-                {/* Tab Content */}
-                {renderTabContent()}
+                    <LoadingIndicator /> : <>
+
+                        <h2 className={ResultsCss.pageTitle}>Δεδομένα για τον Δήμο {dimosLabel}</h2>
+
+                        {/* Tab Navigation */}
+                        <nav className={ResultsCss.tabNavigation}>
+                            {tabs.map(tab => (
+                                <button
+                                    key={tab.id}
+                                    className={`${ResultsCss.tabButton} ${activeTab === tab.id ? ResultsCss.activeTab : ''}`}
+                                    onClick={() => setActiveTab(tab.id)}
+                                >
+                                    {tab.icon}
+                                    <span>{tab.label}</span>
+                                </button>
+                            ))}
+                        </nav>
+
+                        {/* Tab Content */}
+                        {renderTabContent()}
+                    </>}
+
             </div>
 
             <Footer />

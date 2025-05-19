@@ -50,8 +50,9 @@ const RecycleLatest = ({ recycleData = {} }) => {
             <span
               className={RecycleCss.tooltipIcon}
               data-bs-toggle="tooltip"
+              tabIndex={0}
+              role='button'
               title={tooltips[param] || "Δεν υπάρχουν πληροφορίες."}
-
             >
               <GrTooltip />
             </span>
