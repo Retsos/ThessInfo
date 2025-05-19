@@ -41,11 +41,7 @@ const Services = () => {
             RecycleName: 'a',
             airName: 'a',
             icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
-            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
-            icon3: <img src={noise} alt="Noise" className={ServicesCss.noiseIcon} />,
             tooltip1: "Δεδομένα νερού",
-            tooltip2: "Δεδομένα ανακύκλωσης",
-            tooltip3: "Δεδομένα θορύβου"
         },
         {
             value: 'Ανάληψη',
@@ -53,24 +49,39 @@ const Services = () => {
             RecycleName: 'a',
             airName: 'a',
             icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
-            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
-            icon3: <img src={noise} alt="Noise" className={ServicesCss.noiseIcon} />,
             tooltip1: "Δεδομένα νερού",
-            tooltip2: "Δεδομένα ανακύκλωσης",
-            tooltip3: "Δεδομένα θορύβου"
         },
-
+        {
+            value: 'Αμπελόκηποι',
+            label: 'Αμπελόκηποι',
+            RecycleName: 'Αμπελόκηποι',
+            airName: 'Ampelokipoi',
+            icon3: <MdAir style={{ color: '#2992a2', fontSize: '1.2rem', marginLeft: '8px' }} />,
+            tooltip3: "Δεδομένα αέρα"
+        },
+        {
+            value: 'Δήμος Χαλκιδόνος',
+            label: 'Δήμος Χαλκιδόνος',
+            RecycleName: 'Chalkidonos',
+            airName: 'Chalkidonos',
+            icon3: <MdAir style={{ color: '#2992a2', fontSize: '1.2rem', marginLeft: '8px' }} />,
+            tooltip3: "Δεδομένα αέρα"
+        },
+        {
+            value: 'Δήμος Δέλτα',
+            label: 'Δήμος Δέλτα',
+            RecycleName: 'Delta',
+            airName: 'Delta',
+            icon3: <MdAir style={{ color: '#2992a2', fontSize: '1.2rem', marginLeft: '8px' }} />,
+            tooltip3: "Δεδομένα αέρα"
+        },
         {
             value: 'thessaloniki',//???????????
             label: 'Άνω Τούμπα',
             RecycleName: 'a',
             airName: 'a',
             icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
-            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
-            icon3: <img src={noise} alt="Noise" className={ServicesCss.noiseIcon} />,
             tooltip1: "Δεδομένα νερού",
-            tooltip2: "Δεδομένα ανακύκλωσης",
-            tooltip3: "Δεδομένα θορύβου"
         },
         {
             value: 'ΔΕΘ-ΧΑΝΘ',
@@ -78,11 +89,7 @@ const Services = () => {
             RecycleName: 'a',
             airName: 'a',
             icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
-            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
-            icon3: <img src={noise} alt="Noise" className={ServicesCss.noiseIcon} />,
             tooltip1: "Δεδομένα νερού",
-            tooltip2: "Δεδομένα ανακύκλωσης",
-            tooltip3: "Δεδομένα θορύβου"
         },
         {
             value: 'Κάτω Τούμπα',
@@ -90,35 +97,33 @@ const Services = () => {
             RecycleName: 'a',
             airName: 'a',
             icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
-            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
-            icon3: <img src={noise} alt="Noise" className={ServicesCss.noiseIcon} />,
             tooltip1: "Δεδομένα νερού",
-            tooltip2: "Δεδομένα ανακύκλωσης",
-            tooltip3: "Δεδομένα θορύβου"
         },
         {
             value: 'Κέντρο πόλης',
             label: 'Κέντρο πόλης',
             RecycleName: 'a',
-            airName: 'a',
+            airName: 'Thessaloniki',
             icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
-            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
-            icon3: <img src={noise} alt="Noise" className={ServicesCss.noiseIcon} />,
+            icon3: <MdAir style={{ color: '#2992a2', fontSize: '1.2rem', marginLeft: '8px' }} />,
             tooltip1: "Δεδομένα νερού",
-            tooltip2: "Δεδομένα ανακύκλωσης",
-            tooltip3: "Δεδομένα θορύβου"
+            tooltip3: "Δεδομένα αέρα"
+        },
+        {
+            value: 'Κέντρο Βόλβης',
+            label: 'Δήμος Βόλβης',
+            RecycleName: 'a',
+            airName: 'Volvi',
+            icon3: <MdAir style={{ color: '#2992a2', fontSize: '1.2rem', marginLeft: '8px' }} />,
+            tooltip3: "Δεδομένα αέρα"
         },
         {
             value: 'Κωνσταντινουπολίτικα',
             label: 'Κωνσταντινουπολίτικα',
-            RecycleName: 'a',
+            RecycleName: 'kwnst',
             airName: 'a',
             icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
-            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
-            icon3: <img src={noise} alt="Noise" className={ServicesCss.noiseIcon} />,
             tooltip1: "Δεδομένα νερού",
-            tooltip2: "Δεδομένα ανακύκλωσης",
-            tooltip3: "Δεδομένα θορύβου"
         },
         {
             value: 'Νέα Παραλία',
@@ -126,11 +131,7 @@ const Services = () => {
             RecycleName: 'a',
             airName: 'a',
             icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
-            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
-            icon3: <img src={noise} alt="Noise" className={ServicesCss.noiseIcon} />,
             tooltip1: "Δεδομένα νερού",
-            tooltip2: "Δεδομένα ανακύκλωσης",
-            tooltip3: "Δεδομένα θορύβου"
         },
         {
             value: 'Ντεπώ',
@@ -138,11 +139,7 @@ const Services = () => {
             RecycleName: 'a',
             airName: 'a',
             icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
-            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
-            icon3: <img src={noise} alt="Noise" className={ServicesCss.noiseIcon} />,
             tooltip1: "Δεδομένα νερού",
-            tooltip2: "Δεδομένα ανακύκλωσης",
-            tooltip3: "Δεδομένα θορύβου"
         },
         {
             value: 'Παναγία Φανερωμένη',
@@ -150,35 +147,27 @@ const Services = () => {
             RecycleName: 'a',
             airName: 'a',
             icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
-            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
-            icon3: <img src={noise} alt="Noise" className={ServicesCss.noiseIcon} />,
             tooltip1: "Δεδομένα νερού",
-            tooltip2: "Δεδομένα ανακύκλωσης",
-            tooltip3: "Δεδομένα θορύβου"
         },
         {
             value: 'ΘΕΡΜΑΪΚΟΣ',
             label: 'ΘΕΡΜΑΪΚΟΣ',
             RecycleName: 'ΘΕΡΜΑΪΚΟΣ',
-            airName: 'a',
-            icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
+            airName: 'Thermaikos',
             icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
-            icon3: <img src={noise} alt="Noise" className={ServicesCss.noiseIcon} />,
-            tooltip1: "Δεδομένα νερού",
+            icon3: <MdAir style={{ color: '#2992a2', fontSize: '1.2rem', marginLeft: '8px' }} />,
             tooltip2: "Δεδομένα ανακύκλωσης",
-            tooltip3: "Δεδομένα θορύβου"
+            tooltip3: "Δεδομένα αέρα"
         },
         {
             value: 'Θέρμη',
             label: 'Θέρμη',
             RecycleName: 'ΘΕΡΜΗ',
-            airName: 'a',
-            icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
+            airName: 'Thermi',
             icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
-            icon3: <img src={noise} alt="Noise" className={ServicesCss.noiseIcon} />,
-            tooltip1: "Δεδομένα νερού",
+            icon3: <MdAir style={{ color: '#2992a2', fontSize: '1.2rem', marginLeft: '8px' }} />,
             tooltip2: "Δεδομένα ανακύκλωσης",
-            tooltip3: "Δεδομένα θορύβου"
+            tooltip3: "Δεδομένα αέρα"
         },
         {
             value: 'Σχολή Τυφλών',
@@ -186,21 +175,51 @@ const Services = () => {
             RecycleName: 'a',
             airName: 'a',
             icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
-            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
-            icon3: <img src={noise} alt="Noise" className={ServicesCss.noiseIcon} />,
             tooltip1: "Δεδομένα νερού",
-            tooltip2: "Δεδομένα ανακύκλωσης",
-            tooltip3: "Δεδομένα θορύβου"
         },
         {
             value: 'kalamaria',
             label: 'Καλαμαριά',
             RecycleName: 'ΚΑΛΑΜΑΡΙΑ',
-            airName: 'a',
+            airName: 'Kalamaria',
             icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
             icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
+            icon3: <MdAir style={{ color: '#2992a2', fontSize: '1.2rem', marginLeft: '8px' }} />,
             tooltip1: "Δεδομένα νερού",
-            tooltip2: "Δεδομένα ανακύκλωσης"
+            tooltip2: "Δεδομένα ανακύκλωσης",
+            tooltip3: "Δεδομένα αέρα"
+        },
+        {
+            value: 'Oraiokastro',
+            label: 'Ωραιόκαστρο',
+            RecycleName: 'Ωραιόκαστρο',
+            airName: 'Oraiokastro',
+            icon3: <MdAir style={{ color: '#2992a2', fontSize: '1.2rem', marginLeft: '8px' }} />,
+            tooltip3: "Δεδομένα αέρα"
+        },
+        {
+            value: 'Κορδελιό',
+            label: 'Κορδελιό',
+            RecycleName: 'Κορδελιό',
+            airName: 'Kordelio',
+            icon3: <MdAir style={{ color: '#2992a2', fontSize: '1.2rem', marginLeft: '8px' }} />,
+            tooltip3: "Δεδομένα αέρα"
+        },
+        {
+            value: 'Λαγκαδάς',
+            label: 'Λαγκαδάς',
+            RecycleName: 'Λαγκαδάς',
+            airName: 'Lagkadas',
+            icon3: <MdAir style={{ color: '#2992a2', fontSize: '1.2rem', marginLeft: '8px' }} />,
+            tooltip3: "Δεδομένα αέρα"
+        },
+        {
+            value: 'Παύλου Μελά',
+            label: 'Παύλου Μελά',
+            RecycleName: 'Pavlou_Mela',
+            airName: 'Lagkadas',
+            icon3: <MdAir style={{ color: '#2992a2', fontSize: '1.2rem', marginLeft: '8px' }} />,
+            tooltip3: "Δεδομένα αέρα"
         },
         {
             value: 'Πλατεία Δημοκρατίας',
@@ -208,9 +227,9 @@ const Services = () => {
             RecycleName: 'a',
             airName: 'Pulaia',
             icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
-            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
+            icon3: <MdAir style={{ color: '#2992a2', fontSize: '1.2rem', marginLeft: '8px' }} />,
             tooltip1: "Δεδομένα νερού",
-            tooltip2: "Δεδομένα ανακύκλωσης"
+            tooltip3: "Δεδομένα αέρα"
         },
         {
             value: 'Πυλαία',
@@ -219,28 +238,30 @@ const Services = () => {
             airName: 'Pulaia',
             icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
             icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
+            icon3: <MdAir style={{ color: '#2992a2', fontSize: '1.2rem', marginLeft: '8px' }} />,
             tooltip1: "Δεδομένα νερού",
-            tooltip2: "Δεδομένα ανακύκλωσης"
+            tooltip2: "Δεδομένα ανακύκλωσης",
+            tooltip3: "Δεδομένα αέρα"
         },
         {
             value: 'Πυλαία (ΙΚΕΑ)',
             label: 'Πυλαία (ΙΚΕΑ)',
-            RecycleName: 'a',
+            RecycleName: 'ΠΥΛΑΙΑ-ΧΟΡΤΙΑΤΗΣ',
             airName: 'Pulaia',
             icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
             icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
+            icon3: <MdAir style={{ color: '#2992a2', fontSize: '1.2rem', marginLeft: '8px' }} />,
             tooltip1: "Δεδομένα νερού",
-            tooltip2: "Δεδομένα ανακύκλωσης"
+            tooltip2: "Δεδομένα ανακύκλωσης",
+            tooltip3: "Δεδομένα αέρα"
         },
         {
             value: 'neapoli-sykies',
             label: 'Νεάπολη-Συκιές',
             RecycleName: 'a',
-            airName: 'a',
-            icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
-            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
-            tooltip1: "Δεδομένα νερού",
-            tooltip2: "Δεδομένα ανακύκλωσης"
+            airName: 'Neapoli',
+            icon3: <MdAir style={{ color: '#2992a2', fontSize: '1.2rem', marginLeft: '8px' }} />,
+            tooltip3: "Δεδομένα αέρα"
         },
         {
             value: 'Σφαγεία',
@@ -248,11 +269,7 @@ const Services = () => {
             RecycleName: 'a',
             airName: 'a',
             icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
-            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
-            icon3: <img src={noise} alt="Noise" className={ServicesCss.noiseIcon} />,
             tooltip1: "Δεδομένα νερού",
-            tooltip2: "Δεδομένα ανακύκλωσης",
-            tooltip3: "Δεδομένα θορύβου"
         },
         {
             value: 'Τριανδρία',
@@ -260,11 +277,7 @@ const Services = () => {
             RecycleName: 'a',
             airName: 'a',
             icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
-            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
-            icon3: <img src={noise} alt="Noise" className={ServicesCss.noiseIcon} />,
             tooltip1: "Δεδομένα νερού",
-            tooltip2: "Δεδομένα ανακύκλωσης",
-            tooltip3: "Δεδομένα θορύβου"
         },
         {
             value: 'Ξηροκρήνη',
@@ -272,11 +285,7 @@ const Services = () => {
             RecycleName: 'a',
             airName: 'a',
             icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
-            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
-            icon3: <img src={noise} alt="Noise" className={ServicesCss.noiseIcon} />,
             tooltip1: "Δεδομένα νερού",
-            tooltip2: "Δεδομένα ανακύκλωσης",
-            tooltip3: "Δεδομένα θορύβου"
         },
         {
             value: 'Χαριλάου',
@@ -284,9 +293,7 @@ const Services = () => {
             RecycleName: 'a',
             airName: 'a',
             icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
-            icon2: <FaRecycle style={{ color: '#4CAF50', fontSize: '1.2rem', marginLeft: '8px' }} />,
             tooltip1: "Δεδομένα νερού",
-            tooltip2: "Δεδομένα ανακύκλωσης"
         },
     ];
 

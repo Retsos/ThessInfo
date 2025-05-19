@@ -330,8 +330,8 @@ const Results = () => {
                             </div>
 
                         ) : <div className={ResultsCss.comingSoon}>
-                            <IoMdWater className={ResultsCss.comingSoonIcon} />
-                            <p>Δεν υπάρχουν διαθέσιμα δεδομένα για την ποιότητα νερού στον δήμο αυτήν τη στιγμή</p>
+                            <GiRecycle className={ResultsCss.comingSoonIcon} />
+                            <p>Δεν υπάρχουν διαθέσιμα δεδομένα για την ανακύκλωση στον δήμο αυτήν τη στιγμή</p>
                         </div>}
                     </div>
                 );
