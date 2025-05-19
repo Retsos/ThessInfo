@@ -177,37 +177,34 @@ class AreaYearlyAnalysisView(View):
 
 
 
-class BestAreasPerYearComplianceView(View):
+class BestAreaLatestYearComplianceView(View):
     """
-    For each year, returns the top‑5 areas by lowest annual NO2 average,
+    Returns the best area (lowest annual NO2 average) for the most recent year,
     plus a compliant_count = “# pollutants within limit / 5”.
     """
-    
-    # Ένα όριο ανά ρύπο, βάσει WHO (annual για NO₂, 24 h για SO₂/CO, peak-season για O₃).
+
     POLLUTANT_LIMITS = {
-        "no2_conc": "<=9.5",   # WHO annual mean ≤10 µg/m³
-        "so2_conc": "<=10",   # WHO 24 h mean   ≤40 µg/m³
-        "o3_conc":  "<=50",   # WHO peak-season ≤60 µg/m³
-        "co_conc":  "<=4",    # WHO 24 h mean   ≤4 mg/m³
-        "no_conc":  "<=1.5"     # proxy threshold
+        "no2_conc": "<=9.5",
+        "so2_conc": "<=10",
+        "o3_conc":  "<=50",
+        "co_conc":  "<=4",
+        "no_conc":  "<=1.5"
     }
 
     def get(self, request):
-        # 1) Load all data
-        data = load_all_data(latest_year_only=False)
+        # 1) Load only latest year data
+        data = load_all_data(latest_year_only=True)
         if not data:
             return JsonResponse({"error": "No data found"}, status=404)
 
         data = parse_timestamps(data)
 
-        # 2) Group by year → area → records
-        yearly_area_records = defaultdict(lambda: defaultdict(list))
+        # 2) Group by area → records
+        area_records = defaultdict(list)
         for r in data:
-            # 1) βεβαιώσου ότι έχει parsed_time (αν δεν το έχεις ήδη κάνει πιο πριν)
             if "parsed_time" not in r:
                 r["parsed_time"] = datetime.strptime(r["time"], "%Y-%m-%d %H:%M:%S")
 
-            # 2) normalize το co_conc (µg/m³ → mg/m³)
             co = r.get("co_conc")
             if co is not None:
                 try:
@@ -215,65 +212,132 @@ class BestAreasPerYearComplianceView(View):
                 except (TypeError, ValueError):
                     r["co_conc"] = None
 
-            # 3) ομαδοποίηση κατά έτος και περιοχή
-            y = r["parsed_time"].year
-            a = r["area"]
-            yearly_area_records[y][a].append(r)
+            area = r["area"]
+            area_records[area].append(r)
 
-        response = {}
+        # 3) Compute averages
+        area_avgs = {
+            area: compute_averages(recs)
+            for area, recs in area_records.items()
+        }
+
+        # 4) Pick best area by NO2
+        best = min(
+            area_avgs.items(),
+            key=lambda kv: kv[1].get("no2_conc", float("inf")),
+            default=None
+        )
+
+        if not best:
+            return JsonResponse({"error": "No valid data for NO₂ found"}, status=404)
+
+        area, avgs = best
+        compliant = 0
         total_pollutants = len(self.POLLUTANT_LIMITS)
 
-        # helper to check one limit string like "<=10"
         def check_limit(value, limit_str):
             if limit_str.startswith("<="):
-                num = float(limit_str[2:])
-                return value <= num
+                return value <= float(limit_str[2:])
             if limit_str.startswith("<"):
-                num = float(limit_str[1:])
-                return value < num
+                return value < float(limit_str[1:])
             if limit_str.startswith(">="):
-                num = float(limit_str[2:])
-                return value >= num
+                return value >= float(limit_str[2:])
             if limit_str.startswith(">"):
-                num = float(limit_str[1:])
-                return value > num
-            raise ValueError(f"Unknown operator in limit '{limit_str}'")
+                return value > float(limit_str[1:])
+            raise ValueError(f"Invalid limit: {limit_str}")
 
-        for year, areas in yearly_area_records.items():
-            # compute annual averages per area
-            area_avgs = {
-                area: compute_averages(recs)
-                for area, recs in areas.items()
-            }
+        for pol, limit_str in self.POLLUTANT_LIMITS.items():
+            if pol in avgs and check_limit(avgs[pol], limit_str):
+                compliant += 1
 
-            # pick top‑5 by NO2 avg
-            top5 = sorted(
-                area_avgs.items(),
-                key=lambda kv: kv[1].get("no2_conc", float("inf"))
-            )[:5]
+        result = {
+            "year": max(r["parsed_time"].year for r in data),
+            "area": area,
+            "no2_avg": round(avgs.get("no2_conc", 0), 2),
+            "compliant_count": f"{compliant}/{total_pollutants}"
+        }
 
-            enriched = []
-            for area, avgs in top5:
+        return JsonResponse(result)
+
+
+class MonthlyComplianceAverageView(View):
+    """
+    Returns, for each area, the average monthly compliance percentage
+    over all available months, wrapped under 'compliant_count'.
+    """
+
+    # WHO limits per pollutant (used for monthly compliance checks)
+    POLLUTANT_LIMITS = {
+        "no2_conc": "<=9.5",
+        "so2_conc": "<=10",
+        "o3_conc":  "<=50",
+        "co_conc":  "<=4",
+        "no_conc":  "<=1.5"
+    }
+
+    def get(self, request):
+        # Load all available data (not limited to a specific year)
+        data = load_all_data(latest_year_only=False)
+        if not data:
+            return JsonResponse({"error": "No data found"}, status=404)
+
+        # Parse timestamp strings to datetime objects
+        data = parse_timestamps(data)
+
+        # Normalize CO: µg/m³ → mg/m³
+        for r in data:
+            co = r.get("co_conc")
+            if co is not None:
+                try:
+                    r["co_conc"] = co / 1000.0
+                except (TypeError, ValueError):
+                    r["co_conc"] = None
+
+        # Group records by area → month
+        area_month_records = defaultdict(lambda: defaultdict(list))
+        for r in data:
+            area = r["area"]
+            month = r["parsed_time"].month
+            area_month_records[area][month].append(r)
+
+        total_pollutants = len(self.POLLUTANT_LIMITS)
+
+        # Helper function to compare a value against a limit string like "<=10"
+        def check_limit(value, limit_str):
+            if limit_str.startswith("<="):
+                return value <= float(limit_str[2:])
+            if limit_str.startswith("<"):
+                return value < float(limit_str[1:])
+            if limit_str.startswith(">="):
+                return value >= float(limit_str[2:])
+            if limit_str.startswith(">"):
+                return value > float(limit_str[1:])
+            raise ValueError(f"Invalid limit: {limit_str}")
+
+        result = {}
+
+        # For each area, calculate the average monthly compliance %
+        for area, months in area_month_records.items():
+            monthly_percents = []
+
+            # For each month, compute average pollutant values and compliance %
+            for records in months.values():
+                avgs = compute_averages(records)
                 compliant = 0
                 for pol, limit_str in self.POLLUTANT_LIMITS.items():
-                    if pol in avgs:
-                        if check_limit(avgs[pol], limit_str):
-                            compliant += 1
+                    if pol in avgs and check_limit(avgs[pol], limit_str):
+                        compliant += 1
+                percent = (compliant / total_pollutants) * 100
+                monthly_percents.append(percent)
 
-                enriched.append({
-                    "area": area,
-                    "no2_avg": round(avgs.get("no2_conc", 0), 2),
-                    "compliant_count": f"{compliant}/{total_pollutants}"
-                })
+            # Calculate the average compliance percentage across all months
+            if monthly_percents:
+                avg_compliance = round(sum(monthly_percents) / len(monthly_percents), 2)
+                result[area] = {
+                    "compliant_count": avg_compliance
+                }
 
-            response[str(year)] = enriched
-
-        return JsonResponse({
-            "best_areas_per_year": response,
-            "limits": self.POLLUTANT_LIMITS
-        })
-
-
+        return JsonResponse(result)
 
 
 
