@@ -8,12 +8,12 @@ const Accordion = () => {
         <div className="accordion-item">
           <h2 className="accordion-header">
             <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-              Πώς μπορώ να δω δεδομένα για την ποιότητα του αέρα στην περιοχή μου μέσω της εφαρμογής;
+              Τι είδους πληροφορίες μπορώ να βρω στην εφαρμογή;
             </button>
           </h2>
           <div id="collapseOne" className="accordion-collapse collapse show" data-bs-parent="#accordionExample">
             <div className="accordion-body">
-              Μπορείτε να δείτε τα δεδομένα ποιότητας του αέρα στην περιοχή σας μέσω του χάρτη στην αρχική σελίδα της εφαρμογής.
+              Η εφαρμογή παρέχει δεδομένα για την ποιότητα του νερού, την ατμοσφαιρική ρύπανση και την πορεία της ανακύκλωσης σε κάθε περιοχή.
             </div>
           </div>
         </div>
@@ -22,12 +22,12 @@ const Accordion = () => {
         <div className="accordion-item">
           <h2 className="accordion-header">
             <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-              Πώς ενημερώνεται η εφαρμογή σχετικά με τα επίπεδα θορύβου στην πόλη;
+              Πώς ενημερώνονται τα δεδομένα;
             </button>
           </h2>
           <div id="collapseTwo" className="accordion-collapse collapse" data-bs-parent="#accordionExample">
             <div className="accordion-body">
-              Τα δεδομένα θορύβου προέρχονται από αισθητήρες που βρίσκονται σε διάφορες τοποθεσίες και ενημερώνονται σε πραγματικό χρόνο.
+              Κάθε μήνα, μόλις κλείσει ο κύκλος των μετρήσεων, ανανεώνουμε τα νέα στοιχεία για το νερό, τον αέρα και τα απορρίμματα..
             </div>
           </div>
         </div>
@@ -36,12 +36,15 @@ const Accordion = () => {
         <div className="accordion-item">
           <h2 className="accordion-header">
             <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-              Ποιες πληροφορίες παρέχει η εφαρμογή σχετικά με την ποιότητα του πόσιμου νερού;
+              Πώς μπορώ να έχω πρόσβαση στα δεδομένα;
             </button>
           </h2>
           <div id="collapseThree" className="accordion-collapse collapse" data-bs-parent="#accordionExample">
             <div className="accordion-body">
-              Η εφαρμογή παρέχει πληροφορίες για το pH, την καθαρότητα και τυχόν μόλυνση του πόσιμου νερού.
+              Επιλέγω τις "Υπηρεσίες" από το μενού. 
+              Έπειτα, κάνω κλικ στο "Αναζήτηση Δήμου/Περιοχής". 
+              Στη συνέχεια, διαλέγω από τη λίστα την περιοχή που με ενδιαφέρει. 
+              Τέλος, εάν η περιοχή δεν βρίσκεται μέσα στη λίστα, πατάω στο "Οδηγό Περιοχών" το οποίο βρίσκεται κάτω από το "Αναζήτηση Δήμου/Περιοχής" και επιλεγώ από τον χάρτη την περιοχή.
             </div>
           </div>
         </div>
@@ -50,12 +53,12 @@ const Accordion = () => {
         <div className="accordion-item">
           <h2 className="accordion-header">
             <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-              Πώς μπορώ να βρω σημεία ανακύκλωσης κοντά μου μέσω της εφαρμογής;
+              Τι δεδομένα παρέχονται για την ποιότητα του νερού;
             </button>
           </h2>
           <div id="collapseFour" className="accordion-collapse collapse" data-bs-parent="#accordionExample">
             <div className="accordion-body">
-              Μπορείτε να δείτε τα πλησιέστερα σημεία ανακύκλωσης μέσα από τον διαδραστικό χάρτη της εφαρμογής.
+              Τα δεδομένα που παρέχονται είναι η θολότητα NTU (Nephelometric Turbidity Unit / Μονάδα Nεφελομετρικής Θολότητας), το χρώμα, το αργίλιο, τα χλωριούχα, η αγωγιμότητα, η συγκέντρωση ιόντων υδρογόνου (pH) και το υπολειμματικό χλώριο.
             </div>
           </div>
         </div>
@@ -64,12 +67,12 @@ const Accordion = () => {
         <div className="accordion-item">
           <h2 className="accordion-header">
             <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
-              Μπορώ να λαμβάνω ειδοποιήσεις όταν αλλάζει η ποιότητα του αέρα ή του νερού στην περιοχή μου;
+              Τι μετρά η εφαρμογή για την ποιότητα του αέρα;
             </button>
           </h2>
           <div id="collapseFive" className="accordion-collapse collapse" data-bs-parent="#accordionExample">
             <div className="accordion-body">
-              Ναι, μπορείτε να ενεργοποιήσετε ειδοποιήσεις μέσα από τις ρυθμίσεις της εφαρμογής.
+              Οι μετρήσεις κάνουν αναφορά για το διοξείδιο του αζώτου (NO₂), το μονοξείδιο του αζώτου (NO), το μονοξείδιο του άνθρακα (CO), το όζον (O₃) και το διοξείδιο του θείου (SO₂).
             </div>
           </div>
         </div>
@@ -78,12 +81,12 @@ const Accordion = () => {
         <div className="accordion-item">
           <h2 className="accordion-header">
             <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
-              Πώς μπορώ να δω ιστορικά δεδομένα σχετικά με τον θόρυβο ή την ποιότητα του νερού στην περιοχή μου;
+              Ποιες πληροφορίες υπάρχουν για την ανακύκλωση και τα απορρίμματα;
             </button>
           </h2>
           <div id="collapseSix" className="accordion-collapse collapse" data-bs-parent="#accordionExample">
             <div className="accordion-body">
-              Μπορείτε να δείτε ιστορικά δεδομένα επιλέγοντας το χρονικό διάστημα που σας ενδιαφέρει από τις ρυθμίσεις.
+              Θα βρεις δεδομένα για τον όγκο των ανακυκλώσιμων, τα ογκώδη αντικείμενα, τα υλικά που αξιοποιούνται, τα υπολείμματα από ΚΔΑΥ (Κέντρο Διαλογής Ανακυκλώσιμων Υλικών) και γενικά σκουπίδια.
             </div>
           </div>
         </div>
@@ -92,12 +95,12 @@ const Accordion = () => {
         <div className="accordion-item">
           <h2 className="accordion-header">
             <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSeven" aria-expanded="false" aria-controls="collapseSeven">
-              Πώς διασφαλίζεται η προστασία των προσωπικών μου δεδομένων κατά τη χρήση της εφαρμογής;
+              Με ποιον τροπο παρουσιάζονται τα δεδομενα;
             </button>
           </h2>
           <div id="collapseSeven" className="accordion-collapse collapse" data-bs-parent="#accordionExample">
             <div className="accordion-body">
-              Η εφαρμογή ακολουθεί τα πρότυπα ασφαλείας του GDPR, διασφαλίζοντας την προστασία των δεδομένων σας.
+              Τα δεδομένα παρουσιάζονται με πίνακες, γραφήματα (ράβδους, πίτες), χάρτες και διαγράμματα.
             </div>
           </div>
         </div>
@@ -105,12 +108,15 @@ const Accordion = () => {
         <div className="accordion-item">
           <h2 className="accordion-header">
             <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEight" aria-expanded="false" aria-controls="collapseEight">
-              Πώς μπορώ να συγκρίνω τα επίπεδα θορύβου και ποιότητας αέρα σε διαφορετικές περιοχές;
+              Τι σημαίνουν οι δείκτες που εμφανίζονται
             </button>
           </h2>
           <div id="collapseEight" className="accordion-collapse collapse" data-bs-parent="#accordionExample">
             <div className="accordion-body">
-              Μπορείτε να συγκρίνετε τα επίπεδα επιλέγοντας δύο ή περισσότερες περιοχές στον χάρτη της εφαρμογής και προβάλλοντας τις αντίστοιχες μετρήσεις.
+              Ο κάθε δείκτης δείχνει κάτι διαφορετικό:
+              -Για το νερό: καθαρότητα, ασφάλεια και ποιότητα.
+              -Για τον αέρα: επίπεδα ρύπανσης και ποιότητα αναπνοής.
+              -Για την ανακύκλωση: πόσο καλά διαχειρίζεται η περιοχή τα απορρίμματα.
             </div>
           </div>
         </div>
@@ -119,12 +125,14 @@ const Accordion = () => {
         <div className="accordion-item">
           <h2 className="accordion-header">
             <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNine" aria-expanded="false" aria-controls="collapseNine">
-              Μπορώ να δω στατιστικά στοιχεία σχετικά με την ανακύκλωση στην περιοχή μου;
+              Ποιά είναι τα πιο σημαντικά δεδομένα που πρέπει να προσέξω;
             </button>
           </h2>
           <div id="collapseNine" className="accordion-collapse collapse" data-bs-parent="#accordionExample">
             <div className="accordion-body">
-              Ναι, μπορείτε να δείτε ποσοστά και ποσότητες ανακυκλώσιμων υλικών από το μενού "Ανακύκλωση" της εφαρμογής.
+              Για το νερό: η θολότητα και το χρώμα νερού για αιωρούμενα σωματίδια και οργανικά, το pH και η αγωγιμότητα για την οξύτητα και τα συνολικά διαλυμένα άλατα.
+              Για τον αέρα: τα NO₂, O₃, CO τα οποία είναι οι κυριότεροι ρύποι που επιβαρύνουν τους πνεύμονες.
+              Για τα απορρίματα: η ανακύκλωση και τα υπολείμματα ΚΔΑΥ για το πόσο «παράγουμε» και πόσο ανακυκλώνουμε.
             </div>
           </div>
         </div>
@@ -133,12 +141,12 @@ const Accordion = () => {
         <div className="accordion-item">
           <h2 className="accordion-header">
             <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTen" aria-expanded="false" aria-controls="collapseTen">
-              Τι πρέπει να κάνω αν παρατηρήσω προβλήματα με τα δεδομένα ή τη λειτουργία της εφαρμογής;
+              Πώς μπορώ να επικοινωνήσω μαζί σας;
             </button>
           </h2>
           <div id="collapseTen" className="accordion-collapse collapse" data-bs-parent="#accordionExample">
             <div className="accordion-body">
-              Μπορείτε να στείλετε αναφορά σφάλματος μέσω της επιλογής "Υποστήριξη" ή να επικοινωνήσετε με την ομάδα υποστήριξης της εφαρμογής.
+              Πήγαινε στην ενότητα "Επικοινωνία", γράψε το όνομά σου, το email σου και το μήνυμα που θέλεις να μας στείλεις. Θα σου απαντήσουμε το συντομότερο!
             </div>
           </div>
         </div>
