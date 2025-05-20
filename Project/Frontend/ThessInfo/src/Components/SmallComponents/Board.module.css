@@ -1,0 +1,14 @@
+/* TabElements.module.css */
+.contentContainer {
+  margin-top: 20px;
+  padding: 16px;
+  min-height: 500px; /* Προσαρμόστε ανάλογα */
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: white;
+}
+
+/* Προαιρετικά για ομαλή μετάβαση */
+.contentContainer {
+  transition: opacity 0.3s ease;
+}

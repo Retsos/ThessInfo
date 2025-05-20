@@ -1,7 +1,11 @@
 .mapWrapper {
+  height: 600px; /* Προσαρμογή στο ίδιο ύψος με το mapContainer */
   width: 100%;
-  height: 70vh;  
-  margin: 2rem 0;
-  overflow: hidden;
   z-index: 1;
+  position: relative;
+}
+
+.leafletContainer {
+  height: 100% !important; /* Αναγκαίο για Leaflet */
+  width: 100% !important;
 }

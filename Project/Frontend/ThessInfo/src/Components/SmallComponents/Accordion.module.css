@@ -1,0 +1,17 @@
+.accordion{
+    max-width: 800px;
+}
+
+.accordion-button {
+  white-space: normal !important; 
+  word-wrap: break-word !important;
+}
+
+.accordion-item {
+  width: 100%;
+}
+
+.accordion-body {
+  white-space: normal !important;
+  word-wrap: break-word !important;
+}

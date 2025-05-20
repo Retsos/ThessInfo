@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, GeoJSON, useMap } from 'react-leaflet';
-import chroma from 'chroma-js';
-import styles from './map.module.css'
+import 'leaflet/dist/leaflet.css';
+import styles from './map.module.css';
 
-function GeoJsonWithFit({ data, style }) {
+function GeoJsonWithFit({ data }) {
   const map = useMap();
   const hasFitted = React.useRef(false);
 
@@ -15,74 +15,50 @@ function GeoJsonWithFit({ data, style }) {
     hasFitted.current = true;
   }, [data, map]);
 
-  return <GeoJSON data={data} style={style} />;
+  return (
+    <GeoJSON
+      data={data}
+      onEachFeature={(feature, layer) => {
+        if (feature.properties?.name) {
+          layer.bindTooltip(feature.properties.name); // Βασικό tooltip
+        }
+      }}
+    />
+  );
 }
 
-
-export default function WaterQualityMap({ rates = [] }) {
+export default function WaterQualityMap() {
   const [geoData, setGeoData] = useState(null);
 
   useEffect(() => {
-    const geoJsonUrl = '/data/thessBounds.geojson';
-
-    fetch(geoJsonUrl)
+    fetch('/data/thessBounds.geojson')
       .then(res => {
-        if (!res.ok) throw new Error('Failed to fetch geojson');
+        if (!res.ok) throw new Error('GeoJSON not found');
         return res.json();
       })
-      .then(osmGeo => {
-        // Merge comp_rate
-        const features = osmGeo.features.map(f => {
-          const match = rates.find(r => r.name === f.properties.name);
-          return {
-            ...f,
-            properties: {
-              ...f.properties,
-              comp_rate: match ? match.comp_rate : 0
-            }
-          };
-        });
-        setGeoData({ type: 'FeatureCollection', features });
+      .then(data => {
+        console.log('GeoJSON loaded:', data); // Debug log
+        setGeoData(data);
       })
       .catch(err => {
-        console.error('GeoJSON fetch error:', err);
+        console.error('GeoJSON error:', err);
         setGeoData(null);
       });
-  }, [rates]);
-
-  // 3) Χρωματική κλίμακα 0–100
-  const getColor = rate =>
-    chroma
-      .scale(['#ff4c4c', '#ffee4c', '#4cff4c'])(Math.max(0, Math.min(100, rate)) / 100)
-      .hex();
-
-  // 4) Style function
-  const styleFeature = feature => ({
-    fillColor: getColor(feature.properties.comp_rate),
-    color: '#555',
-    weight: 1,
-    fillOpacity: 0.7
-  });
+  }, []);
 
   return (
     <div className={styles.mapWrapper}>
       <MapContainer
-        // αρχικό center/zoom θα διορθωθεί απ' το fitBounds
         center={[40.63, 22.95]}
         zoom={12}
-        scrollWheelZoom={true}    // με το scrolldown/up
-        doubleClickZoom={true}    // με διπλό κλικ
-        touchZoom={true}          // σε κινητό με pinch
-        zoomControl={true}
-        style={{ width: '100%', height: '100%' }}
+        scrollWheelZoom={true}
+        className={styles.leafletContainer}
       >
         <TileLayer
-          attribution="&copy; OpenStreetMap contributors"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {geoData && (
-          <GeoJsonWithFit data={geoData} style={styleFeature} />
-        )}
+        {geoData && <GeoJsonWithFit data={geoData} />}
       </MapContainer>
     </div>
   );

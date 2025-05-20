@@ -1,0 +1,52 @@
+.tabsRoot {
+    background-color: #f8fff8; /* Πολύ ανοιχτό πράσινο για το background */
+    border-bottom: 1px solid #e0e0e0;
+    padding: 0;
+    min-height: 48px;
+}
+
+.indicator {
+    background-color: #2e7d32; /* Πιο σκούρο πράσινο για τον δείκτη */
+    height: 2px;
+}
+
+.tabRoot {
+    text-transform: none;
+    font-weight: 500;
+    color: #616161; /* Γκρι για μη-επιλεγμένες καρτέλες */
+    margin: 0 16px;
+    padding: 12px 24px;
+    transition: all 0.3s ease;
+    min-height: 48px;
+}
+
+.tabSelected {
+    color: #2e7d32 !important; /* Πράσινο για επιλεγμένη καρτέλα */
+    font-weight: 600;
+}
+
+.tabRoot:hover {
+    color: #388e3c; /* Πράσινο για hover */
+    background-color: rgba(46, 125, 50, 0.05);
+}
+
+/* Προαιρετικά - Για πιο modern look */
+.container {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    border-radius: 8px 8px 0 0;
+    overflow: hidden;
+}
+/* TabElements.module.css */
+.contentContainer {
+  margin: 2rem  1rem;
+  padding: 16px;
+  min-height: 500px; /* Προσαρμόστε ανάλογα */
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: white;
+}
+
+/* Προαιρετικά για ομαλή μετάβαση */
+.contentContainer {
+  transition: opacity 0.3s ease;
+}
