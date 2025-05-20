@@ -353,3 +353,96 @@ class RegionsLatestCompliantCountView(View):
             return numeric_value <= val
         except Exception:
             return True
+        
+
+
+class BestRegionView(View):
+    def get(self, request):
+        # Φορτώνουμε όλα τα δεδομένα
+        all_data = load_all_data()
+        if not all_data:
+            return JsonResponse({'error': 'Δεν υπάρχουν διαθέσιμα δεδομένα.'}, status=404)
+
+        # Ομαδοποίηση των εγγραφών ανά περιοχή (Category)
+        regions = {}
+        for entry in all_data:
+            region = entry.get('Category', 'Άγνωστη Περιοχή')
+            regions.setdefault(region, []).append(entry)
+
+        # Υπολογισμός στατιστικών συμμόρφωσης για κάθε περιοχή
+        region_stats = {}
+        for region, entries in regions.items():
+            compliant_count = 0
+            total_count = 0
+            for entry in entries:
+                analysis = self.analyze_entry(entry)
+                if isinstance(analysis.get('is_compliant'), bool):
+                    total_count += 1
+                    if analysis['is_compliant']:
+                        compliant_count += 1
+            region_stats[region] = {
+                'compliantCount': compliant_count,
+                'totalCount': total_count,
+                'rate_percent': round((compliant_count / total_count * 100) if total_count > 0 else 0, 2)
+            }
+
+        # Εύρεση μέγιστου αριθμού compliant
+        max_compliant = max(stats['compliantCount'] for stats in region_stats.values())
+        # Επιλογή όλων των περιοχών με το μέγιστο compliantCount
+        best_regions = [region for region, stats in region_stats.items() if stats['compliantCount'] == max_compliant]
+
+        # Προετοιμασία απάντησης
+        response = {
+            'best_regions': best_regions,
+            'compliantCount': max_compliant,
+            'details': {region: region_stats[region] for region in best_regions}
+        }
+
+        return JsonResponse(response)
+
+    def analyze_entry(self, entry):
+        value = entry.get('Τιμή', '')
+        limit = entry.get('Παραμετρική τιμή1', '')
+        numeric_value = self.extract_numeric(value)
+        is_compliant = self.is_within_limits(numeric_value, limit) if numeric_value is not None else None
+        return {
+            'parameter': entry.get('Φυσικοχημικές Παράμετροι', ''),
+            'unit': entry.get('Μονάδα μέτρησης', ''),
+            'value': numeric_value,
+            'limit': limit,
+            'is_compliant': is_compliant,
+            'notes': 'Μη αριθμητική τιμή' if numeric_value is None else None
+        }
+
+    @staticmethod
+    def extract_numeric(value):
+        try:
+            value = value.strip()
+            if re.search(r'[Α-Ωα-ωA-Za-z]', value):
+                return None
+            normalized = value.replace(',', '.')
+            match = re.search(r'[\d]+(?:\.[\d]+)?', normalized)
+            return float(match.group()) if match else None
+        except Exception:
+            return None
+
+    def is_within_limits(self, numeric_value, limit_expression):
+        try:
+            if numeric_value is None:
+                return True
+            limit = limit_expression.lower().replace(' ', '')
+            if 'και' in limit:
+                lower, upper = limit.split('και')
+                lb = float(re.sub(r'[^0-9,\.]', '', lower).replace(',', '.'))
+                ub = float(re.sub(r'[^0-9,\.]', '', upper).replace(',', '.'))
+                return lb <= numeric_value <= ub
+            if '≥' in limit:
+                lb = float(re.sub(r'[^0-9,\.]', '', limit).replace(',', '.'))
+                return numeric_value >= lb
+            if '≤' in limit:
+                ub = float(re.sub(r'[^0-9,\.]', '', limit).replace(',', '.'))
+                return numeric_value <= ub
+            lv = float(re.sub(r'[^0-9,\.]', '', limit_expression).replace(',', '.'))
+            return numeric_value <= lv
+        except Exception:
+            return True
