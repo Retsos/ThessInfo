@@ -572,7 +572,7 @@ const Services = () => {
                                     Περιοχή με τα υψηλότερα kg/κάτοικο
                                 </p>
                             </div>
-
+                            {/*Sto click async function gia na parei ta data kai ta pernaei san param sto BestRegions */}
                             <div className={ServicesCss.card} onClick={async () => {
                                 const airData = await fetchData('airquality/best-area-latest/');
                                 navigate('/BestRegions', {
@@ -591,7 +591,7 @@ const Services = () => {
                                     Καλύτερη περιοχή αέρα
                                 </h4>
                                 <p className={ServicesCss.cardTextSmall}>
-                                    Ζώνη με τα χαμηλότερα PM2.5
+                                    Ζώνη με το χαμηλότερο ΝΟ2
                                 </p>
                             </div>
 

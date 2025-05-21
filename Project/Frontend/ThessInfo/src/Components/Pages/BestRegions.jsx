@@ -93,7 +93,7 @@ export default function BestRegions() {
 
                     </div>
                 ) : (
-                    <p>Δεν βρέθηκαν δεδομένα.</p>
+                    <p className='text-center'>Δεν βρέθηκαν δεδομένα.</p>
                 )}
             </div>
 
