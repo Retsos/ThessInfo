@@ -6,6 +6,7 @@ from django.core.cache import cache
 
 def load_all_data():
     # Προσπάθησε να πάρεις τα δεδομένα από την cache
+    cache.clear()
     cached_data = cache.get('all_data')
     if cached_data is not None:
         return cached_data

@@ -1,9 +1,11 @@
+from ast import parse
 from django.http import JsonResponse
 from django.conf import settings
 from django.views import View
 from pathlib import Path
-from .utils import load_all_data
-import re
+from .utils import load_all_data,is_within_limits,extract_numeric,entry_year,analyze_entry
+from datetime import datetime
+
 
 class LatestAnalysisView(View):
     def get(self, request):
@@ -44,7 +46,7 @@ class LatestAnalysisView(View):
                     'analysis': []
                 }
             grouped[category]['latest_data'].append(entry)
-            grouped[category]['analysis'].append(self.analyze_entry(entry))
+            grouped[category]['analysis'].append(analyze_entry(entry))
         
         # Αν υπάρχει μόνο μία κατηγορία, επιστρέφουμε μόνο αυτήν
         if len(grouped) == 1:
@@ -72,73 +74,8 @@ class LatestAnalysisView(View):
 
         return JsonResponse(response, safe=False)
 
-    
-    def analyze_entry(self, entry):
-        """
-        Επιστρέφει ανάλυση για την εγγραφή:
-          - Εξάγει την αριθμητική τιμή από το πεδίο "Τιμή".
-          - Ελέγχει αν η τιμή πληροί το όριο στο "Παραμετρική τιμή1".
-        """
-        value = entry.get('Τιμή', '')
-        limit = entry.get('Παραμετρική τιμή1', '')
-        numeric_value = self.extract_numeric(value)
-        is_compliant = self.is_within_limits(numeric_value, limit) if numeric_value is not None else None
-        
-        return {
-            "parameter": entry.get('Φυσικοχημικές Παράμετροι', ''),
-            "unit": entry.get('Μονάδα μέτρησης', ''),
-            "value": numeric_value,
-            "limit": limit,
-            "is_compliant": is_compliant,
-            "notes": "Μη αριθμητική τιμή" if numeric_value is None else None
-        }
-    
 
-    @staticmethod
-    def extract_numeric(value):
-        try:
-            # Αφαίρεση περιττών κενών
-            value = value.strip()
 
-            # Αν περιέχει γράμματα (π.χ. "ΔΠ^5"), επιστρέφουμε None
-            if re.search(r'[Α-Ωα-ωA-Za-z]', value):
-                return None
-
-            # Αντικατάσταση όλων των ',' με '.' για σωστή μετατροπή σε float
-            normalized_value = value.replace(',', '.')
-
-            # Εντοπίζει τον πρώτο αριθμό που εμφανίζεται
-            match = re.search(r'[\d]+(?:\.[\d]+)?', normalized_value)
-            if match:
-                return float(match.group())
-
-            return None
-        except Exception:
-            return None
-
-    def is_within_limits(self, numeric_value, limit_expression):
-        try:
-            if numeric_value is None:
-                return True
-            
-            limit = limit_expression.lower().replace(" ", "")
-            
-            if 'και' in limit:
-                lower, upper = limit.split('και')
-                lower_bound = float(re.sub(r'[^0-9,\.]', '', lower).replace(',', '.'))
-                upper_bound = float(re.sub(r'[^0-9,\.]', '', upper).replace(',', '.'))
-                return lower_bound <= numeric_value <= upper_bound
-            elif '≥' in limit:
-                lower_bound = float(re.sub(r'[^0-9,\.]', '', limit).replace(',', '.'))
-                return numeric_value >= lower_bound
-            elif '≤' in limit:
-                upper_bound = float(re.sub(r'[^0-9,\.]', '', limit).replace(',', '.'))
-                return numeric_value <= upper_bound
-            else:
-                limit_value = float(re.sub(r'[^0-9,\.]', '', limit_expression).replace(',', '.'))
-                return numeric_value <= limit_value
-        except Exception:
-            return True
 
 class YearlyAnalysisView(View):
     def get(self, request):
@@ -168,9 +105,9 @@ class YearlyAnalysisView(View):
                 }
 
             param_name = entry.get('Φυσικοχημικές Παράμετροι', 'Άγνωστη Παράμετρος')
-            numeric_value = self.extract_numeric(entry.get('Τιμή', ''))
+            numeric_value = extract_numeric(entry.get('Τιμή', ''))
             limit = entry.get('Παραμετρική τιμή1', '')
-            is_compliant = self.is_within_limits(numeric_value, limit) if numeric_value is not None else None
+            is_compliant = is_within_limits(numeric_value, limit) if numeric_value is not None else None
 
             if param_name not in yearly_stats[year]['parameters']:
                 yearly_stats[year]['parameters'][param_name] = {
@@ -200,60 +137,9 @@ class YearlyAnalysisView(View):
 
         return JsonResponse(yearly_stats, safe=False)
     
-    @staticmethod
-    def extract_numeric(value):
-        try:
-            # Αφαίρεση περιττών κενών
-            value = value.strip()
 
-            # Αν περιέχει γράμματα (π.χ. "ΔΠ^5"), επιστρέφουμε None
-            if re.search(r'[Α-Ωα-ωA-Za-z]', value):
-                return None
 
-            # Αντικατάσταση όλων των ',' με '.' για σωστή μετατροπή σε float
-            normalized_value = value.replace(',', '.')
-
-            # Εντοπίζει τον πρώτο αριθμό που εμφανίζεται
-            match = re.search(r'[\d]+(?:\.[\d]+)?', normalized_value)
-            if match:
-                return float(match.group())
-
-            return None
-        except Exception:
-            return None
-
-    def is_within_limits(self, numeric_value, limit_expression):
-        """
-        Ελέγχει αν η numeric_value είναι εντός των ορίων που περιγράφονται στο limit_expression.
-        Υποστηρίζονται:
-          - Όρια με κάτω και πάνω όριο (π.χ. "≥6,5 και ≤9,5")
-          - Μόνο κάτω όριο (π.χ. "≥0,2^2")
-          - Μόνο πάνω όριο (π.χ. "≤250")
-          - Στατική τιμή (π.χ. "200")
-        """
-        try:
-            if numeric_value is None:
-                return True
-            
-            limit = limit_expression.lower().replace(" ", "")
-            
-            if 'και' in limit:
-                lower, upper = limit.split('και')
-                lower_bound = float(re.sub(r'[^0-9,\.]', '', lower).replace(',', '.'))
-                upper_bound = float(re.sub(r'[^0-9,\.]', '', upper).replace(',', '.'))
-                return lower_bound <= numeric_value <= upper_bound
-            elif '≥' in limit:
-                lower_bound = float(re.sub(r'[^0-9,\.]', '', limit).replace(',', '.'))
-                return numeric_value >= lower_bound
-            elif '≤' in limit:
-                upper_bound = float(re.sub(r'[^0-9,\.]', '', limit).replace(',', '.'))
-                return numeric_value <= upper_bound
-            else:
-                limit_value = float(re.sub(r'[^0-9,\.]', '', limit_expression).replace(',', '.'))
-                return numeric_value <= limit_value
-        except Exception:
-            return True
-        
+ 
 
 class RegionsLatestCompliantCountView(View):
     def get(self, request):
@@ -294,9 +180,9 @@ class RegionsLatestCompliantCountView(View):
 
             compliant_count = 0
             for entry in last_year_entries:
-                num = self.extract_numeric(entry.get('Τιμή', ''))
+                num = extract_numeric(entry.get('Τιμή', ''))
                 limit = entry.get('Παραμετρική τιμή1', '')
-                if num is not None and self.is_within_limits(num, limit):
+                if num is not None and is_within_limits(num, limit):
                     compliant_count += 1
 
 
@@ -320,41 +206,68 @@ class RegionsLatestCompliantCountView(View):
 
         return JsonResponse(output, safe=False)
 
-
-    @staticmethod
-    def extract_numeric(value: str):
-        try:
-            v = value.strip()
-            if re.search(r'[Α-Ωα-ωA-Za-z]', v):
-                return None
-            v = v.replace(',', '.')
-            m = re.search(r'\d+(?:\.\d+)?', v)
-            return float(m.group()) if m else None
-        except Exception:
-            return None
-
-
-    @staticmethod
-    def is_within_limits(numeric_value: float, limit_expr: str) -> bool:
-        try:
-            lim = limit_expr.lower().replace(" ", "")
-            if 'και' in lim:
-                low, high = lim.split('και')
-                lb = float(re.sub(r'[^0-9\.]', '', low).replace(',', '.'))
-                ub = float(re.sub(r'[^0-9\.]', '', high).replace(',', '.'))
-                return lb <= numeric_value <= ub
-            if '≥' in lim:
-                lb = float(re.sub(r'[^0-9\.]', '', lim).replace(',', '.'))
-                return numeric_value >= lb
-            if '≤' in lim:
-                ub = float(re.sub(r'[^0-9\.]', '', lim).replace(',', '.'))
-                return numeric_value <= ub
-            val = float(re.sub(r'[^0-9\.]', '', limit_expr).replace(',', '.'))
-            return numeric_value <= val
-        except Exception:
-            return True
         
+class MunicipalityStatsView(View):
+    REGION_GROUPS = {
+        'Θεσσαλονίκης': [
+            '40 Εκκλησιές', 'ΔΕΘ-ΧΑΝΘ', 'Ανάληψη', 'Άνω Τούμπα', 'Κάτω Τούμπα',
+            'Κέντρο πόλης', 'Νέα Παραλία', 'Ντεπώ', 'Ξηροκρήνη', 'Παναγία Φανερωμένη',
+            'Πλατεία Δημοκρατίας', 'Χαριλάου', 'Τριανδρία', 'Σχολή Τυφλών', 'Σφαγεία', 'Άνω Πόλη'
+        ],
+        'Καλαμαριά': ['Καλαμαριά'],
+        'Πυλαίας-Χορτιάτη': ['Πυλαία', 'Πυλαία (ΙΚΕΑ)', 'Κωνσταντινουπολίτικα'],
+    }
 
+    def get(self, request):
+        all_data = load_all_data()
+        temp_list = []
+
+        for group_name, areas in self.REGION_GROUPS.items():
+            group_entries = [
+                e for e in all_data
+                if e.get('Category', '').strip() in areas
+            ]
+
+            years = sorted({
+                int(e.get('Year'))
+                for e in group_entries
+                if e.get('Year') is not None and str(e.get('Year')).isdigit()
+            })
+            if not years:
+                continue
+
+            last_year = years[-1]
+            
+            last_year_entries = [
+                e for e in group_entries
+                if str(e.get('Year')) == str(last_year)
+            ]
+            total_count = len(last_year_entries)
+
+            compliant_count = 0
+            for entry in last_year_entries:
+                num = extract_numeric(entry.get('Τιμή', ''))
+                limit = entry.get('Παραμετρική τιμή1', '')
+                if num is not None and is_within_limits(num, limit):
+                    compliant_count += 1
+
+            rate = compliant_count / total_count if total_count > 0 else 0
+
+            temp_list.append({
+                'name': group_name,
+                'lastYear': last_year,
+                'compliantCount': f"{compliant_count}/{total_count}",
+                '_rate': rate
+            })
+
+        sorted_list = sorted(temp_list, key=lambda x: x['_rate'], reverse=True)
+
+        output = [
+            {k: v for k, v in item.items() if k != '_rate'}
+            for item in sorted_list
+        ]
+
+        return JsonResponse(output, safe=False)
 
 class BestRegionView(View):
     def get(self, request):
@@ -375,7 +288,7 @@ class BestRegionView(View):
             compliant_count = 0
             total_count = 0
             for entry in entries:
-                analysis = self.analyze_entry(entry)
+                analysis = analyze_entry(entry)
                 if isinstance(analysis.get('is_compliant'), bool):
                     total_count += 1
                     if analysis['is_compliant']:
@@ -400,49 +313,4 @@ class BestRegionView(View):
 
         return JsonResponse(response)
 
-    def analyze_entry(self, entry):
-        value = entry.get('Τιμή', '')
-        limit = entry.get('Παραμετρική τιμή1', '')
-        numeric_value = self.extract_numeric(value)
-        is_compliant = self.is_within_limits(numeric_value, limit) if numeric_value is not None else None
-        return {
-            'parameter': entry.get('Φυσικοχημικές Παράμετροι', ''),
-            'unit': entry.get('Μονάδα μέτρησης', ''),
-            'value': numeric_value,
-            'limit': limit,
-            'is_compliant': is_compliant,
-            'notes': 'Μη αριθμητική τιμή' if numeric_value is None else None
-        }
-
-    @staticmethod
-    def extract_numeric(value):
-        try:
-            value = value.strip()
-            if re.search(r'[Α-Ωα-ωA-Za-z]', value):
-                return None
-            normalized = value.replace(',', '.')
-            match = re.search(r'[\d]+(?:\.[\d]+)?', normalized)
-            return float(match.group()) if match else None
-        except Exception:
-            return None
-
-    def is_within_limits(self, numeric_value, limit_expression):
-        try:
-            if numeric_value is None:
-                return True
-            limit = limit_expression.lower().replace(' ', '')
-            if 'και' in limit:
-                lower, upper = limit.split('και')
-                lb = float(re.sub(r'[^0-9,\.]', '', lower).replace(',', '.'))
-                ub = float(re.sub(r'[^0-9,\.]', '', upper).replace(',', '.'))
-                return lb <= numeric_value <= ub
-            if '≥' in limit:
-                lb = float(re.sub(r'[^0-9,\.]', '', limit).replace(',', '.'))
-                return numeric_value >= lb
-            if '≤' in limit:
-                ub = float(re.sub(r'[^0-9,\.]', '', limit).replace(',', '.'))
-                return numeric_value <= ub
-            lv = float(re.sub(r'[^0-9,\.]', '', limit_expression).replace(',', '.'))
-            return numeric_value <= lv
-        except Exception:
-            return True
+        
