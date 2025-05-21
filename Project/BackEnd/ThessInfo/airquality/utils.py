@@ -5,15 +5,32 @@ from django.core.cache import cache
 from datetime import datetime
 from collections import defaultdict
 
-
+# WHO-based pollutant limits (normalized units: µg/m³ for gases except CO in mg/m³)
 POLLUTANT_LIMITS = {
-    "no2_conc": "<=10",   # WHO annual mean ≤10 µg/m³
-    "so2_conc": "<=40",   # WHO 24 h mean   ≤40 µg/m³
-    "o3_conc":  "<=60",   # WHO peak-season ≤60 µg/m³
-    "co_conc":  "<=300",    # WHO 24 h mean   ≤4 mg/m³
-    "no_conc":  "<=1"     # proxy threshold
+    "no2_conc": "<=9.5",
+    "so2_conc": "<=10",
+    "o3_conc":  "<=50",
+    "co_conc":  "<=4",
+    "no_conc":  "<=1.5",
 }
 
+# English key → Greek display name
+AREA_NAME_MAP = {
+    "volvi":       "Βόλβη",
+    "delta":       "Δέλτα",
+    "thermaikos":  "Θερμαϊκός",
+    "thermi":      "Θέρμη",
+    "thessaloniki": "Θεσσαλονίκη",
+    "kalamaria":   "Καλαμαριά",
+    "kordelio":    "Κορδελιό",
+    "lagkadas":    "Λαγκαδάς",
+    "ampelokipoi": "Αμπελόκηποι",
+    "neapoli":     "Νεάπολη - Συκιές",
+    "oraiokastro": "Ωραιόκαστρο",
+    "pavlou_mela": "Παύλου Μελά",
+    "pulaia":      "Πυλαία",
+    "chalkidonos": "Χαλκηδόνα",
+}
 
 
 def load_all_data(area=None, latest_year_only=False, year=None):
@@ -73,13 +90,11 @@ def load_all_data(area=None, latest_year_only=False, year=None):
 
     cache.set(cache_key, all_data, timeout=3600)
     return all_data
-
+    
 
 def compute_averages(records):
-    pollutants = ["no2_conc", "o3_conc", "co_conc", "no_conc", "so2_conc"]
-    totals = defaultdict(float)
-    counts = defaultdict(int)
-
+    pollutants = list(POLLUTANT_LIMITS.keys())
+    totals, counts = defaultdict(float), defaultdict(int)
     for r in records:
         for p in pollutants:
             try:
@@ -88,11 +103,7 @@ def compute_averages(records):
                 counts[p] += 1
             except (ValueError, TypeError):
                 continue
-
-    return {
-        p: round(totals[p] / counts[p], 2) if counts[p] else 0.0
-        for p in pollutants
-    }
+    return {p: round(totals[p] / counts[p], 2) if counts[p] else 0.0 for p in pollutants}
 
 
 def parse_timestamps(records):
@@ -104,7 +115,33 @@ def parse_timestamps(records):
     return records
 
 
+def normalize_co(records):
+    """Convert CO from µg/m³ to mg/m³ on all records."""
+    for r in records:
+        co = r.get("co_conc")
+        if co is not None:
+            try:
+                r["co_conc"] = co / 1000.0
+            except (TypeError, ValueError):
+                r["co_conc"] = None
+    return records
+
+
+def check_limit(value, spec):
+    """Generic comparator for '<=', '<', '>=', '>' specs"""
+    if spec.startswith("<="): return value <= float(spec[2:])
+    if spec.startswith("<"):  return value <  float(spec[1:])
+    if spec.startswith(">="): return value >= float(spec[2:])
+    if spec.startswith(">"):  return value >  float(spec[1:])
+    raise ValueError(f"Invalid limit spec: {spec}")
+
+
+def get_greek_name(area_key):
+    return AREA_NAME_MAP.get(area_key.lower(), area_key)
+
+
 def group_by_month(records, year_filter=None):
+    # unchanged
     result = defaultdict(list)
     for r in records:
         if year_filter is None or r["parsed_time"].year == year_filter:
@@ -113,6 +150,7 @@ def group_by_month(records, year_filter=None):
 
 
 def group_by_year(records):
+    # unchanged
     result = defaultdict(list)
     for r in records:
         result[r["parsed_time"].year].append(r)

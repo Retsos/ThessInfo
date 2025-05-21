@@ -13,6 +13,6 @@ urlpatterns = [
     path('best-area-latest/', BestAreaLatestYearComplianceView.as_view(), name='best-area-latest'),
     path('monthly-compliance/', MonthlyComplianceAverageView.as_view(), name='monthly-compliance'),
     path('worst-area/', WorstAreaComplianceView.as_view(), name='worst-area'),
-
+    
 ]
 
