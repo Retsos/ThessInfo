@@ -34,6 +34,8 @@ AREA_NAME_MAP = {
 
 
 def load_all_data(area=None, latest_year_only=False, year=None):
+    cache.clear()
+
     if area and latest_year_only:
         cache_key = f'all_data_{area}_latest'
     elif area and year:
