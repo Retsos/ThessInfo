@@ -184,9 +184,6 @@ def recycling_viewperperson(request):
 
 
 
-
-
-
 def average_view(request):
     all_data = load_all_data()
     results = []
@@ -246,46 +243,40 @@ def average_view(request):
 
     return JsonResponse({'results': grouped})
 
+
+
 class TopRegionsRecyclingView(View):
     def get(self, request):
         all_data = load_all_data()
 
-        # φιλτράρισμα μόνο για το σωστό ΤΥΠΟ
         target_type = "ΕΙΣΕΡΧΟΜΕΝΑ ΑΝΑΚΥΚΛΩΣΙΜΑ ΥΛΙΚΑ ΣΤΟ ΚΕΝΤΡΟ ΔΙΑΛΟΓΗΣ (kg/Κάτοικο)"
         filtered = [
             rec for rec in all_data
             if rec.get("ΤΥΠΟΣ") == target_type
         ]
 
-        # pattern για μήνα-έτος όπως προηγουμένως
-        months_order = {
-            "Ιαν":1, "Φεβ":2, "Μαρ":3, "Απρ":4, "Μαϊ":5, "Ιουν":6,
-            "Ιουλ":7, "Αυγ":8, "Σεπ":9, "Οκτ":10, "Νοε":11, "Δεκ":12
-        }
         pattern = re.compile(
             r'^(?P<month>Ιαν|Φεβ|Μαρ|Απρ|Μαϊ|Ιουν|Ιουλ|Αυγ|Σεπ|Οκτ|Νοε|Δεκ)-(?P<year>\d{2,4})$'
         )
 
-        # οργάνωση: region -> year -> list τιμών
         data_by_region = defaultdict(lambda: defaultdict(list))
         all_years = set()
 
         for rec in filtered:
-            region = rec.get("ΠΕΡΙΟΧΗ","").strip()
+            region = rec.get("ΠΕΡΙΟΧΗ", "")
             for key, raw in rec.items():
                 m = pattern.match(key)
                 if not m:
                     continue
                 yr = m.group('year')
-                year = '20'+yr if len(yr)==2 else yr
+                year = '20'+yr if len(yr) == 2 else yr
                 all_years.add(year)
 
-                # parse αριθμό
                 try:
-                    num = float(raw.replace(',','.'))
+                    num = float(raw.replace(',', '.'))
                 except (ValueError, AttributeError):
-                    num = None
-                if num is None or num == 0:
+                    continue
+                if num == 0:
                     continue
 
                 data_by_region[region][year].append(num)
@@ -295,20 +286,15 @@ class TopRegionsRecyclingView(View):
 
         last_year = max(all_years)
 
-        # σύνθεση λίστας με averages
-        results = []
+        results = {}
         for region, years in data_by_region.items():
             vals = years.get(last_year, [])
             if not vals:
                 continue
             avg = sum(vals) / len(vals)
-            results.append({
-                'region': region,
-                'year': int(last_year),
-                'averageKgPerPerson': round(avg, 2)
-            })
 
-        # ταξινόμηση κατά φθίνουσα average
-        results.sort(key=lambda x: x['averageKgPerPerson'], reverse=True)
+            results[region] = {
+                'compliant_count': round(avg, 2)
+            }
 
-        return JsonResponse(results, safe=False)
+        return JsonResponse(results)

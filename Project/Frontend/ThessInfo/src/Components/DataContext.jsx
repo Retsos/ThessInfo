@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect, use } from 'react';
 import api from '../endpoints/api';
 
 const DataContext = createContext();
@@ -22,13 +22,19 @@ export const DataProvider = ({ children }) => {
     const loadAllData = async () => {
       await Promise.all([
         fetchData('airquality/monthly-compliance/', setAirData),
-        // fetchData('waterquality/monthly-compliance/', setWaterData),
-        // fetchData('recycling/monthly-compliance/', setRecyclingData),
+        fetchData('water/api/regions-latest-compliance/', setWaterData),
+        fetchData('recycle/top-recycling-per-person/', setRecyclingData),
       ]);
       setLoading(false);
     };
     loadAllData();
   }, []);
+
+  useEffect(() => {
+  console.log('Air Data:', recyclingData);
+    console.log('Water Data:', waterData);
+  console.log('airrrr Data22:', airData);
+  })
 
   return (
     <DataContext.Provider value={{ airData, waterData, recyclingData, loading }}>

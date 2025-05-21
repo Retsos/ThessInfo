@@ -151,14 +151,13 @@ class RegionsLatestCompliantCountView(View):
             if entry.get('Category')
         }
 
-        temp_list = []
+        result = {}
 
         for region in regions:
             region_entries = [
                 e for e in all_data
                 if e.get('Category', '').strip().lower() == region.lower()
             ]
-
 
             years = sorted({
                 e.get('Year')
@@ -170,13 +169,11 @@ class RegionsLatestCompliantCountView(View):
 
             last_year = years[-1]
 
-
             last_year_entries = [
                 e for e in region_entries
                 if e.get('Year') == last_year
             ]
             total_count = len(last_year_entries)
-
 
             compliant_count = 0
             for entry in last_year_entries:
@@ -185,26 +182,13 @@ class RegionsLatestCompliantCountView(View):
                 if num is not None and is_within_limits(num, limit):
                     compliant_count += 1
 
+            rate = (compliant_count / total_count * 100) if total_count > 0 else 0
 
-            rate = compliant_count / total_count if total_count > 0 else 0
+            result[region] = {
+                'compliant_count': f"{rate:.2f}"
+            }
 
-            temp_list.append({
-                'name': region,
-                'lastYear': last_year,
-                'compliantCount': f"{compliant_count}/{total_count}",
-                '_rate': rate
-            })
-
-
-        sorted_list = sorted(temp_list, key=lambda x: x['_rate'], reverse=True)
-
-
-        output = [
-            {k: v for k, v in item.items() if k != '_rate'}
-            for item in sorted_list
-        ]
-
-        return JsonResponse(output, safe=False)
+        return JsonResponse(result, safe=False)
 
         
 class MunicipalityStatsView(View):

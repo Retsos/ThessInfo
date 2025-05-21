@@ -136,7 +136,8 @@ class MonthlyComplianceAverageView(AreaMixin, View):
                 percents.append((passed / total) * 100)
             if percents:
                 avg_pct = round(sum(percents) / len(percents), 2)
-                result[get_greek_name(a)] = {"compliant_count": avg_pct}
+                result[get_greek_name(a)] = {"compliant_count": f"{avg_pct:.2f}"}
+
 
         return JsonResponse(result)
 
