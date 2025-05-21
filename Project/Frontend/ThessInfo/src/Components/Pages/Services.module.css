@@ -121,6 +121,7 @@
   grid-template-columns: repeat(3, minmax(200px, 1fr));
   gap: 1rem;
   margin: 0;
+  cursor: pointer;
 }
 
 .sectionTitle {

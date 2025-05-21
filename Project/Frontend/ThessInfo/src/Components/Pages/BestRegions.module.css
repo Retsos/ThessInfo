@@ -1,0 +1,103 @@
+.pageContainer {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.FullContainer {
+    top: 0;
+    z-index: 100;
+    transition: position 0.3s ease;
+    min-height: 100%;
+    min-width: 100%;
+}
+
+.FullContainer.sticky {
+    position: sticky;
+}
+
+.content {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+
+    @media (max-width:768px) {
+        padding: 1rem;
+    }
+}
+
+.cardHeader {
+    display: flex;
+    align-items: center;
+    justify-self: center;
+    gap: 1rem;
+    font-weight: 500;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+
+    @media (max-width:768px) {
+        font-size: 1.5rem;
+    }
+
+    @media (max-width:576px) {
+        font-size: 1.15rem;
+    }
+}
+
+.bestregion {
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.3rem;
+
+    @media (max-width:768px) {
+        font-size: 1.1rem;
+    }
+
+    @media (max-width:576px) {
+        font-size: 0.9rem;
+    }
+
+}
+
+.icon {
+    margin-bottom: 1rem;
+}
+
+.cardDescription {
+    color: #666;
+    text-align: center;
+}
+
+.dataContainer {
+    background: #f9f9f9;
+    padding: 1.5rem;
+    border-radius: 6px;
+}
+
+.dataValue {
+    font-size: 1.5rem;
+    text-align: center;
+    color: #333;
+    @media (max-width:768px) {
+        font-size: 1.2rem;
+    }
+
+    @media (max-width:576px) {
+        font-size: 0.9rem;
+    }
+}
+
+.dataDetails {
+    color: #555;
+    line-height: 1.6;
+    text-align: end;
+    margin-top: 3rem;
+    margin-bottom: -1rem;
+
+    @media (max-width:576px) {
+        font-size: 0.8rem;
+    }
+}

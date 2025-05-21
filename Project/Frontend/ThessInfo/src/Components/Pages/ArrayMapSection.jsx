@@ -23,15 +23,10 @@ export default function ArrayMapSection() {
         <Navbar />
       </div>
 
-
           <div>
             <TabElements/>
 
           </div>
-
-
-
-
 
       <Footer />
     </div>

@@ -5,15 +5,29 @@ import Footer from '../Navbars/Footer';
 import { useNavigate, Link } from 'react-router-dom';
 import { FaHandHoldingWater, FaTrophy } from "react-icons/fa";
 import { FaRecycle } from "react-icons/fa";
-import noise from "../../assets/noise.png";
+import api from '../../endpoints/api';
 import Select, { components } from 'react-select';
 import { MdAir, } from "react-icons/md";
+import Loadingcomp from '../SmallComponents/loadingcomp';
 
 const Services = () => {
     const [selectedOption, setSelectedOption] = useState(null);
     const [showMinLengthWarning, setShowMinLengthWarning] = useState(false);
     const navigate = useNavigate();
     const [isSticky, setIsSticky] = useState(false);
+
+    const fetchData = async (endpoint) => {
+    try {
+        const response = await fetch(`airquality/best-area-latest/`);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        return null;
+    }
+};
 
     useEffect(() => {
         const handleScroll = () => {
@@ -456,11 +470,11 @@ const Services = () => {
                     <Navbar></Navbar>
                 </div>
 
+
                 <div className={ServicesCss.hero}>
                     <h2>Καλωσήρθες στην πλατφόρμα μας!</h2>
                     <p>Επέλεξε τον δήμο ή την περιοχή σου για να δεις στοιχεία ποιότητας νερού, ανακύκλωσης, καθαριότητας και αέρα.</p>
                 </div>
-
 
                 <div className={ServicesCss.wrapper} >
                     <h1 className={ServicesCss.title}>Αναζήτησε Πληροφορίες για την Περιοχή σου</h1>
@@ -523,7 +537,15 @@ const Services = () => {
                         <h3 className={`text-center ${ServicesCss.sectionTitle}`}>Οι περιοχές με τα καλύτερα στατιστικά</h3>
                         <div className={ServicesCss.TopCards}>
 
-                            <div className={ServicesCss.card}>
+                            <div className={ServicesCss.card} onClick={() => navigate('/BestRegions', {
+                                state: {
+                                    type: 'water',
+                                    title: 'Καλύτερη περιοχή νερού',
+                                    description: 'Περιοχή με το πιο καθαρό νερό στη Θεσσαλονίκη',
+                                    iconProps: { color: "#2196F3", size: 32 }, // Αντί για το icon element
+                                    color: "#2196F3"
+                                }
+                            })}>
                                 <FaTrophy color="#2196F3" size={32} />
                                 <h4 className={ServicesCss.cardTitleSmall}>
                                     Καλύτερη περιοχή νερού
@@ -533,7 +555,15 @@ const Services = () => {
                                 </p>
                             </div>
 
-                            <div className={ServicesCss.card}>
+                            <div className={ServicesCss.card} onClick={() => navigate('/BestRegions', {
+                                state: {
+                                    type: 'recycling',
+                                    title: 'Καλύτερη περιοχή ανακύκλωσης',
+                                    description: 'Περιοχή με τα υψηλότερα kg/κάτοικο',
+                                    iconProps: { color: "#4CAF50", size: 32 },
+                                    color: "#4CAF50"
+                                }
+                            })}>
                                 <FaTrophy color="#4CAF50" size={32} />
                                 <h4 className={ServicesCss.cardTitleSmall}>
                                     Καλύτερη περιοχή ανακύκλωσης
@@ -543,7 +573,19 @@ const Services = () => {
                                 </p>
                             </div>
 
-                            <div className={ServicesCss.card}>
+                            <div className={ServicesCss.card} onClick={async () => {
+                                const airData = await fetchData('airquality/best-area-latest/');
+                                navigate('/BestRegions', {
+                                    state: {
+                                        type: 'air',
+                                        title: 'Καλύτερη περιοχή αέρα',
+                                        description: 'Ζώνη με το χαμηλότερο ΝΟ2',
+                                        iconProps: { color: "#5dade2", size: 32 },
+                                        color: "#5dade2",
+                                        apiData: airData // Περνάμε τα δεδομένα από το API
+                                    }
+                                });
+                            }}>
                                 <FaTrophy color="#5dade2" size={32} />
                                 <h4 className={ServicesCss.cardTitleSmall}>
                                     Καλύτερη περιοχή αέρα
