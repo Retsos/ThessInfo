@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, GeoJSON, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import styles from './map.module.css';
+import Box from '@mui/material/Box';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
 
 function GeoJsonWithFit({ data }) {
   const map = useMap();
@@ -29,7 +32,11 @@ function GeoJsonWithFit({ data }) {
 
 export default function WaterQualityMap() {
   const [geoData, setGeoData] = useState(null);
+  const [value, setValue] = React.useState(0);
 
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
   useEffect(() => {
     fetch('/data/thessBounds.geojson')
       .then(res => {
@@ -37,7 +44,6 @@ export default function WaterQualityMap() {
         return res.json();
       })
       .then(data => {
-        console.log('GeoJSON loaded:', data); // Debug log
         setGeoData(data);
       })
       .catch(err => {
@@ -47,19 +53,40 @@ export default function WaterQualityMap() {
   }, []);
 
   return (
-    <div className={styles.mapWrapper}>
-      <MapContainer
-        center={[40.63, 22.95]}
-        zoom={12}
-        scrollWheelZoom={true}
-        className={styles.leafletContainer}
-      >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        {geoData && <GeoJsonWithFit data={geoData} />}
-      </MapContainer>
-    </div>
+
+    <>
+
+      <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
+        <div className='d-flex justify-content-center align-items-center'>
+          <Tabs value={value}
+            onChange={handleChange}
+            variant="scrollable"
+            scrollButtons={false}
+            aria-label="scrollable prevent tabs example"
+          >
+            <Tab label="Ποιότητα Νερού" />
+            <Tab label="Ανακύκλωσιμα σε kg/Κάτοικο" />
+            <Tab label="Ποιότητα Αέρα" />
+          </Tabs>
+        </div>
+
+      </Box>
+
+      <div className={styles.mapWrapper}>
+        <MapContainer
+          center={[40.63, 22.95]}
+          zoom={12}
+          scrollWheelZoom={true}
+          className={styles.leafletContainer}
+        >
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          {geoData && <GeoJsonWithFit data={geoData} />}
+        </MapContainer>
+      </div>
+    </>
+
   );
 }
