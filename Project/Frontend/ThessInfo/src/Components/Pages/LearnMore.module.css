@@ -16,31 +16,56 @@
   justify-content: center;
   color: white;
   text-align: center;
+
+  @media (max-width: 768px) {
+    height: 50vh;
+  }
 }
 
 .heroContent h1 {
   font-size: 3rem;
   margin-bottom: 1rem;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
 }
 
 .heroContent p {
-  font-size: 1.5rem;
-  opacity: 0.9;
+  font-size: 1.2rem;
+  opacity: 0.95;
+
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
 }
+
 
 .contentWrapper {
   max-width: 1200px;
   width: 50%;
   margin: 2rem auto;
   padding: 0 2rem;
+
+    @media (max-width: 768px) {
+    width: 100%;
+    padding: 0 1rem;
+  }
 }
 
 .featuresSection {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(2, minmax(300px, 1fr));
   gap: 2rem;
-  margin-bottom: 4rem;
+  width: 100%;
+  justify-content: center;
+  margin: 0 auto 4rem auto;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(1, minmax(300px, 1fr));
+  }
+
 }
 
 .featureCard {
@@ -53,6 +78,14 @@
 
 .featureCard:hover {
   transform: translateY(-5px);
+}
+
+.featureCard h3 {
+  font-size: 2rem;
+
+  @media (max-width: 768px) {
+    font-size: 1.1rem;
+  }
 }
 
 .featureIcon {
@@ -84,7 +117,33 @@
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   margin-bottom: 4rem;
+
+  @media (max-width: 992px) {
+    padding: 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+
 }
+
+.faqSection h2 {
+  font-size: 1.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+
+  @media (max-width: 992px) {
+    font-size: 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 1.25rem;
+  }
+}
+
 
 .sectionIcon {
   vertical-align: middle;
@@ -98,6 +157,13 @@
   color: white;
   border-radius: 10px;
   margin-bottom: 4rem;
+
+  @media (max-width: 768px) {
+    padding: 2rem;
+    width: 100%;
+  }
+
+
 }
 
 .ctaButton {
@@ -126,18 +192,4 @@
 .ctaButton:hover {
   transform: scale(1.05);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-}
-
-@media (max-width: 768px) {
-  .heroContent h1 {
-    font-size: 2rem;
-  }
-
-  .heroContent p {
-    font-size: 1.2rem;
-  }
-
-  .featuresSection {
-    grid-template-columns: 1fr;
-  }
 }

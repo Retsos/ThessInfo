@@ -78,7 +78,7 @@ export default function MonthlyChart({ waterData }) {
               top: 5,
               right: isMobile ? 0 : 20,
               bottom: isMobile ? -30 : -20,
-              left: -10
+              left: 10
             }}
           >
             <CartesianGrid stroke="#e0e0e0" strokeDasharray="3 3" />

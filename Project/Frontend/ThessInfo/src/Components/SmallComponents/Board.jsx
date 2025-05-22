@@ -21,7 +21,7 @@ const headCells = [
     getLabel: (tabValue) => {
       switch (tabValue) {
         case 0: return 'Τιμή Συμμόρφωσης';
-        case 1: return 'Ανακυκλώσιμα (kg/Κάτοικο)';
+        case 1: return 'ΜΟ Ανακυκλώσιμων (kg/Κάτοικο)';
         case 2: return 'Τιμή Συμμόρφωσης';
         default: return 'Τιμή';
       }
@@ -92,7 +92,7 @@ export default function Board() {
             aria-label="scrollable prevent tabs example"
           >
             <Tab label="Ποιότητα Νερού" />
-            <Tab label="Ανακύκλωσιμα σε kg/Κάτοικο" />
+            <Tab label="ΜΟ Ανακύκλωσιμων kg/Κάτοικο" />
             <Tab label="Ποιότητα Αέρα" />
           </Tabs>
         </div>

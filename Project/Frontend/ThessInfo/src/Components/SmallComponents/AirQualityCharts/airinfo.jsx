@@ -68,12 +68,12 @@ export default function AirLatest({ airData = {} }) {
           } else if (!isNaN(limitVal)) {
             statusIcon = value <= limitVal ? (
               <FaCheckCircle
-                className={AirCss.statusIcon}
+                className={AirCss.statusIconGood}
                 title="Εντός ορίου"
               />
             ) : (
               <FaTimesCircle
-                className={AirCss.statusIcon}
+                className={AirCss.statusIconBad}
                 title="Εκτός ορίου"
               />
             );

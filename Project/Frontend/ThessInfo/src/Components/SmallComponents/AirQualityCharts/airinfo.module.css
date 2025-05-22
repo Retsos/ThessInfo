@@ -87,12 +87,17 @@
   gap: 0.5rem;
 }
 
-.statusIcon {
+.statusIconGood {
   font-size: 1.2rem;
   color: #2ecc71;
   /* πράσινο για εντός ορίου – αλλάζεις αν εκτός */
 }
 
+.statusIconBad {
+  font-size: 1.2rem;
+  color: #d83131;
+  /* πράσινο για εντός ορίου – αλλάζεις αν εκτός */
+}
 .noData {
   font-size: 1rem;
   color: #888888;

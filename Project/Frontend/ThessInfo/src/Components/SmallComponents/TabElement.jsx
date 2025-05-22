@@ -5,6 +5,7 @@ import Tab from '@mui/material/Tab';
 import Map from '../SmallComponents/map';
 import styles from './TabElements.module.css';
 import Board from '../SmallComponents/Board';
+import Alert from './InfoAlert';
 
 export default function TabElements({ onChangeView }) {
     const [value, setValue] = React.useState(0);
@@ -44,8 +45,11 @@ export default function TabElements({ onChangeView }) {
 
             {/* Conditional rendering based on tab */}
             <div className={styles.contentContainer}>
+                <Alert/>
                 {value === 0 ? (
-                    <Board /> // Πίνακας δεδομένων
+                    <>
+                    <Board />
+                    </>
                 ) : (
                     <Map /> // Χάρτης
                 )}

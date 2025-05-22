@@ -44,7 +44,7 @@ const Home = () => {
             <p>Συνεχής παρακολούθηση σε κρίσιμες υδάτινες περιοχές</p>
           </div>
           <div className={HomeCss.featureCard}>
-            <h3><img src={cloudImage} alt="" className={HomeCss.cardimages}/> Ατμοσφαιρική Ρύπανση</h3>
+            <h3><img src={cloudImage} alt="" className={HomeCss.cardimages} /> Ατμοσφαιρική Ρύπανση</h3>
             <p>Δείκτες PM2.5, NO2 και O3 σε πραγματικό χρόνο</p>
           </div>
           <div className={HomeCss.featureCard}>
@@ -55,7 +55,7 @@ const Home = () => {
 
         {/* Description Section */}
         <section className={HomeCss.descriptionSection}>
-        <h2 className={HomeCss.sectionTitle}>Γιατί να μας επιλέξετε;</h2>          
+          <h2 className={HomeCss.sectionTitle}>Τι μας ξεχωρίζει;</h2>
           <div className={HomeCss.benefitsList}>
             <div className={HomeCss.benefitItem}>
               <FaArrowRight className={HomeCss.benefitIcon} />

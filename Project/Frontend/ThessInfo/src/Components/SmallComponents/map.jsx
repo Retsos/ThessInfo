@@ -12,11 +12,8 @@ function GeoJsonWithStyle({ data, tabValue, contextData }) {
   const hasFitted = useRef(false);
   const geoJsonRef = useRef(null);
 
-  // 1) Ορίζουμε σωστά τη συνάρτηση style
-  // …πάνω στο component…
   const getStyle = useCallback(feature => {
     const areaName = feature.properties.name;
-    // Επίλεξε το raw data object για την τρέχουσα καρτέλα
     const raw =
       tabValue === 0 ? contextData.waterData2 :
         tabValue === 1 ? contextData.recyclingData :
@@ -25,33 +22,39 @@ function GeoJsonWithStyle({ data, tabValue, contextData }) {
     const count = raw[areaName]?.compliant_count ?? 0;
     const no2 = raw[areaName]?.no2_avg ?? 0;
 
-    // Υπολόγισε το fillColor ανά καρτέλα
     let fillColor = '#ccc';
+
     if (tabValue === 0) {
-      // Νερό
       fillColor =
         count >= 90 ? '#1a75ff' :
           count >= 80 ? '#4d94ff' :
             count >= 70 ? '#80b3ff' :
-              count >= 60 ? '#b3d1ff' :
-                '#e6f0ff';
+              '#e6f0ff';
+
     } else if (tabValue === 1) {
-      // Ανακύκλωση
-      fillColor =
-        count >= 10 ? '#2e7d32' :
-          count >= 5 ? '#4caf50' :
-            count >= 2 ? '#81c784' :
-              count >= 1 ? '#a5d6a7' :
-                '#c8e6c9';
+      if (count > 6) {
+        fillColor = '#2e7d32';      
+      } else if (count >= 3) {
+        fillColor = '#4caf50';      
+      } else if (count >= 1) {
+        fillColor = '#81c784';      
+      } else {
+        fillColor = '#c8e6c9';     
+      }
+
     } else {
-      // Αέρας
-      fillColor =
-        no2 <= 5 ? '#00e676' :
-          no2 <= 10 ? '#ffeb3b' :
-            no2 <= 20 ? '#ff9800' :
-              no2 <= 30 ? '#ff5722' :
-                '#d50000';
+
+      if (count >= 85) {
+        fillColor = '#00e676'; 
+      } else if (count >= 70) {
+        fillColor = '#ffeb3b';  
+      } else if (count >= 60) {
+        fillColor = '#ff9800';  
+      } else {
+        fillColor = '#d50000'; 
+      }
     }
+
 
     return {
       fillColor,
@@ -140,7 +143,7 @@ export default function QualityMap() {
       });
   }, []);
 
-  // Δημιουργούμε ένα legend ανάλογα με την καρτέλα
+  // Δημιουργούμε ένα legend ανάλογα με την καρτέλα δλδ υπομνημα κατω 
   const renderLegend = () => {
     const legendItems = [];
 
@@ -148,28 +151,25 @@ export default function QualityMap() {
       case 0: // Νερό
         legendItems.push(
           { color: '#1a75ff', text: '≥ 90% - Πολύ καλό' },
-          { color: '#4d94ff', text: '80-89% - Καλό' },
-          { color: '#80b3ff', text: '70-79% - Μέτριο' },
-          { color: '#b3d1ff', text: '60-69% - Κατώτερο' },
-          { color: '#e6f0ff', text: '< 60% - Χαμηλό' }
+          { color: '#80b3ff', text: '80-89% - Καλό' },
+          { color: '#b3d1ff', text: '70-79% - Μέτριο' },
+          { color: '#e6f0ff', text: '< 70% - Χαμηλό' }
         );
         break;
       case 1: // Ανακύκλωση
         legendItems.push(
-          { color: '#2e7d32', text: '≥ 11kg - Πολύ καλό' },
-          { color: '#4caf50', text: '6-10kg - Καλό' },
-          { color: '#81c784', text: '3-5kg - Μέτριο' },
-          { color: '#a5d6a7', text: '1-2kg - Κατώτερο' },
+          { color: '#2e7d32', text: '≥ 6kg - Πολύ καλό' },
+          { color: '#81c784', text: '3-5kg - Καλό' },
+          { color: '#a5d6a7', text: '1-2kg - Μέτριο' },
           { color: '#c8e6c9', text: '< 1kg - Χαμηλό' }
         );
         break;
       case 2: // Αέρας
         legendItems.push(
-          { color: '#00e676', text: '≤ 5 - Πολύ καλό' },
-          { color: '#ffeb3b', text: '6-10 - Καλό' },
-          { color: '#ff9800', text: '11-20 - Μέτριο' },
-          { color: '#ff5722', text: '21-30 - Κακό' },
-          { color: '#d50000', text: '> 30 - Πολύ κακό' }
+          { color: '#00e676', text: ' ≥ 85% – Πολύ καλό' },
+          { color: '#ffeb3b', text: ' 70–79 % – Καλό' },
+          { color: '#ff9800', text: ' 60–69 % - Μέτριο' },
+          { color: '#ff5722', text: '< 60 % – Χαμηλό' },
         );
         break;
     }
@@ -210,6 +210,8 @@ export default function QualityMap() {
           center={[40.63, 22.95]}
           zoom={12}
           scrollWheelZoom={true}
+          minZoom={9}
+          maxZoom={12}
           className={styles.leafletContainer}
         >
           <TileLayer
