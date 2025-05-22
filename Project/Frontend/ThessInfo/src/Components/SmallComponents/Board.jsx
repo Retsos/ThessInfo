@@ -16,10 +16,10 @@ import styles from './Board.module.css';
 
 const headCells = [
   { id: 'area', label: 'Περιοχή' },
-  { 
-    id: 'complianceValue', 
+  {
+    id: 'complianceValue',
     getLabel: (tabValue) => {
-      switch(tabValue) {
+      switch (tabValue) {
         case 0: return 'Τιμή Συμμόρφωσης';
         case 1: return 'Ανακυκλώσιμα (kg/Κάτοικο)';
         case 2: return 'Τιμή Συμμόρφωσης';
@@ -31,7 +31,7 @@ const headCells = [
 
 export default function Board() {
   const [tabValue, setTabValue] = React.useState(0);
-  const {airData, waterData, recyclingData, loading } = useData();
+  const { airData, waterData, recyclingData, loading } = useData();
   const [orderBy, setOrderBy] = React.useState('area');
   const [order, setOrder] = React.useState('asc');
 
@@ -85,11 +85,19 @@ export default function Board() {
   return (
     <>
       <Box sx={{ width: '100%', bgcolor: 'background.paper', mb: 2 }}>
-        <Tabs value={tabValue} onChange={handleTabChange} centered>
-          <Tab label="Ποιότητα Νερού" />
-          <Tab label="Ανακύκλωσιμα kg/Κάτοικο" />
-          <Tab label="Ποιότητα Αέρα" />
-        </Tabs>
+        <div className='d-flex justify-content-center align-items-center'>
+          <Tabs
+            value={tabValue}
+            onChange={handleChange}
+            variant="scrollable"
+            scrollButtons={false}
+            aria-label="scrollable prevent tabs example"
+          >
+            <Tab label="Ποιότητα Νερού" />
+            <Tab label="Ανακύκλωσιμα σε kg/Κάτοικο" />
+            <Tab label="Ποιότητα Αέρα" />
+          </Tabs>
+        </div>
       </Box>
 
       {loading ? (
@@ -110,8 +118,8 @@ export default function Board() {
                       direction={orderBy === cell.id ? order : 'asc'}
                       onClick={() => handleRequestSort(cell.id)}
                     >
-                      {typeof cell.getLabel === 'function' 
-                        ? cell.getLabel(tabValue) 
+                      {typeof cell.getLabel === 'function'
+                        ? cell.getLabel(tabValue)
                         : cell.label}
                     </TableSortLabel>
                   </TableCell>

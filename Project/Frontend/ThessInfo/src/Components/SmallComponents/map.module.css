@@ -1,32 +1,50 @@
+/* ===== map.module.css ===== */
 .mapWrapper {
+  gap: 1rem;
+  display: flex;
   height: 500px;
-  width: 60%;
+  position: relative;
+  width: 80%;
   z-index: 1;
-  max-width: 100%;
   margin: 1rem auto;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+
+  @media (max-width: 992px) {
+    margin: 3rem auto;
+    flex-direction: column !important;
+    justify-content: center;
+    align-items: center;
+  }
 }
 
 .leafletContainer {
+  width: 100% !important;
   height: 100% !important;
   border-radius: 8px;
-  width: 100% !important;
+
 }
+
 .legend {
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  z-index: 1000;
+  align-self: end;
+  /* πάνω-πάνω */
   background: white;
   padding: 10px;
   border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   font-size: 0.9rem;
+  width: 300px;
+
+  @media (max-width: 992px) {
+    width: 200px;
+    margin-top: 3rem ;
+    align-self: center;
+
+  }
 }
 
-.legend h4 {
-  margin: 0 0 8px 0;
+.legend p {
+  margin: 0 0 8px;
+  font-weight: bold;
+  font-size: 1rem;
   text-align: center;
 }
 
@@ -37,7 +55,6 @@
 }
 
 .legendColor {
-  display: inline-block;
   width: 20px;
   height: 20px;
   margin-right: 8px;

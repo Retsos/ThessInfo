@@ -18,16 +18,14 @@ const Services = () => {
 
     const fetchData = async (endpoint) => {
         try {
-            const response = await fetch(`airquality/best-area-latest/`);
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return await response.json();
-        } catch (error) {
-            console.error('Error fetching data:', error);
+            const res = await api.get(endpoint);
+            return res.data;
+        } catch (err) {
+            console.error(`Error fetching ${endpoint}:`, err);
             return null;
         }
     };
+
 
     useEffect(() => {
         const handleScroll = () => {
@@ -537,16 +535,14 @@ const Services = () => {
                         <h3 className={`text-center ${ServicesCss.sectionTitle}`}>Οι περιοχές με τα καλύτερα στατιστικά</h3>
                         <div className={ServicesCss.TopCards}>
 
-                            <div className={ServicesCss.card} onClick={async () => {
-                                const res = await fetchData('Water/BestRegionView/');
+                            <div className={ServicesCss.card} onClick={() => {
                                 navigate('/BestRegions', {
                                     state: {
-                                        type: 'recycling',
+                                        type: 'water',
                                         title: 'Καλύτερη περιοχή νερού',
                                         description: 'Περιοχή με το πιο καθαρό νερό στην Θεσσαλονίκη',
                                         iconProps: { color: "#2196F3", size: 32 },
                                         color: "#2196F3",
-                                        apiData: res.data // Περνάμε τα δεδομένα από το API
                                     }
                                 });
                             }}>
@@ -560,7 +556,7 @@ const Services = () => {
                             </div>
 
                             <div className={ServicesCss.card} onClick={async () => {
-                                const recData = await fetchData('waterquality/best-area-latest/');
+                                const recData = await fetchData('water/best-area-latest/');
                                 navigate('/BestRegions', {
                                     state: {
                                         type: 'recycling',
@@ -580,20 +576,20 @@ const Services = () => {
                                     Περιοχή με τα υψηλότερα kg/κάτοικο
                                 </p>
                             </div>
-                            {/*Sto click async function gia na parei ta data kai ta pernaei san param sto BestRegions */}
-                            <div className={ServicesCss.card} onClick={async () => {
-                                const airData = await fetchData('airquality/best-area-latest/');
-                                navigate('/BestRegions', {
-                                    state: {
-                                        type: 'air',
-                                        title: 'Καλύτερη περιοχή αέρα',
-                                        description: 'Ζώνη με το χαμηλότερο ΝΟ2',
-                                        iconProps: { color: "#5dade2", size: 32 },
-                                        color: "#5dade2",
-                                        apiData: airData // Περνάμε τα δεδομένα από το API
-                                    }
-                                });
-                            }}>
+                            <div
+                                className={ServicesCss.card}
+                                onClick={() => {
+                                    navigate('/BestRegions', {
+                                        state: {
+                                            type: 'air',
+                                            title: 'Καλύτερη περιοχή αέρα',
+                                            description: 'Ζώνη με το χαμηλότερο ΝΟ₂',
+                                            iconProps: { color: "#5dade2", size: 32 },
+                                            color: "#5dade2",
+                                        }
+                                    });
+                                }}
+                            >
                                 <FaTrophy color="#5dade2" size={32} />
                                 <h4 className={ServicesCss.cardTitleSmall}>
                                     Καλύτερη περιοχή αέρα

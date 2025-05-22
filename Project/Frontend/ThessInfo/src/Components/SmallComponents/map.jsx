@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect,useCallback, useRef, } from 'react';
 import { MapContainer, TileLayer, GeoJSON, useMap, Tooltip } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import styles from './map.module.css';
@@ -9,111 +9,89 @@ import { useData } from '../DataContext';
 
 function GeoJsonWithStyle({ data, tabValue, contextData }) {
   const map = useMap();
-  const hasFitted = React.useRef(false);
+  const hasFitted = useRef(false);
+  const geoJsonRef = useRef(null);
 
-  // Συνάρτηση για τον χρωματισμό των περιοχών
-  const getStyle = ((feature) => {
-    const areaName = feature.properties.name;
-    let fillColor;
-    console.log('Current area name:', areaName); // Debug
-    console.log('Current context data:', contextData);
+  // 1) Ορίζουμε σωστά τη συνάρτηση style
+  // …πάνω στο component…
+const getStyle = useCallback(feature => {
+  const areaName = feature.properties.name;
+  // Επίλεξε το raw data object για την τρέχουσα καρτέλα
+  const raw =
+    tabValue === 0 ? contextData.waterData :
+    tabValue === 1 ? contextData.recyclingData :
+    contextData.airData || {};
+  
+  const count = raw[areaName]?.compliant_count ?? 0;
+  const no2 = raw[areaName]?.no2_avg ?? 0;
 
-    // Βρίσκουμε τα δεδομένα για την τρέχουσα περιοχή
-    const areaData = contextData?.[tabValue === 0 ? 'waterData' :
-      tabValue === 1 ? 'recyclingData' : 'airData'];
-    const areaEntry = areaData?.find(item => item.area === areaName);
-    const value = areaEntry?.value || 0;
-    const areaValue = areaData?.[areaName]?.compliant_count || 0;
+  // Υπολόγισε το fillColor ανά καρτέλα
+  let fillColor = '#ccc';
+  if (tabValue === 0) {
+    // Νερό
+    fillColor =
+      count >= 90 ? '#1a75ff' :
+      count >= 80 ? '#4d94ff' :
+      count >= 70 ? '#80b3ff' :
+      count >= 60 ? '#b3d1ff' :
+      '#e6f0ff';
+  } else if (tabValue === 1) {
+    // Ανακύκλωση
+    fillColor =
+      count >= 150 ? '#2e7d32' :
+      count >= 100 ? '#4caf50' :
+      count >= 50  ? '#81c784' :
+      count >= 20  ? '#a5d6a7' :
+      '#c8e6c9';
+  } else {
+    // Αέρας
+    fillColor =
+      no2 <= 5   ? '#00e676' :
+      no2 <= 10  ? '#ffeb3b' :
+      no2 <= 20  ? '#ff9800' :
+      no2 <= 30  ? '#ff5722' :
+      '#d50000';
+  }
 
-    // Εφαρμόζουμε τα χρώματα ανάλογα με την καρτέλα
-    switch (tabValue) {
-      case 0: // Νερό
-        fillColor = getColorForWater(parseFloat(areaValue));
-        value = areaValue;
-        break;
-      case 1: // Ανακύκλωση
-        fillColor = getColorForRecycling(parseFloat(areaValue));
-        value = areaValue;
-        break;
-      case 2: // Αέρας
-        fillColor = getColorForAir(parseFloat(areaValue));
-        value = areaValue;
-        break;
-      default:
-        fillColor = '#cccccc';
-    }
+  return {
+    fillColor,
+    weight: 1,
+    opacity: 1,
+    color: 'white',
+    dashArray: '3',
+    fillOpacity: 0.7
+  };
+}, [tabValue, contextData]);
 
-    return {
-      fillColor,
-      weight: 1,
-      opacity: 1,
-      color: 'white',
-      dashArray: '3',
-      fillOpacity: 0.7
-    };
-  }, [tabValue, contextData]);
 
+  // FitBounds μία φορά
   useEffect(() => {
-    if (!data || hasFitted.current) return;
-
-    const layer = new window.L.GeoJSON(data);
-    map.fitBounds(layer.getBounds(), { padding: [20, 20] });
-    hasFitted.current = true;
+    if (data && !hasFitted.current) {
+      const layer = new window.L.GeoJSON(data);
+      map.fitBounds(layer.getBounds(), { padding: [20, 20] });
+      hasFitted.current = true;
+    }
   }, [data, map]);
-
-  // Βοηθητικές συναρτήσεις για χρωματισμό
-  const getColorForWater = (value) => {
-    if (value >= 90) return '#1a75ff'; // Πολύ καλό - σκούρο μπλε
-    if (value >= 80) return '#4d94ff'; // Καλό - μπλε
-    if (value >= 70) return '#80b3ff'; // Μέτριο - ανοιχτό μπλε
-    if (value >= 60) return '#b3d1ff'; // Κατώτερο του μετρίου
-    return '#e6f0ff'; // Χαμηλό - πολύ ανοιχτό μπλε
-  };
-
-  const getColorForRecycling = (value) => {
-    if (value >= 150) return '#2e7d32'; // Πολύ καλό - σκούρο πράσινο
-    if (value >= 100) return '#4caf50'; // Καλό - πράσινο
-    if (value >= 50) return '#81c784'; // Μέτριο - ανοιχτό πράσινο
-    if (value >= 20) return '#a5d6a7'; // Κατώτερο του μετρίου
-    return '#c8e6c9'; // Χαμηλό - πολύ ανοιχτό πράσινο
-  };
-
-  const getColorForAir = (value) => {
-    if (value <= 5) return '#00e676'; // Πολύ καλό - πράσινο
-    if (value <= 10) return '#ffeb3b'; // Καλό - κίτρινο
-    if (value <= 20) return '#ff9800'; // Μέτριο - πορτοκαλί
-    if (value <= 30) return '#ff5722'; // Κακό - κόκκινο
-    return '#d50000'; // Πολύ κακό - σκούρο κόκκινο
-  };
 
   return (
     <GeoJSON
       data={data}
+      ref={geoJsonRef}
       style={getStyle}
       onEachFeature={(feature, layer) => {
-        const areaName = feature.properties.name;
-        const areaData = contextData?.[tabValue === 0 ? 'waterData' :
-          tabValue === 1 ? 'recyclingData' : 'airData'];
-        const value = areaData?.[areaName]?.compliant_count || 'N/A';
-
-        let tooltipContent = `<strong>${areaName}</strong><br/>`;
-
-        switch (tabValue) {
-          case 0:
-            tooltipContent += `Ποιότητα Νερού: ${value}`;
-            break;
-          case 1:
-            tooltipContent += `Ανακύκλωση: ${value} kg/κάτοικο`;
-            break;
-          case 2:
-            tooltipContent += `Ποιότητα Αέρα: ${value}`;
-            break;
-        }
-
-        layer.bindTooltip(tooltipContent);
+        // Tooltip
+        layer.bindTooltip(
+          `<strong>${feature.properties.name}</strong><br/>` +
+          (tabValue===0
+            ? `Νερό: ${contextData.waterData[feature.properties.name]?.compliant_count ?? 'N/A'}`
+            : tabValue===1
+            ? `Ανακύκλωση: ${contextData.recyclingData[feature.properties.name]?.compliant_count ?? 'N/A'}`
+            : `Αέρας: ${contextData.airData[feature.properties.name]?.compliant_count ?? 'N/A'}`
+          )
+        );
 
         layer.on({
-          mouseover: (e) => {
+          mouseover: e => {
             e.target.setStyle({
               weight: 3,
               color: '#666',
@@ -122,9 +100,14 @@ function GeoJsonWithStyle({ data, tabValue, contextData }) {
             });
             e.target.bringToFront();
           },
-          mouseout: (e) => {
-            // Χρησιμοποιούμε το current style
-            e.target.setStyle(getStyle(e.target.feature));
+          mouseout: e => {
+            // 2) Επαναφέρουμε το αρχικό style
+            if (geoJsonRef.current) {
+              geoJsonRef.current.resetStyle(e.target);
+            } else {
+              // fallback
+              e.target.setStyle(getStyle(feature));
+            }
           }
         });
       }}
@@ -192,7 +175,7 @@ export default function QualityMap() {
 
     return (
       <div className={styles.legend}>
-        <h4>Υπόμνημα</h4>
+        <p>Υπόμνημα</p>
         {legendItems.map((item, index) => (
           <div key={index} className={styles.legendItem}>
             <span className={styles.legendColor} style={{ backgroundColor: item.color }}></span>

@@ -30,11 +30,11 @@ export const DataProvider = ({ children }) => {
     loadAllData();
   }, []);
 
-  useEffect(() => {
-  console.log('Air Data:', recyclingData);
-    console.log('Water Data:', waterData);
-  console.log('airrrr Data22:', airData);
-  })
+  // useEffect(() => {
+  // console.log('Air Data:', recyclingData);
+  //   console.log('Water Data:', waterData);
+  // console.log('airrrr Data22:', airData);
+  // })
 
   return (
     <DataContext.Provider value={{ airData, waterData, recyclingData, loading }}>
