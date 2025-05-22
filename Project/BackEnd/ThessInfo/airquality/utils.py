@@ -16,20 +16,20 @@ POLLUTANT_LIMITS = {
 
 # English key → Greek display name
 AREA_NAME_MAP = {
-    "volvi":       "Βόλβη",
-    "delta":       "Δέλτα",
-    "thermaikos":  "Θερμαϊκός",
-    "thermi":      "Θέρμη",
-    "thessaloniki": "Θεσσαλονίκη",
-    "kalamaria":   "Καλαμαριά",
-    "kordelio":    "Κορδελιό",
-    "lagkadas":    "Λαγκαδάς",
-    "ampelokipoi": "Αμπελόκηποι",
-    "neapoli":     "Νεάπολη - Συκιές",
-    "oraiokastro": "Ωραιόκαστρο",
-    "pavlou_mela": "Παύλου Μελά",
-    "pulaia":      "Πυλαία",
-    "chalkidonos": "Χαλκηδόνα",
+    "volvi":       "Δήμος Βόλβης",
+    "delta":       "Δήμος Δέλτα",
+    "thermaikos":  "Δήμος Θερμαϊκού",
+    "thermi":      "Δήμος Θέρμης",
+    "thessaloniki": "Δήμος Θεσσαλονίκης",
+    "kalamaria":   "Δήμος Καλαμαριάς",
+    "kordelio":    "Δήμος Κορδελιού - Ευόσμου",
+    "lagkadas":    "Δήμος Λαγκαδά",
+    "ampelokipoi": "Δήμος Αμπελοκήπων - Μενεμένης",
+    "neapoli":     "Δήμος Νεάπολης - Συκεών",
+    "oraiokastro": "Δήμος Ωραιοκάστρου",
+    "pavlou_mela": "Δήμος Παύλου Μελά",
+    "pulaia":      "Δήμος Πυλαίας - Χορτιάτη",
+    "chalkidonos": "Δήμος Χαλκηδόνας",
 }
 
 
