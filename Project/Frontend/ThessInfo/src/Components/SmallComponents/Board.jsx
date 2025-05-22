@@ -35,10 +35,8 @@ export default function Board() {
   const [orderBy, setOrderBy] = React.useState('area');
   const [order, setOrder] = React.useState('asc');
 
-  const handleTabChange = (_, newVal) => {
-    setTabValue(newVal);
-    setOrderBy('area');
-    setOrder('asc');
+  const handleChange = (event, newValue) => {
+    setTabValue(newValue);
   };
 
   const transformData = data => {
