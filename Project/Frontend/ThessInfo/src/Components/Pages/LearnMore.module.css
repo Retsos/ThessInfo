@@ -23,9 +23,13 @@
 }
 
 .heroContent h1 {
-  font-size: 3rem;
+  font-size: 4rem;
   margin-bottom: 1rem;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+
+  @media (max-width: 992px) {
+    font-size: 3rem;
+  }
 
   @media (max-width: 768px) {
     font-size: 2rem;
@@ -33,7 +37,7 @@
 }
 
 .heroContent p {
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   opacity: 0.95;
 
   @media (max-width: 768px) {
@@ -41,14 +45,12 @@
   }
 }
 
-
 .contentWrapper {
   max-width: 1200px;
-  width: 50%;
   margin: 2rem auto;
   padding: 0 2rem;
 
-    @media (max-width: 768px) {
+  @media (max-width: 768px) {
     width: 100%;
     padding: 0 1rem;
   }
@@ -74,6 +76,11 @@
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   transition: transform 0.3s ease;
+  @media (max-width: 768px) {
+    margin: 0 auto;
+  }
+
+
 }
 
 .featureCard:hover {

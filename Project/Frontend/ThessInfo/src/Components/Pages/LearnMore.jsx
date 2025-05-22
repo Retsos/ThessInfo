@@ -39,7 +39,7 @@ const LearnMore = () => {
             <div className={LearnMoreCss.heroSection}>
                 <div className={LearnMoreCss.heroContent}>
                     <h1>Μάθετε Περισσότερα για την Εφαρμογή</h1>
-                    <p>Ανακαλύψτε πώς η εφαρμογή μας μπορεί να βελτιώσει την καθημερινότητά σας</p>
+                    <p className='mt-5'>Ανακαλύψτε πώς η εφαρμογή μας μπορεί να βελτιώσει την καθημερινότητά σας</p>
                 </div>
             </div>
 
