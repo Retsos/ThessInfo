@@ -37,7 +37,7 @@ export default function BestRegions() {
                         endpoint = 'water/BestRegionView/';
                         break;
                     case 'recycling':
-                        endpoint = 'recycling/monthly-compliance/';
+                        endpoint = 'recycle/top-recycling/';
                         break;
                     default:
                         return;
@@ -136,10 +136,10 @@ export default function BestRegions() {
                             <>
                                 <p className={Styles.bestregion}>
                                     Καλύτερη περιοχή:&nbsp;
-                                    <span style={{ color }}>{apiData.area}</span>
+                                    <span style={{ color }}>{apiData.region}</span>
                                 </p>
                                 <p className={Styles.dataValue}>
-                                    Ανακύκλωση: {apiData.compliant_count} kg/κάτοικο
+                                    Μέση Ανακύκλωση: {apiData.average} kg/κάτοικο
                                 </p>
                             </>
                         )}

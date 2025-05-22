@@ -174,7 +174,16 @@ class RegionsLatestCompliantCountView(View):
                 if e.get('Year') == last_year
             ]
             total_count = len(last_year_entries)
+            
+            valid_entries = []
+            for entry in last_year_entries:
+                num = extract_numeric(entry.get('Τιμή', ''))
+                if num is not None:
+                    valid_entries.append((entry, num))
 
+            total_count = len(valid_entries)
+
+            
             compliant_count = 0
             for entry in last_year_entries:
                 num = extract_numeric(entry.get('Τιμή', ''))
@@ -193,18 +202,18 @@ class RegionsLatestCompliantCountView(View):
         
 class MunicipalityStatsView(View):
     REGION_GROUPS = {
-        'Θεσσαλονίκης': [
+        'Δήμος Θεσσαλονίκης': [
             '40 Εκκλησιές', 'ΔΕΘ-ΧΑΝΘ', 'Ανάληψη', 'Άνω Τούμπα', 'Κάτω Τούμπα',
             'Κέντρο πόλης', 'Νέα Παραλία', 'Ντεπώ', 'Ξηροκρήνη', 'Παναγία Φανερωμένη',
             'Πλατεία Δημοκρατίας', 'Χαριλάου', 'Τριανδρία', 'Σχολή Τυφλών', 'Σφαγεία', 'Άνω Πόλη'
         ],
-        'Καλαμαριά': ['Καλαμαριά'],
-        'Πυλαίας-Χορτιάτη': ['Πυλαία', 'Πυλαία (ΙΚΕΑ)', 'Κωνσταντινουπολίτικα'],
+        'Δήμος Καλαμαριάς': ['Καλαμαριά'],
+        'Δήμος Πυλαίας - Χορτιάτη': ['Πυλαία', 'Πυλαία (ΙΚΕΑ)', 'Κωνσταντινουπολίτικα'],
     }
 
     def get(self, request):
         all_data = load_all_data()
-        temp_list = []
+        results = {}
 
         for group_name, areas in self.REGION_GROUPS.items():
             group_entries = [
@@ -215,43 +224,40 @@ class MunicipalityStatsView(View):
             years = sorted({
                 int(e.get('Year'))
                 for e in group_entries
-                if e.get('Year') is not None and str(e.get('Year')).isdigit()
+                if e.get('Year') and str(e.get('Year')).isdigit()
             })
             if not years:
                 continue
 
             last_year = years[-1]
-            
-            last_year_entries = [
+            last_entries = [
                 e for e in group_entries
                 if str(e.get('Year')) == str(last_year)
             ]
-            total_count = len(last_year_entries)
 
-            compliant_count = 0
-            for entry in last_year_entries:
-                num = extract_numeric(entry.get('Τιμή', ''))
-                limit = entry.get('Παραμετρική τιμή1', '')
-                if num is not None and is_within_limits(num, limit):
-                    compliant_count += 1
+            # φιλτράρουμε μόνο έγκυρα num
+            valid = [
+                (e, extract_numeric(e.get('Τιμή', '')))
+                for e in last_entries
+                if extract_numeric(e.get('Τιμή', '')) is not None
+            ]
+            total = len(valid)
+            compliant = sum(
+                1 for e, num in valid
+                if is_within_limits(num, e.get('Παραμετρική τιμή1', ''))
+            )
 
-            rate = compliant_count / total_count if total_count > 0 else 0
+            rate = round((compliant / total * 100), 2) if total else 0
 
-            temp_list.append({
-                'name': group_name,
+            results[group_name] = {
                 'lastYear': last_year,
-                'compliantCount': f"{compliant_count}/{total_count}",
-                '_rate': rate
-            })
+                'compliant_count': rate
+            }
 
-        sorted_list = sorted(temp_list, key=lambda x: x['_rate'], reverse=True)
+        return JsonResponse(results, safe=False)
 
-        output = [
-            {k: v for k, v in item.items() if k != '_rate'}
-            for item in sorted_list
-        ]
 
-        return JsonResponse(output, safe=False)
+
 
 class BestRegionView(View):
     def get(self, request):
@@ -291,8 +297,9 @@ class BestRegionView(View):
         # Προετοιμασία απάντησης
         response = {
             'best_regions': best_regions,
-            'compliantCount': max_compliant,
-            'details': {region: region_stats[region] for region in best_regions}
+            'compliant_count': max_compliant,
+            'details': {region: region_stats[region] for region in best_regions},
+            'year': entry_year(entry)
         }
 
         return JsonResponse(response)

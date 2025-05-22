@@ -6,6 +6,7 @@ const DataContext = createContext();
 export const DataProvider = ({ children }) => {
   const [airData, setAirData] = useState(null);
   const [waterData, setWaterData] = useState(null);
+  const [waterData2, setWaterData2] = useState(null);
   const [recyclingData, setRecyclingData] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -23,6 +24,7 @@ export const DataProvider = ({ children }) => {
       await Promise.all([
         fetchData('airquality/monthly-compliance/', setAirData),
         fetchData('water/api/regions-latest-compliance/', setWaterData),
+        fetchData('water/MarginAreas/', setWaterData2),
         fetchData('recycle/top-recycling-per-person/', setRecyclingData),
       ]);
       setLoading(false);
@@ -37,7 +39,7 @@ export const DataProvider = ({ children }) => {
   // })
 
   return (
-    <DataContext.Provider value={{ airData, waterData, recyclingData, loading }}>
+    <DataContext.Provider value={{ airData, waterData, recyclingData, waterData2,loading }}>
       {children}
     </DataContext.Provider>
   );

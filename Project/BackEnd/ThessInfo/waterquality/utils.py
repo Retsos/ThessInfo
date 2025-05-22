@@ -101,7 +101,7 @@ def analyze_entry(entry):
 
 
 
-def entry_year( entry):
+def entry_year(entry):
     # Υποστηρικτικές μορφές ημερομηνίας: ISO, dd/mm/YYYY, YYYY και πεδίο Year
     date_str = entry.get('date') or entry.get('Έτος') or entry.get('Date') or entry.get('Year')
     if not date_str:

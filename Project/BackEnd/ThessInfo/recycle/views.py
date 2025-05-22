@@ -245,7 +245,15 @@ def average_view(request):
 
 
 
-class TopRegionsRecyclingView(View):
+class TopRegionsRecyclingViewgeneral(View):
+    DISPLAY_NAMES2 = {
+        'ΘΕΡΜΑΪΚΟΣ': 'Δήμος Θερμαϊκού',
+        'ΘΕΡΜΗ': 'Δήμος Θέρμης',
+        'ΠΥΛΑΙΑ-ΧΟΡΤΙΑΤΗΣ': 'Δήμος Πυλαίας - Χορτιάτη',
+        'ΚΑΛΑΜΑΡΙΑ': 'Δήμος Καλαμαριάς',
+        
+        # βάλ’ κι άλλες όποιες θες…
+    }
     def get(self, request):
         all_data = load_all_data()
 
@@ -286,6 +294,7 @@ class TopRegionsRecyclingView(View):
 
         last_year = max(all_years)
 
+        #display = self.DISPLAY_NAMES2.get(region, region)
         results = {}
         for region, years in data_by_region.items():
             vals = years.get(last_year, [])
@@ -293,8 +302,78 @@ class TopRegionsRecyclingView(View):
                 continue
             avg = sum(vals) / len(vals)
 
-            results[region] = {
+            display = self.DISPLAY_NAMES2.get(region, region)
+            # Βάζουμε το display name ως κλειδί
+            results[display] = {
                 'compliant_count': round(avg, 2)
             }
 
+
         return JsonResponse(results)
+    
+
+#DEDOMENA XARTI
+class TopRegionsRecyclingView(View):
+
+
+    def get(self, request):
+        all_data = load_all_data()
+
+        target_type = "ΕΙΣΕΡΧΟΜΕΝΑ ΑΝΑΚΥΚΛΩΣΙΜΑ ΥΛΙΚΑ ΣΤΟ ΚΕΝΤΡΟ ΔΙΑΛΟΓΗΣ (kg/Κάτοικο)"
+        filtered = [
+            rec for rec in all_data
+            if rec.get("ΤΥΠΟΣ") == target_type
+        ]
+
+        pattern = re.compile(
+            r'^(?P<month>Ιαν|Φεβ|Μαρ|Απρ|Μαϊ|Ιουν|Ιουλ|Αυγ|Σεπ|Οκτ|Νοε|Δεκ)-(?P<year>\d{2,4})$'
+        )
+
+        data_by_region = defaultdict(lambda: defaultdict(list))
+        all_years = set()
+
+        for rec in filtered:
+            region = rec.get("ΠΕΡΙΟΧΗ", "")
+            for key, raw in rec.items():
+                m = pattern.match(key)
+                if not m:
+                    continue
+                yr = m.group('year')
+                year = '20'+yr if len(yr) == 2 else yr
+                all_years.add(year)
+
+                try:
+                    num = float(raw.replace(',', '.'))
+                except (ValueError, AttributeError):
+                    continue
+                if num == 0:
+                    continue
+
+                data_by_region[region][year].append(num)
+
+        if not all_years:
+            return JsonResponse({'error': 'Δεν βρέθηκαν δεδομένα για ανακύκλωση.'}, status=404)
+
+        last_year = max(all_years)
+
+        region_averages = {}
+        for region, years in data_by_region.items():
+            vals = years.get(last_year, [])
+            if not vals:
+                continue
+            avg = sum(vals) / len(vals)
+            region_averages[region] = round(avg, 2)
+
+        if not region_averages:
+            return JsonResponse({'error': 'Καμία περιοχή δεν έχει δεδομένα για το τελευταίο έτος.'}, status=404)
+
+        # Εύρεση της περιοχής με το μεγαλύτερο μέσο όρο
+        best_region = max(region_averages.items(), key=lambda x: x[1])
+
+
+
+        return JsonResponse({
+            'region': best_region[0],
+            'average': best_region[1],
+            'year': last_year
+        })
