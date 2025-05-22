@@ -16,7 +16,17 @@ import styles from './Board.module.css';
 
 const headCells = [
   { id: 'area', label: 'Περιοχή' },
-  { id: 'complianceValue', label: 'Τιμή Συμμόρφωσης' },
+  { 
+    id: 'complianceValue', 
+    getLabel: (tabValue) => {
+      switch(tabValue) {
+        case 0: return 'Τιμή Συμμόρφωσης';
+        case 1: return 'Ανακυκλώσιμα (kg/Κάτοικο)';
+        case 2: return 'Τιμή Συμμόρφωσης';
+        default: return 'Τιμή';
+      }
+    }
+  },
 ];
 
 export default function Board() {
@@ -27,7 +37,6 @@ export default function Board() {
 
   const handleTabChange = (_, newVal) => {
     setTabValue(newVal);
-    // Αν θέλεις να ξαναρχίζει από area/asc όταν αλλάζει tab:
     setOrderBy('area');
     setOrder('asc');
   };
@@ -78,7 +87,7 @@ export default function Board() {
       <Box sx={{ width: '100%', bgcolor: 'background.paper', mb: 2 }}>
         <Tabs value={tabValue} onChange={handleTabChange} centered>
           <Tab label="Ποιότητα Νερού" />
-          <Tab label="Ανακύκλωσιμα σε kg/Κάτοικο" />
+          <Tab label="Ανακύκλωσιμα kg/Κάτοικο" />
           <Tab label="Ποιότητα Αέρα" />
         </Tabs>
       </Box>
@@ -101,7 +110,9 @@ export default function Board() {
                       direction={orderBy === cell.id ? order : 'asc'}
                       onClick={() => handleRequestSort(cell.id)}
                     >
-                      {cell.label}
+                      {typeof cell.getLabel === 'function' 
+                        ? cell.getLabel(tabValue) 
+                        : cell.label}
                     </TableSortLabel>
                   </TableCell>
                 ))}

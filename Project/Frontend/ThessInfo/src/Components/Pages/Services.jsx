@@ -17,17 +17,17 @@ const Services = () => {
     const [isSticky, setIsSticky] = useState(false);
 
     const fetchData = async (endpoint) => {
-    try {
-        const response = await fetch(`airquality/best-area-latest/`);
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
+        try {
+            const response = await fetch(`airquality/best-area-latest/`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            return null;
         }
-        return await response.json();
-    } catch (error) {
-        console.error('Error fetching data:', error);
-        return null;
-    }
-};
+    };
 
     useEffect(() => {
         const handleScroll = () => {
@@ -537,15 +537,19 @@ const Services = () => {
                         <h3 className={`text-center ${ServicesCss.sectionTitle}`}>Οι περιοχές με τα καλύτερα στατιστικά</h3>
                         <div className={ServicesCss.TopCards}>
 
-                            <div className={ServicesCss.card} onClick={() => navigate('/BestRegions', {
-                                state: {
-                                    type: 'water',
-                                    title: 'Καλύτερη περιοχή νερού',
-                                    description: 'Περιοχή με το πιο καθαρό νερό στη Θεσσαλονίκη',
-                                    iconProps: { color: "#2196F3", size: 32 }, // Αντί για το icon element
-                                    color: "#2196F3"
-                                }
-                            })}>
+                            <div className={ServicesCss.card} onClick={async () => {
+                                const res = await fetchData('Water/BestRegionView/');
+                                navigate('/BestRegions', {
+                                    state: {
+                                        type: 'recycling',
+                                        title: 'Καλύτερη περιοχή νερού',
+                                        description: 'Περιοχή με το πιο καθαρό νερό στην Θεσσαλονίκη',
+                                        iconProps: { color: "#2196F3", size: 32 },
+                                        color: "#2196F3",
+                                        apiData: res.data // Περνάμε τα δεδομένα από το API
+                                    }
+                                });
+                            }}>
                                 <FaTrophy color="#2196F3" size={32} />
                                 <h4 className={ServicesCss.cardTitleSmall}>
                                     Καλύτερη περιοχή νερού
@@ -555,15 +559,19 @@ const Services = () => {
                                 </p>
                             </div>
 
-                            <div className={ServicesCss.card} onClick={() => navigate('/BestRegions', {
-                                state: {
-                                    type: 'recycling',
-                                    title: 'Καλύτερη περιοχή ανακύκλωσης',
-                                    description: 'Περιοχή με τα υψηλότερα kg/κάτοικο',
-                                    iconProps: { color: "#4CAF50", size: 32 },
-                                    color: "#4CAF50"
-                                }
-                            })}>
+                            <div className={ServicesCss.card} onClick={async () => {
+                                const recData = await fetchData('waterquality/best-area-latest/');
+                                navigate('/BestRegions', {
+                                    state: {
+                                        type: 'recycling',
+                                        title: 'Καλύτερη περιοχή ανακύκλωσης',
+                                        description: 'Περιοχή με τα υψηλότερα kg/κάτοικο',
+                                        iconProps: { color: "#4CAF50", size: 32 },
+                                        color: "#4CAF50",
+                                        apiData: recData // Περνάμε τα δεδομένα από το API
+                                    }
+                                });
+                            }}>
                                 <FaTrophy color="#4CAF50" size={32} />
                                 <h4 className={ServicesCss.cardTitleSmall}>
                                     Καλύτερη περιοχή ανακύκλωσης

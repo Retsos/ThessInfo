@@ -7,17 +7,24 @@ import { FaTrophy } from 'react-icons/fa';
 import api from '../../endpoints/api';
 import Loadingcomp from '../SmallComponents/loadingcomp';
 
-/**
- * Displays detailed view for the best region based on type (air, water, recycling).
- * Receives via location.state:
- * - type: 'air' | 'water' | 'recycling'
- * - title, description, iconProps, color
- */
 export default function BestRegions() {
     const { state } = useLocation();
-    const { type, title, description, iconProps, color } = state || {};
-    const [apiData, setApiData] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const {
+        type,
+        title,
+        description,
+        iconProps,
+        color,
+        apiData: initialData
+    } = state || {};
+
+    // Αν υπάρχει initialData, το βάζουμε απευθείας,
+    // αλλιώς ξεκινάμε με null
+    const [apiData, setApiData] = useState(initialData || null);
+
+    // Αν έχουμε initialData, δεν είμαστε σε loading
+    const [loading, setLoading] = useState(!initialData);
+
     const [isSticky, setIsSticky] = useState(false);
 
     // Sticky Navbar on scroll
@@ -30,18 +37,26 @@ export default function BestRegions() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    // Fetch data based on type
+    // Fetch data μόνο αν ΔΕΝ υπάρχει initialData
     useEffect(() => {
-        if (!type) return;
+        if (!type || initialData) return;
+
         const fetchBestRegion = async () => {
             setLoading(true);
             try {
                 let endpoint = '';
                 switch (type) {
-                    case 'air': endpoint = 'airquality/best-area-latest/'; break;
-                    case 'water': endpoint = 'waterquality/monthly-compliance/'; break;
-                    case 'recycling': endpoint = 'recycling/monthly-compliance/'; break;
-                    default: return;
+                    case 'air':
+                        endpoint = 'airquality/best-area-latest/';
+                        break;
+                    case 'Water':
+                        endpoint = 'Water/BestRegionView/';
+                        break;
+                    case 'recycling':
+                        endpoint = 'recycling/monthly-compliance/';
+                        break;
+                    default:
+                        return;
                 }
                 const res = await api.get(endpoint);
                 setApiData(res.data);
@@ -51,13 +66,9 @@ export default function BestRegions() {
                 setLoading(false);
             }
         };
+
         fetchBestRegion();
-    }, [type]);
-
-    useEffect(() => {
-        console.log('apiData updated:', apiData);
-    }, [apiData]);
-
+    }, [type, initialData]);
 
     return (
         <div className={Styles.pageContainer}>
@@ -67,7 +78,11 @@ export default function BestRegions() {
 
             <div className={Styles.content} style={{ borderTop: `4px solid ${color}` }}>
                 <div className={Styles.cardHeader}>
-                    <FaTrophy className={Styles.icon} color={iconProps?.color} size={iconProps?.size} />
+                    <FaTrophy
+                        className={Styles.icon}
+                        color={iconProps?.color}
+                        size={iconProps?.size}
+                    />
                     <p>{title}</p>
                 </div>
 
@@ -76,21 +91,24 @@ export default function BestRegions() {
                 {loading ? (
                     <Loadingcomp />
                 ) : apiData ? (
-                    
                     <div className={Styles.dataContainer}>
-
                         <p className={Styles.bestregion}>
-                            Καλύτερη περιοχή: <span style={{ color }}>{apiData.area}</span>
+                            Καλύτερη περιοχή:{' '}
+                            <span style={{ color }}>{apiData.area}</span>
                         </p>
 
                         <p className={Styles.dataValue}>
-                            {type === 'air' && `NO₂ μέσος όρος: ${apiData.no2_avg}`}
-                            {type === 'water' && `Συμμόρφωση: ${apiData.compliant_count}`}
-                            {type === 'recycling' && `Ανακύκλωση: ${apiData.compliant_count}`}
+                            {type === 'air' &&
+                                `NO₂ μέσος όρος: ${apiData.no2_avg}`}
+                            {type === 'water' &&
+                                `Συμμόρφωση: ${apiData.compliant_count}`}
+                            {type === 'recycling' &&
+                                `Ανακύκλωση: ${apiData.compliant_count}`}
                         </p>
 
-                        <p className={Styles.dataDetails}>Έτος: {apiData.year}</p>
-
+                        <p className={Styles.dataDetails}>
+                            Έτος: {apiData.year}
+                        </p>
                     </div>
                 ) : (
                     <p>Δεν βρέθηκαν δεδομένα.</p>
