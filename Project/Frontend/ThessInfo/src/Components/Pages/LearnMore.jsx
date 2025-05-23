@@ -38,7 +38,7 @@ const LearnMore = () => {
             {/* Hero Section */}
             <div className={LearnMoreCss.heroSection}>
                 <div className={LearnMoreCss.heroContent}>
-                    <h1>Μάθετε Περισσότερα για την Εφαρμογή</h1>
+                    <h1>Μάθετε Περισσότερα για το ThessInfo</h1>
                     <p className='mt-5'>Ανακαλύψτε πώς η εφαρμογή μας μπορεί να βελτιώσει την καθημερινότητά σας</p>
                 </div>
             </div>

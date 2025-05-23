@@ -30,8 +30,11 @@ const Home = () => {
       {/* Hero Section */}
       <div className={HomeCss.heroSection}>
         <div className={HomeCss.heroContent}>
-          <h1>Περιβαλλοντική Πληροφόρηση Θεσσαλονίκης</h1>
-          <p>Πραγματικές μετρήσεις - Άμεση ενημέρωση - Δράση αποτελεσματικότητας</p>
+          <h1 className={HomeCss.title}>ThessInfo</h1>
+          <h2 className={HomeCss.subtitle}>Περιβαλλοντική Πληροφόρηση Θεσσαλονίκης</h2>
+          <p className={HomeCss.tagline}>
+            Πραγματικές μετρήσεις — Άμεση ενημέρωση — Δράση αποτελεσματικότητας
+          </p>
         </div>
       </div>
 

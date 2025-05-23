@@ -23,26 +23,14 @@
 }
 
 .heroContent h1 {
-  font-size: 4rem;
+  font-size: clamp(2rem, 5vw, 4rem);
   margin-bottom: 1rem;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-
-  @media (max-width: 992px) {
-    font-size: 3rem;
-  }
-
-  @media (max-width: 768px) {
-    font-size: 2rem;
-  }
 }
 
 .heroContent p {
-  font-size: 1.5rem;
+  font-size: clamp(1rem, 3vw, 1.5rem);
   opacity: 0.95;
-
-  @media (max-width: 768px) {
-    font-size: 1rem;
-  }
 }
 
 .contentWrapper {
