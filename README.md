@@ -33,7 +33,7 @@ ThessInfo is a React application for visualizing water quality, air quality, and
 1. **Clone repository**
 
    ```bash
-   git clone https://github.com/Retsos/thessinfo.git
+   git clone https://github.com/Retsos/ThessInfo.git
    ```
 
 2. **Frontend setup**
