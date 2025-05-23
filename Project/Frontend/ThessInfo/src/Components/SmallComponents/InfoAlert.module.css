@@ -1,5 +1,5 @@
 .infoAlert {
-
+    text-align: justify;
     @media (max-width: 768px) {
         font-size: 0.8rem;
         margin: 0;
