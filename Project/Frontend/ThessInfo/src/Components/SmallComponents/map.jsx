@@ -20,41 +20,33 @@ function GeoJsonWithStyle({ data, tabValue, contextData }) {
           contextData.airData || {};
 
     const count = raw[areaName]?.compliant_count ?? 0;
-    const no2 = raw[areaName]?.no2_avg ?? 0;
 
     let fillColor = '#ccc';
 
-    if (tabValue === 0) {
-      fillColor =
-        count >= 90 ? '#1a75ff' :
-          count >= 80 ? '#4d94ff' :
-            count >= 70 ? '#80b3ff' :
-              '#e6f0ff';
+      if (tabValue === 0) {
+    // Νερό: ≥90 / 80–89 / 70–79 / <70
+    fillColor =
+      count >= 90 ? '#1a75ff' :
+      count >= 80 ? '#80b3ff' :
+      count >= 70 ? '#b3d1ff' :
+      '#e6f0ff';
 
-    } else if (tabValue === 1) {
-      if (count > 6) {
-        fillColor = '#2e7d32';      
-      } else if (count >= 3) {
-        fillColor = '#4caf50';      
-      } else if (count >= 1) {
-        fillColor = '#81c784';      
-      } else {
-        fillColor = '#c8e6c9';     
-      }
+  } else if (tabValue === 1) {
+    // Ανακύκλωση: ≥5kg / 3–4 / 1–2 / <1
+    fillColor =
+      count >= 5 ? '#2e7d32' :
+      count >= 3 ? '#81c784' :
+      count >= 1 ? '#a5d6a7' :
+      '#c8e6c9';
 
-    } else {
-
-      if (count >= 85) {
-        fillColor = '#00e676'; 
-      } else if (count >= 70) {
-        fillColor = '#ffeb3b';  
-      } else if (count >= 60) {
-        fillColor = '#ff9800';  
-      } else {
-        fillColor = '#d50000'; 
-      }
-    }
-
+  } else {
+    // Αέρας: ≥85% / 74–84% / 65–73% / <65%
+    fillColor =
+      count >= 85 ? '#00e676' :
+      count >= 74 ? '#ffeb3b' :
+      count >= 65 ? '#ff9800' :
+      '#ff5722';
+  }
 
     return {
       fillColor,
@@ -158,7 +150,7 @@ export default function QualityMap() {
         break;
       case 1: // Ανακύκλωση
         legendItems.push(
-          { color: '#2e7d32', text: '≥ 6kg - Πολύ καλό' },
+          { color: '#2e7d32', text: '≥ 5kg - Πολύ καλό' },
           { color: '#81c784', text: '3-5kg - Καλό' },
           { color: '#a5d6a7', text: '1-2kg - Μέτριο' },
           { color: '#c8e6c9', text: '< 1kg - Χαμηλό' }
@@ -167,9 +159,9 @@ export default function QualityMap() {
       case 2: // Αέρας
         legendItems.push(
           { color: '#00e676', text: ' ≥ 85% – Πολύ καλό' },
-          { color: '#ffeb3b', text: ' 70–79 % – Καλό' },
-          { color: '#ff9800', text: ' 60–69 % - Μέτριο' },
-          { color: '#ff5722', text: '< 60 % – Χαμηλό' },
+          { color: '#ffeb3b', text: ' 74–84 % – Καλό' },
+          { color: '#ff9800', text: ' 65–74 % - Μέτριο' },
+          { color: '#ff5722', text: '< 65 % – Χαμηλό' },
         );
         break;
     }
