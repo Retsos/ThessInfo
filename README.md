@@ -33,7 +33,7 @@ ThessInfo is a React application for visualizing water quality, air quality, and
 1. **Clone repository**
 
    ```bash
-   git clone https://github.com/Retsos/thessinfo.git
+   git clone https://github.com/Retsos/ThessInfo.git
    ```
 
 2. **Frontend setup**
@@ -73,9 +73,15 @@ ThessInfo is a React application for visualizing water quality, air quality, and
 
 ## 📊 Data Endpoints
 
-* **Air Quality**:  `/airquality/monthly-compliance/`, `/airquality/best-area-latest/`
-* **Water Quality**: `/waterquality/monthly-compliance/`, `/waterquality/BestRegionView/`
-* **Recycling**: `/recycling/monthly-compliance/`, `/recycling/top-recycling/`
+* **Air Quality**:  `airqualit/area/<str:area>/latest-measurements/`, `airqualit/area/<str:area>/group-by-year/`
+                    `airqualit/best-area-latest/`, `airqualit/monthly-compliance/`,`airqualit/worst-area/`
+  
+* **Water Quality**: `water/api/latest-measurements/`, `water/api/group-by-year/`,`water/api/regions-latest-compliance/`
+                     `water/BestRegionView/`,`water/MarginAreas/`
+  
+* **Recycling**: `recycle/recycling-ota/`, `recycle/recycling-perperson/`,`recycle/recycling-good/`
+                 `recycle/top-recycling-per-person/`,`recycle/top-recycling/`
+  
 
 Endpoints are served by a Django REST API using open data from Greek municipal and academic sources.
 
