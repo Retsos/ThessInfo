@@ -23,8 +23,8 @@ const Contact = () => {
       // Εμφάνιση toast notification
       toast.success(
         <>
-          <strong>❤️ Σας ευχαριστούμε θερμά!</strong><br/>
-          Το αίτημά σας ελήφθη επιτυχώς.<br/>
+          <strong>❤️ Σας ευχαριστούμε θερμά!</strong><br />
+          Το αίτημά σας ελήφθη επιτυχώς.<br />
         </>,
         {
           position: "top-center",
@@ -37,7 +37,16 @@ const Contact = () => {
       );
       reset();
     } catch (error) {
-      toast.error("Υπήρξε σφάλμα κατά την αποστολή. Προσπαθήστε πάλι.");
+      toast.error("Υπήρξε σφάλμα κατά την αποστολή. Προσπαθήστε πάλι.",
+        {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        }
+      );
       console.error(error);
     } finally {
       setIsLoading(false);
