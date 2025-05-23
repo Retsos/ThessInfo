@@ -14,15 +14,6 @@ const Services = () => {
     const [isSticky, setIsSticky] = useState(false);
     const location = useLocation();
 
-    const fetchData = async (endpoint) => {
-        try {
-            const res = await api.get(endpoint);
-            return res.data;
-        } catch (err) {
-            console.error(`Error fetching ${endpoint}:`, err);
-            return null;
-        }
-    };
 
     useEffect(() => {
         const handleScroll = () => {
@@ -123,7 +114,6 @@ const Services = () => {
                             </div>
 
                             <div className={ServicesCss.card} onClick={async () => {
-                                const recData = await fetchData('water/best-area-latest/');
                                 navigate('/BestRegions', {
                                     state: {
                                         type: 'recycling',
@@ -131,7 +121,6 @@ const Services = () => {
                                         description: 'Περιοχή με τα υψηλότερα kg/κάτοικο',
                                         iconProps: { color: "#4CAF50", size: 32 },
                                         color: "#4CAF50",
-                                        apiData: recData // Περνάμε τα δεδομένα από το API
                                     }
                                 });
                             }}>

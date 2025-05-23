@@ -51,12 +51,12 @@ export default function Board() {
 
   const rawData = React.useMemo(() => {
     switch (tabValue) {
-      case 0: return waterData;
+      case 0: return waterData2;
       case 1: return recyclingData;
       case 2: return airData;
       default: return null;
     }
-  }, [tabValue, airData, waterData, recyclingData]);
+  }, [tabValue, airData, waterData2, recyclingData]);
 
   const rows = React.useMemo(() => {
     const arr = transformData(rawData);

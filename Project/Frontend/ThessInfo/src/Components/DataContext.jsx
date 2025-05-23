@@ -23,7 +23,7 @@ export const DataProvider = ({ children }) => {
     const loadAllData = async () => {
       await Promise.all([
         fetchData('airquality/monthly-compliance/', setAirData),
-        fetchData('water/api/regions-latest-compliance/', setWaterData),
+        //fetchData('water/api/regions-latest-compliance/', setWaterData),   AN TO THES KAPOU VGALE TO COMMENT
         fetchData('water/MarginAreas/', setWaterData2),
         fetchData('recycle/top-recycling-per-person/', setRecyclingData),
       ]);
@@ -32,11 +32,6 @@ export const DataProvider = ({ children }) => {
     loadAllData();
   }, []);
 
-  // useEffect(() => {
-  // console.log('Air Data:', recyclingData);
-  //   console.log('Water Data:', waterData);
-  // console.log('airrrr Data22:', airData);
-  // })
 
   return (
     <DataContext.Provider value={{ airData, waterData, recyclingData, waterData2,loading }}>

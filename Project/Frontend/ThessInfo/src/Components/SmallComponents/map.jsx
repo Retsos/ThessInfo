@@ -61,7 +61,7 @@ function GeoJsonWithStyle({ data, tabValue, contextData }) {
 
   // FitBounds μία φορά
   useEffect(() => {
-    console.log(contextData);
+    //console.log(contextData);
     if (data && !hasFitted.current) {
       const layer = new window.L.GeoJSON(data);
       map.fitBounds(layer.getBounds(), { padding: [20, 20] });
@@ -79,10 +79,10 @@ function GeoJsonWithStyle({ data, tabValue, contextData }) {
         layer.bindTooltip(
           `<strong>${feature.properties.name}</strong><br/>` +
           (tabValue === 0
-            ? `Νερό: ${contextData.waterData2[feature.properties.name]?.compliant_count ?? 'N/A'}`
+            ? `Νερό: ${contextData.waterData2[feature.properties.name]?.compliant_count ?? 'N/A'}%`
             : tabValue === 1
-              ? `Ανακύκλωση: ${contextData.recyclingData[feature.properties.name]?.compliant_count ?? 'N/A'}`
-              : `Αέρας: ${contextData.airData[feature.properties.name]?.compliant_count ?? 'N/A'}`
+              ? `Ανακύκλωση: ${contextData.recyclingData[feature.properties.name]?.compliant_count ?? 'N/A'}kg`
+              : `Αέρας: ${contextData.airData[feature.properties.name]?.compliant_count ?? 'N/A'}%`
           )
         );
 

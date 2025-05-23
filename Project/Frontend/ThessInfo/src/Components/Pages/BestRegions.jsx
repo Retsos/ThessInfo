@@ -109,7 +109,10 @@ export default function BestRegions() {
                                     {apiData.best_regions?.[0] && (
                                         <p className={Styles.bestregion}>
                                             Καλύτερη περιοχή:&nbsp;
-                                            <span style={{ color }}>{apiData.best_regions[0]} & {apiData.best_regions[1]}</span>
+                                            <span style={{ color }}>
+                                                {apiData.best_regions[0]}
+                                                {apiData.best_regions[1] ? ` & ${apiData.best_regions[1]}` : ''}
+                                            </span>
                                         </p>
                                     )}
                                     {apiData.best_regions?.[0] && apiData.details && (() => {

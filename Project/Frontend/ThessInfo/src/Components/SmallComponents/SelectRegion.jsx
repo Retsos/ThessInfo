@@ -33,7 +33,9 @@ const SelectRegion = () => {
             label: 'Αμπελόκηποι',
             RecycleName: 'Αμπελόκηποι',
             airName: 'Ampelokipoi',
+            icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
             icon3: <MdAir style={{ color: '#2992a2', fontSize: '1.2rem', marginLeft: '8px' }} />,
+            tooltip1: "Δεδομένα νερού",
             tooltip3: "Δεδομένα αέρα"
         },
         {
@@ -171,8 +173,42 @@ const SelectRegion = () => {
             label: 'Ωραιόκαστρο',
             RecycleName: 'Ωραιόκαστρο',
             airName: 'Oraiokastro',
+            icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
             icon3: <MdAir style={{ color: '#2992a2', fontSize: '1.2rem', marginLeft: '8px' }} />,
+            tooltip1: "Δεδομένα νερού",
             tooltip3: "Δεδομένα αέρα"
+        },
+        {
+            value: 'ευοσμος',
+            label: 'Εύοσμος',
+            RecycleName: 'Εύοσμος',
+            airName: 'Εύοσμος',
+            icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
+            tooltip1: "Δεδομένα νερού",
+        },
+        {
+            value: 'Ευκαρπία',
+            label: 'Ευκαρπία',
+            RecycleName: 'Ευκαρπία',
+            airName: 'Ευκαρπία',
+            icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
+            tooltip1: "Δεδομένα νερού",
+        },
+        {
+            value: 'ΒΙΠΕΘ',
+            label: 'ΒΙΠΕΘ',
+            RecycleName: 'ΒΙΠΕΘ',
+            airName: 'ΒΙΠΕΘ',
+            icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
+            tooltip1: "Δεδομένα νερού",
+        },
+        {
+            value: 'Άγιος Παύλος',
+            label: 'Άγιος Παύλος',
+            RecycleName: 'Άγιος Παύλος',
+            airName: 'Άγιος Παύλος',
+            icon: <FaHandHoldingWater style={{ color: '#2196F3', fontSize: '1.2rem' }} />,
+            tooltip1: "Δεδομένα νερού",
         },
         {
             value: 'Κορδελιό',
@@ -441,13 +477,13 @@ const SelectRegion = () => {
                 value={selectedOption}
                 onChange={handleChange}
             />
-            
+
             {showMinLengthWarning && (
                 <div style={{ color: "rgba(211, 46, 46, 0.88)", marginTop: "5px" }}>
                     Επιλέξτε τουλάχιστον 1.
                 </div>
             )}
-            
+
             <button
                 className={Styles.searchButton}
                 type="button"

@@ -368,7 +368,7 @@ const Results = () => {
 
                             </div>
                         ) : <div className={ResultsCss.comingSoon}>
-                            <IoMdWater className={ResultsCss.comingSoonIcon} />
+                            <MdAir className={ResultsCss.comingSoonIcon} />
                             <p>Δεν υπάρχουν διαθέσιμα δεδομένα για την ποιότητα νερού στον δήμο αυτήν τη στιγμή</p>
                         </div>}
                     </div>
