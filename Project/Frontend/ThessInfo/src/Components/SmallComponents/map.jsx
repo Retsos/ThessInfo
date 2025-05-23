@@ -6,6 +6,8 @@ import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { useData } from '../DataContext';
+import { BASE_URL } from '../../endpoints/api';
+import Loadingcomp from './loadingcomp';
 
 function GeoJsonWithStyle({ data, tabValue, contextData }) {
   const map = useMap();
@@ -23,30 +25,30 @@ function GeoJsonWithStyle({ data, tabValue, contextData }) {
 
     let fillColor = '#ccc';
 
-      if (tabValue === 0) {
-    // Νερό: ≥90 / 80–89 / 70–79 / <70
-    fillColor =
-      count >= 90 ? '#1a75ff' :
-      count >= 80 ? '#80b3ff' :
-      count >= 70 ? '#b3d1ff' :
-      '#e6f0ff';
+    if (tabValue === 0) {
+      // Νερό: ≥90 / 80–89 / 70–79 / <70
+      fillColor =
+        count >= 90 ? '#1a75ff' :
+          count >= 80 ? '#80b3ff' :
+            count >= 70 ? '#b3d1ff' :
+              '#e6f0ff';
 
-  } else if (tabValue === 1) {
-    // Ανακύκλωση: ≥5kg / 3–4 / 1–2 / <1
-    fillColor =
-      count >= 5 ? '#2e7d32' :
-      count >= 3 ? '#81c784' :
-      count >= 1 ? '#a5d6a7' :
-      '#c8e6c9';
+    } else if (tabValue === 1) {
+      // Ανακύκλωση: ≥5kg / 3–4 / 1–2 / <1
+      fillColor =
+        count >= 5 ? '#2e7d32' :
+          count >= 3 ? '#81c784' :
+            count >= 1 ? '#a5d6a7' :
+              '#c8e6c9';
 
-  } else {
-    // Αέρας: ≥85% / 74–84% / 65–73% / <65%
-    fillColor =
-      count >= 85 ? '#00e676' :
-      count >= 74 ? '#ffeb3b' :
-      count >= 65 ? '#ff9800' :
-      '#ff5722';
-  }
+    } else {
+      // Αέρας: ≥85% / 74–84% / 65–73% / <65%
+      fillColor =
+        count >= 85 ? '#00e676' :
+          count >= 74 ? '#ffeb3b' :
+            count >= 65 ? '#ff9800' :
+              '#ff5722';
+    }
 
     return {
       fillColor,
@@ -121,7 +123,7 @@ export default function QualityMap() {
   };
 
   useEffect(() => {
-    fetch('/data/thessBounds.geojson')
+    fetch(`${BASE_URL}/geojson/`)
       .then(res => {
         if (!res.ok) throw new Error('GeoJSON not found');
         return res.json();
@@ -181,50 +183,57 @@ export default function QualityMap() {
 
   return (
     <>
-      <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
-        <div className='d-flex justify-content-center align-items-center'>
-          <Tabs
-            value={tabValue}
-            onChange={handleChange}
-            variant="scrollable"
-            scrollButtons={false}
-            aria-label="scrollable prevent tabs example"
-          >
-            <Tab label="Ποιότητα Νερού" />
-            <Tab label="Ανακύκλωσιμα σε kg/Κάτοικο" />
-            <Tab label="Ποιότητα Αέρα" />
-          </Tabs>
-        </div>
-      </Box>
+      {loading ? (
+        <Loadingcomp />
+      ) : (
+        <>
+          <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
+            <div className='d-flex justify-content-center align-items-center'>
+              <Tabs
+                value={tabValue}
+                onChange={handleChange}
+                variant="scrollable"
+                scrollButtons={false}
+                aria-label="scrollable prevent tabs example"
+              >
+                <Tab label="Ποιότητα Νερού" />
+                <Tab label="Ανακύκλωσιμα σε kg/Κάτοικο" />
+                <Tab label="Ποιότητα Αέρα" />
+              </Tabs>
+            </div>
+          </Box>
 
-      <div className={styles.mapWrapper}>
-        <MapContainer
-          center={[40.63, 22.95]}
-          zoom={12}
-          scrollWheelZoom={true}
-          minZoom={9}
-          maxZoom={12}
-          className={styles.leafletContainer}
-        >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-          {geoData && (
-            <GeoJsonWithStyle
-              key={tabValue}
-              data={geoData}
-              tabValue={tabValue}
-              contextData={{
-                airData,
-                recyclingData,
-                waterData2 // πλέον object, όχι array
-              }}
-            />
-          )}
-        </MapContainer>
-        {renderLegend()}
-      </div>
+          <div className={styles.mapWrapper}>
+            <MapContainer
+              center={[40.63, 22.95]}
+              zoom={12}
+              scrollWheelZoom={true}
+              minZoom={9}
+              maxZoom={12}
+              className={styles.leafletContainer}
+            >
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              {geoData && (
+                <GeoJsonWithStyle
+                  key={tabValue}
+                  data={geoData}
+                  tabValue={tabValue}
+                  contextData={{
+                    airData,
+                    recyclingData,
+                    waterData2,
+                  }}
+                />
+              )}
+            </MapContainer>
+            {renderLegend()}
+          </div>
+        </>
+      )}
     </>
   );
+
 }

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const BASE_URL = "http://thessinfo.pythonanywhere.com/";
+export const BASE_URL = "https://thessinfo.pythonanywhere.com/";
 
 const api = axios.create({
     baseURL: BASE_URL,

@@ -4,20 +4,21 @@ from rest_framework.response import Response
 from rest_framework import status
 from .settings import EMAIL_HOST_USER
 from django.conf import settings
+import os
+import json
+from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseServerError
 
-class NotifyView(APIView):
-    def post(self, request):
-        data = request.data
-        subject = "Νέα δεδομένα από το frontend"
-        message = f"Λάβαμε τα εξής δεδομένα:\n\n{data}"
-        recipient_list = [EMAIL_HOST_USER]  # άλλαξε το με το email σου
+def geojson_view(request):
+    try:
+        path = os.path.join(settings.BASE_DIR, 'data', 'thessBounds.geojson')
+        with open(path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        return JsonResponse(data)
+    except Exception as e:
+        return HttpResponseServerError(f"Error loading geojson: {e}")
 
-        try:
-            send_mail(subject, message, None, recipient_list)
-            return Response({'success': True, 'message': 'Email στάλθηκε'}, status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response({'success': False, 'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+
 
 class ContactAPIView(APIView):
     def post(self, request):

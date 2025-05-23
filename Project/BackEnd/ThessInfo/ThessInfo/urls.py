@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path,include
 from django.conf.urls.static import static
 from django.conf import settings
-from .view import NotifyView,ContactAPIView
+from .view import ContactAPIView,geojson_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -10,5 +10,6 @@ urlpatterns = [
     path('recycle/', include('recycle.urls')),
     path('airquality/', include('airquality.urls')),
     path('contact/', ContactAPIView.as_view(), name='contact'),
+    path('geojson/', geojson_view),
 
 ]
