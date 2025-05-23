@@ -51,7 +51,7 @@ export default function TabElements({ onChangeView }) {
                     <Board />
                     </>
                 ) : (
-                    <Map /> // Χάρτης
+                    <Map />
                 )}
             </div>
         </Box>

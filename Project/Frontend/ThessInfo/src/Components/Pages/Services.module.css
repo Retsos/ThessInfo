@@ -143,6 +143,8 @@
   text-align: center;
   margin-top: 1rem;
   color: #777;
+  font-size: 1.2rem;
+  font-weight: 500;
 }
 
 
@@ -169,5 +171,8 @@
   }
   .TopCards {
     grid-template-columns: 1fr;
+  }
+  .hint {
+    font-size: 1rem;
   }
 }

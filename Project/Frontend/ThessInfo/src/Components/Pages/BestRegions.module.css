@@ -23,8 +23,9 @@
     background: white;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-
+    width: 100%;
     @media (max-width:768px) {
+        width: 90%;
         padding: 1rem;
     }
 }
@@ -115,4 +116,19 @@
 
 .list li {
   margin: 0.25rem 0;
+}
+.mediaContainer {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+.regionImage {
+  max-width: 250px;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+.link {
+  color: #1976d2;
+  text-decoration: underline;
 }
