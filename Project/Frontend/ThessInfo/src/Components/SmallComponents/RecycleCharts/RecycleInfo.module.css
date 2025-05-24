@@ -58,23 +58,17 @@
   &:hover {
     color: #20a53b;
   }
+    @media (max-width: 768px) {
+    font-size: 1rem;
+    margin-left: 0.5rem;
+  }
 }
-
-.tooltip {
-  position: absolute;
-  background: rgba(0, 0, 0, 0.8);
-  color: #fff;
-  padding: 0.5rem 0.75rem;
-  border-radius: 4px;
-  font-size: 0.85rem;
-  max-width: 220px;
-  white-space: normal;
-  opacity: 0;
-  transition: opacity 0.2s;
+.listIcons {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
-
-.tooltipIcon:hover .tooltip,
-.tooltipIcon:active .tooltip {  
+.tooltipIcon:hover .tooltip-arrow {  
   opacity: 1;
 }
 

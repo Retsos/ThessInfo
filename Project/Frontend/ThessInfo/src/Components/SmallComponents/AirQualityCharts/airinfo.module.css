@@ -103,21 +103,19 @@
   color: #888888;
 }
 
-/* αν θέλεις custom tooltip (π.χ. χωρίς Bootstrap) */
-.tooltip {
-  position: absolute;
-  background: rgba(0, 0, 0, 0.8);
-  color: #fff;
-  padding: 0.5rem 0.75rem;
-  border-radius: 4px;
-  font-size: 0.85rem;
-  max-width: 220px;
-  white-space: normal;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-
 .tooltipIcon:hover .tooltip {
   opacity: 1;
+}
+.bs-tooltip-end .tooltip-arrow {
+    left: -4px;
+}
+.chartTitle{
+  margin: 0 0 1rem;
+  font-size: 1.5rem;
+  text-align: center;
+  color: #2f76d1;    
+
+  @media (max-width: 480px) {
+    font-size: 1.25rem;
+  }
 }

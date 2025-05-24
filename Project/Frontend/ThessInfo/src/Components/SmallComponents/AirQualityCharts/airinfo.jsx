@@ -1,5 +1,4 @@
-// src/Components/SmallComponents/AirLatest.jsx
-import React from 'react';
+import React, { useEffect } from 'react';
 import AirCss from './airinfo.module.css';
 import { GrTooltip } from 'react-icons/gr';
 import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
@@ -44,6 +43,18 @@ export default function AirLatest({ airData = {} }) {
   const latestDataObj = (yearEntry.monthly_averages || {})[latestMonthKey] || {};
   const averages = latestDataObj.averages || {};
 
+
+  useEffect(() => {
+    const tooltipTriggerList = Array.from(
+      document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    );
+    tooltipTriggerList.forEach(el => {
+      if (window.bootstrap) {
+        new window.bootstrap.Tooltip(el);
+      }
+    });
+  }, [airData]);
+
   return (
     <div className={AirCss.card}>
       <h4 className={AirCss.cardTitle}>
@@ -54,6 +65,7 @@ export default function AirLatest({ airData = {} }) {
       </h4>
 
       <ul className={AirCss.list}>
+
         {Object.entries(averages).map(([param, value]) => {
           const label = param.replace('_conc', '').toUpperCase();
           const limitStr = limits[param] || '';
@@ -83,18 +95,24 @@ export default function AirLatest({ airData = {} }) {
 
           return (
             <li key={param} className={AirCss.listItem}>
+
               <span className={AirCss.parameter}>
                 <strong>{label}</strong>: {displayValue}
                 <span title={`Όριο: ${limitStr}`}> ({limitStr})</span>
               </span>
 
               <div className={AirCss.listIcons}>
+
                 {statusIcon}
-                <GrTooltip
-                  className={AirCss.tooltipIcon}
+                <span className={AirCss.tooltipIcon}
                   data-bs-toggle="tooltip"
-                  title={PARAM_TOOLTIPS[param] || ''}
-                />
+                  data-bs-placement="right"
+                  data-bs-trigger="hover focus click"
+                  title={PARAM_TOOLTIPS[param] || ''}>
+                  <GrTooltip
+                  />
+                </span>
+
               </div>
             </li>
           );

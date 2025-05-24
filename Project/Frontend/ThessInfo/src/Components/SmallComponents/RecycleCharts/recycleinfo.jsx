@@ -1,5 +1,4 @@
-// RecycleLatest.jsx
-import React from 'react';
+import React, { useEffect } from 'react';
 import RecycleCss from './RecycleInfo.module.css';
 import { GrTooltip } from 'react-icons/gr';
 
@@ -19,6 +18,18 @@ const tooltips = {
 };
 
 const RecycleLatest = ({ recycleData = {} }) => {
+  useEffect(() => {
+    const tooltipTriggerList = Array.from(
+      document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    );
+    tooltipTriggerList.forEach(el => {
+      if (window.bootstrap) {
+        new window.bootstrap.Tooltip(el);
+      }
+    });
+  }, [recycleData]);
+
+
   const monthlyData = recycleData['Μηνιαία Δεδομένα'] || {};
   const months = Object.keys(monthlyData);
   if (!months.length) {
@@ -42,20 +53,26 @@ const RecycleLatest = ({ recycleData = {} }) => {
       </h4>
 
       <ul className={RecycleCss.list}>
+
         {Object.entries(latestData).map(([param, value]) => (
           <li key={param} className={RecycleCss.listItem}>
+
             <p className={RecycleCss.paramName}>
               <strong>{param}</strong>: {value?.toLocaleString() || '–'}
             </p>
-            <span
-              className={RecycleCss.tooltipIcon}
-              data-bs-toggle="tooltip"
-              tabIndex={0}
-              role='button'
-              title={tooltips[param] || "Δεν υπάρχουν πληροφορίες."}
-            >
-              <GrTooltip />
-            </span>
+
+            <div className={RecycleCss.listIcons}>
+              
+              <span
+                className={RecycleCss.tooltipIcon}
+                data-bs-toggle="tooltip"
+                data-bs-placement="right"
+                title={tooltips[param] || "Δεν υπάρχουν πληροφορίες."}
+              >
+                <GrTooltip />
+              </span>
+            </div>
+
           </li>
         ))}
       </ul>

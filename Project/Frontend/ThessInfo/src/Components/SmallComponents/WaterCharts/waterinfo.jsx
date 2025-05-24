@@ -42,6 +42,7 @@ const WaterCard = ({ waterData }) => {
 
           return (
             <li key={idx} className={WaterCss.listItem}>
+              
               <div className={WaterCss.parameter}>
                 <strong>{parameter}</strong>: {hasValue ? value : '–'} {hasValue && unit}
                 {limitDisplay && (

@@ -69,25 +69,6 @@
   }
 }
 
-/* Αν χρησιμοποιείτε custom tooltip αντί για Bootstrap */
-.tooltip {
-    position: absolute;
-    background: rgba(0, 0, 0, 0.75);
-    color: white;
-    padding: 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    white-space: normal;
-    max-width: 250px;
-    z-index: 1000;
-    left: 100%;
-    top: 50%;
-    transform: translate(10px, -50%);
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.2s;
-}
-
 .tooltipIcon:hover .tooltip {
     opacity: 1;
 }
