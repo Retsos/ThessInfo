@@ -57,7 +57,7 @@ const Services = () => {
                         <p className={ServicesCss.hint}>
                             🔥 Η κορυφαία υπηρεσία μας:{' '}
                             <Link
-                                to="/ArrayMapSection"
+                                to="/ArrayMapSection/0/Water"
                                 className={ServicesCss.link}
                             >
                                 Δες όλα τα δεδομένα ανά δήμο!

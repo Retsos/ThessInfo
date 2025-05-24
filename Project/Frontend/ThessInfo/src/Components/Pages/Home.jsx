@@ -43,19 +43,19 @@ const Home = () => {
         {/* Features Grid */}
         <div className={HomeCss.featuresGrid}>
           <div className={HomeCss.featureCard}>
-            <Link to="/ArrayMapSection/2/Water" className={HomeCss.featureLink}>
+            <Link to="/ArrayMapSection/1/Water" className={HomeCss.featureLink}>
               <h3>📊 Έλεγχος Ποιότητας Νερού</h3>
               <p>Άμεση ενημέρωση για pH & χλώριο κα. — εξασφαλίζοντας καθαρό και ασφαλές νερό.</p>
             </Link>
           </div>
           <div className={HomeCss.featureCard}>
-            <Link to="/ArrayMapSection/2/Recycle" className={HomeCss.featureLink}>
+            <Link to="/ArrayMapSection/1/Recycle" className={HomeCss.featureLink}>
               <h3>♻️ Διαχείριση Απορριμμάτων</h3>
               <p>Ανακύκλωση & αξιοποίηση: βελτιστοποιημένες λύσεις για καθαρό περιβάλλον.</p>
             </Link>
           </div>
           <div className={HomeCss.featureCard}>
-            <Link to="/ArrayMapSection/2/Air" className={HomeCss.featureLink}>
+            <Link to="/ArrayMapSection/1/Air" className={HomeCss.featureLink}>
               <h3><img src={cloudImage} alt="" className={HomeCss.cardimages} /> Ατμοσφαιρική Ρύπανση</h3>
               <p>Δείκτες PM2.5, NO2 και O3 — προστατεύοντας την υγεία σου.</p>
             </Link>
