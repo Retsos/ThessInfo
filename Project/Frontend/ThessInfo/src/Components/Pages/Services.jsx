@@ -118,7 +118,7 @@ const Services = () => {
                                     state: {
                                         type: 'recycling',
                                         title: 'Καλύτερη περιοχή ανακύκλωσης',
-                                        description: 'Περιοχή με τα υψηλότερα kg/κάτοικο',
+                                        description: 'Περιοχή με τον υψηλότερο ΜΟ ανακύκλωσης kg/κάτοικο',
                                         iconProps: { color: "#4CAF50", size: 32 },
                                         color: "#4CAF50",
                                     }
@@ -129,7 +129,7 @@ const Services = () => {
                                     Καλύτερη περιοχή ανακύκλωσης
                                 </h4>
                                 <p className={ServicesCss.cardTextSmall}>
-                                    Περιοχή με τα υψηλότερα kg/κάτοικο
+                                    Περιοχή με τον υψηλότερο ΜΟ ανακύκλωσης kg/κάτοικο
                                 </p>
                             </div>
                             <div
