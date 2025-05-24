@@ -4,10 +4,14 @@ import Navbar from '../Navbars/Navbar';
 import Footer from '../Navbars/Footer';
 import Styles from './ArrayMapSection.module.css';
 import TabElements from '../SmallComponents/TabElement';
+import { useParams } from 'react-router-dom';
 
 
 export default function ArrayMapSection() {
   const [isSticky, setIsSticky] = useState(false);
+  const { view, category } = useParams();
+  const initialView     = Number(view) || 0;
+  const initialCategory = category    || 'Water';
 
   useEffect(() => {
     const onScroll = () => setIsSticky(window.scrollY > window.innerHeight * 0.2);
@@ -24,8 +28,10 @@ export default function ArrayMapSection() {
       </div>
 
           <div>
-            <TabElements/>
-
+            <TabElements         
+              initialView={initialView}
+              initialCategory={initialCategory}
+            />
           </div>
 
       <Footer />

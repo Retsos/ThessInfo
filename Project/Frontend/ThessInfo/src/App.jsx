@@ -23,7 +23,7 @@ function App() {
             <Route path="/Services" element={<Services />} />
             <Route path="/BestRegions" element={<BestRegions />} />
             <Route path="/Results" element={<Results />} />
-            <Route path="/ArrayMapSection" element={<ArrayMapSection />} />
+            <Route path="/ArrayMapSection/:view/:category" element={<ArrayMapSection />} />
           </Routes>
         </ScrollToTop>
       </DataProvider>

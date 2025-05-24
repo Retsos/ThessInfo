@@ -5,7 +5,7 @@ import HomeCss from './Home.module.css';
 import Footer from '../Navbars/Footer';
 import { FaArrowRight, FaQuestionCircle } from 'react-icons/fa';
 import Accordion2 from '../SmallComponents/Accordion2';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -43,16 +43,22 @@ const Home = () => {
         {/* Features Grid */}
         <div className={HomeCss.featuresGrid}>
           <div className={HomeCss.featureCard}>
-            <h3>📊 Έλεγχος Ποιότητας Νερού</h3>
-            <p>Συνεχής παρακολούθηση σε κρίσιμες υδάτινες περιοχές</p>
+            <Link to="/ArrayMapSection/2/Water" className={HomeCss.featureLink}>
+              <h3>📊 Έλεγχος Ποιότητας Νερού</h3>
+              <p>Άμεση ενημέρωση για pH & χλώριο κα. — εξασφαλίζοντας καθαρό και ασφαλές νερό.</p>
+            </Link>
           </div>
           <div className={HomeCss.featureCard}>
-            <h3><img src={cloudImage} alt="" className={HomeCss.cardimages} /> Ατμοσφαιρική Ρύπανση</h3>
-            <p>Δείκτες PM2.5, NO2 και O3 σε πραγματικό χρόνο</p>
+            <Link to="/ArrayMapSection/2/Recycle" className={HomeCss.featureLink}>
+              <h3>♻️ Διαχείριση Απορριμμάτων</h3>
+              <p>Ανακύκλωση & αξιοποίηση: βελτιστοποιημένες λύσεις για καθαρό περιβάλλον.</p>
+            </Link>
           </div>
           <div className={HomeCss.featureCard}>
-            <h3>♻️ Διαχείριση Απορριμμάτων</h3>
-            <p>Ευφυής διαχείριση και ανακύκλωση αποβλήτων</p>
+            <Link to="/ArrayMapSection/2/Air" className={HomeCss.featureLink}>
+              <h3><img src={cloudImage} alt="" className={HomeCss.cardimages} /> Ατμοσφαιρική Ρύπανση</h3>
+              <p>Δείκτες PM2.5, NO2 και O3 — προστατεύοντας την υγεία σου.</p>
+            </Link>
           </div>
         </div>
 

@@ -29,9 +29,10 @@ const headCells = [
   },
 ];
 
-export default function Board() {
-  const [tabValue, setTabValue] = React.useState(0);
-  const { airData, waterData, recyclingData,waterData2, loading } = useData();
+export default function Board({ initialCategory = 'Water' }) {
+  const catIndex = { Water:0, Recycle:1, Air:2 }[initialCategory] ?? 0;
+  const [tabValue, setTabValue] = React.useState(catIndex);
+  const { airData, recyclingData,waterData2, loading } = useData();
   const [orderBy, setOrderBy] = React.useState('area');
   const [order, setOrder] = React.useState('asc');
 

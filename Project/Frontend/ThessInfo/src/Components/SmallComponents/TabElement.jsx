@@ -7,19 +7,21 @@ import styles from './TabElements.module.css';
 import Board from '../SmallComponents/Board';
 import Alert from './InfoAlert';
 
-export default function TabElements({ onChangeView }) {
-    const [value, setValue] = React.useState(0);
+export default function TabElements({
+    initialView = 0,
+    initialCategory = 'Water'
+}) {
+    const [view, setView] = React.useState(initialView);
 
-    const handleChange = (event, newValue) => {
-        setValue(newValue);
-        if (onChangeView) onChangeView(newValue);
+    const handleChange = (_, newVal) => {
+        setView(newVal);
     };
 
     return (
         <Box sx={{ width: '100%' }} classes={{ root: styles.container }}>
             {/* Tabs για εναλλαγή view */}
             <Tabs
-                value={value}
+                value={view}
                 onChange={handleChange}
                 centered
                 classes={{
@@ -45,13 +47,13 @@ export default function TabElements({ onChangeView }) {
 
             {/* Conditional rendering based on tab */}
             <div className={styles.contentContainer}>
-                <Alert/>
-                {value === 0 ? (
+                <Alert />
+                {view === 0 ? (
                     <>
-                    <Board />
+                        <Board initialCategory={initialCategory} />
                     </>
                 ) : (
-                    <Map />
+                    <Map initialCategory={initialCategory} />
                 )}
             </div>
         </Box>

@@ -79,9 +79,19 @@
   text-align: center;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   transition: transform 0.3s ease;
+  cursor: pointer;
 }
 
+.featureLink{
+  text-decoration: none;
+  color: black;
+}
+
+.featureIcon {
+  color: #1daaad;
+}
 .featureCard:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
   transform: translateY(-5px);
 }
 

@@ -113,9 +113,10 @@ function GeoJsonWithStyle({ data, tabValue, contextData }) {
   );
 }
 
-export default function QualityMap() {
+export default function QualityMap({ initialCategory = 'Water' }) {
   const [geoData, setGeoData] = useState(null);
-  const [tabValue, setTabValue] = React.useState(0);
+  const catIndex = { Water:0, Recycle:1, Air:2 }[initialCategory] ?? 0;
+  const [tabValue, setTabValue] = React.useState(catIndex);
   const { airData, recyclingData, waterData2, loading } = useData();
 
   const handleChange = (event, newValue) => {
