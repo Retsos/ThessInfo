@@ -377,7 +377,6 @@ const Results = () => {
                             <div className='pt-5'>
                                 <div className={ResultsCss.SegmentSection}>
 
-                                    {console.log(AirDataYear)}
                                     <div className={`shadow ${ResultsCss.info}`}>
                                         <AirLatest airData={AirDataYear}></AirLatest>
                                     </div>
