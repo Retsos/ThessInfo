@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbars/Navbar'
 import LearnMoreCss from './LearnMore.module.css'
 import Footer from '../Navbars/Footer'
@@ -11,30 +11,30 @@ const LearnMore = () => {
     const [isSticky, setIsSticky] = useState(false);
 
 
-      useEffect(() => {
+    useEffect(() => {
         const handleScroll = () => {
-          const initialPageHeight = window.innerHeight;
-          const twentyPercentPoint = initialPageHeight * 0.20;
-          const scrollPosition = window.scrollY;
-    
-          if (scrollPosition > twentyPercentPoint) {
-            setIsSticky(true);
-          } else {
-            setIsSticky(false);
-          }
+            const initialPageHeight = window.innerHeight;
+            const twentyPercentPoint = initialPageHeight * 0.20;
+            const scrollPosition = window.scrollY;
+
+            if (scrollPosition > twentyPercentPoint) {
+                setIsSticky(true);
+            } else {
+                setIsSticky(false);
+            }
         };
-    
+
         window.addEventListener("scroll", handleScroll, { passive: true });
         return () => {
-          window.removeEventListener("scroll", handleScroll);
+            window.removeEventListener("scroll", handleScroll);
         };
-      }, []);
+    }, []);
 
     return (
         <div className={LearnMoreCss.pageContainer}>
-                <div className={`${LearnMoreCss.FullContainer} ${isSticky ? LearnMoreCss.sticky : ''}`}   >
-                    <Navbar></Navbar>
-                </div>
+            <div className={`${LearnMoreCss.FullContainer} ${isSticky ? LearnMoreCss.sticky : ''}`}   >
+                <Navbar></Navbar>
+            </div>
             {/* Hero Section */}
             <div className={LearnMoreCss.heroSection}>
                 <div className={LearnMoreCss.heroContent}>
@@ -49,11 +49,11 @@ const LearnMore = () => {
                 <div className={LearnMoreCss.featuresSection}>
                     <div className={LearnMoreCss.featureCard}>
                         <FiBookOpen className={LearnMoreCss.featureIcon} />
-                        <h3>Πώς Λειτουργεί</h3>
+                        <h3>Από Open Data στη Διαφάνεια</h3>
                         <ul className={LearnMoreCss.featureList}>
-                            <li>Απλές και εύκολες οδηγίες</li>
-                            <li>Διαδραστικά μαθήματα</li>
-                            <li>Βίντεο με οδηγίες χρήσης</li>
+                            <li>Open Data Sources: Χρησιμοποιούμε επίσημα δεδομένα από δήμους & ερευνητικά κέντρα</li>
+                            <li>Πολυμορφική απεικόνιση: Χάρτες, Charts & Tables</li>
+                            <li>Συχνές Ερωτήσεις & Οδηγός Απαντήσεων (FAQ)</li>
                         </ul>
                     </div>
 
@@ -61,9 +61,9 @@ const LearnMore = () => {
                         <FiCheckCircle className={LearnMoreCss.featureIcon} />
                         <h3>Βασικά Πλεονεκτήματα</h3>
                         <ul className={LearnMoreCss.featureList}>
-                            <li>Άμεση Υποστήριξη Χρηστών</li>
-                            <li>Ασφαλές Περιβάλλον</li>
-                            <li>Τακτικές Αναβαθμίσεις</li>
+                            <li>Ζωντανές απεικονίσεις περιοχών με εύκολα-to-read χρώματα</li>
+                            <li>Responsive Πίνακες & Γραφήματα: Φιλικό περιβάλλον σε desktop & mobile</li>
+                            <li>Εύκολη Πλοήγηση: Quick-links σε Best Regions, Trends & Αναλυτικά Reports</li>
                         </ul>
                     </div>
                 </div>
