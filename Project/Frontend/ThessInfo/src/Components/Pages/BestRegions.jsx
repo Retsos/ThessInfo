@@ -163,7 +163,7 @@ export default function BestRegions() {
                 {/* Call-to-Action */}
                 <p className="text-center" style={{ marginTop: '2rem' }}>
                     🔥 Η κορυφαία υπηρεσία μας:{' '}
-                    <Link to="/ArrayMapSection" className={Styles.link}>
+                    <Link  to="/ArrayMapSection/0/Water" className={Styles.link}>
                         Δες όλα τα δεδομένα ανά δήμο!
                     </Link>
                 </p>

@@ -221,16 +221,25 @@ const Results = () => {
         };
     };
 
-    const GREEK_MONTH_ORDER = {
-        'Ιαν': 1, 'Φεβ': 2, 'Μαρ': 3, 'Απρ': 4, 'Μαϊ': 5,
-        'Ιουν': 6, 'Ιουλ': 7, 'Αυγ': 8, 'Σεπ': 9, 'Οκτ': 10,
-        'Νοε': 11, 'Δεκ': 12
+    const ENGLISH_MONTH_ORDER = {
+        January: 1,
+        February: 2,
+        March: 3,
+        April: 4,
+        May: 5,
+        June: 6,
+        July: 7,
+        August: 8,
+        September: 9,
+        October: 10,
+        November: 11,
+        December: 12
     };
 
     const lastyearRecycle = useMemo(() => {
         if (!RecycleDataLatest) return null;
-        const years = Object.keys(RecycleDataLatest.Yearly_Stats);       // ['2023','2024']
-        const numericYears = years.map(y => parseInt(y, 10));          // [2023, 2024]
+        const years = Object.keys(RecycleDataLatest.Yearly_Stats);     
+        const numericYears = years.map(y => parseInt(y, 10));          
         return Math.max(...numericYears);
     }, [RecycleDataLatest]);
 
@@ -239,7 +248,7 @@ const Results = () => {
     const lastYearAir = useMemo(() => {
         if (!AirDataYear) return null;
 
-        // 1) find the latest year key
+        // 1) find the latest year
         const years = Object.keys(AirDataYear)
             .filter(k => /^\d{4}$/.test(k))
             .map(y => parseInt(y, 10));
@@ -250,17 +259,18 @@ const Results = () => {
         const monthObj = AirDataYear[latestYear].monthly_averages;
         if (!monthObj) return null;
 
-        // 3) sort the month names by your Greek-month ordering
+        // 3) sort months by Greek order
         const monthNames = Object.keys(monthObj);
-        monthNames.sort((a, b) => GREEK_MONTH_ORDER[a] - GREEK_MONTH_ORDER[b]);
+        monthNames.sort((a, b) => ENGLISH_MONTH_ORDER[a] - ENGLISH_MONTH_ORDER[b]);
 
         // 4) pick the last one
-        const latestMonth = monthNames[monthNames.length - 1];
+        const latestMonthName = monthNames[monthNames.length - 1];
+        const monthNumber = ENGLISH_MONTH_ORDER[latestMonthName];  // τώρα 12 αντί "Δεκ"
 
         return {
             year: latestYear,
-            month: latestMonth,
-            data: monthObj[latestMonth]
+            month: monthNumber,         // αριθμητικό μήνα
+            data: monthObj[latestMonthName]
         };
     }, [AirDataYear]);
 
@@ -386,7 +396,7 @@ const Results = () => {
 
 
                                 </div>
-                                <p className='text-end pt-5'>    Τελευταία μέτρηση: {lastYearAir.month} {lastYearAir.year}</p>
+                                <p className='text-end pt-5'>    Τελευταία μέτρηση: {lastYearAir.month}/{lastYearAir.year}</p>
                             </div>
                         ) : <div className={ResultsCss.comingSoon}>
                             <MdAir className={ResultsCss.comingSoonIcon} />
