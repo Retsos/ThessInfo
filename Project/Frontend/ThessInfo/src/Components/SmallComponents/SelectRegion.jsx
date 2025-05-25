@@ -179,7 +179,7 @@ const SelectRegion = () => {
 
             {showMinLengthWarning && (
                 <div style={{ color: "rgba(211, 46, 46, 0.88)", marginTop: "5px" }}>
-                    Επιλέξτε τουλάχιστον 1.
+                    Επιλέξτε τουλάχιστον 1 περιοχή.
                 </div>
             )}
 
