@@ -164,8 +164,6 @@ const Results = () => {
         //  console.log("ASDADAD", RecycleDataLatestperperson);
         //  console.log(RecycleDataLatest)
 
-
-
     }, [AirDataLatest, AirDataYear, RecycleDataLatestperperson]);
 
 
@@ -223,13 +221,11 @@ const Results = () => {
         };
     };
 
-    const latestYear = useMemo(() => {
-        if (!waterDataLastYear) return null;
-        const ks = Object.keys(waterDataLastYear)
-            .filter(k => /^\d{4}$/.test(k))
-            .map(Number);
-        return ks.length ? String(Math.max(...ks)) : null;
-    }, [waterDataLastYear]);
+    const GREEK_MONTH_ORDER = {
+        'Ιαν': 1, 'Φεβ': 2, 'Μαρ': 3, 'Απρ': 4, 'Μαϊ': 5,
+        'Ιουν': 6, 'Ιουλ': 7, 'Αυγ': 8, 'Σεπ': 9, 'Οκτ': 10,
+        'Νοε': 11, 'Δεκ': 12
+    };
 
     const lastyearRecycle = useMemo(() => {
         if (!RecycleDataLatest) return null;
@@ -239,6 +235,34 @@ const Results = () => {
     }, [RecycleDataLatest]);
 
 
+
+    const lastYearAir = useMemo(() => {
+        if (!AirDataYear) return null;
+
+        // 1) find the latest year key
+        const years = Object.keys(AirDataYear)
+            .filter(k => /^\d{4}$/.test(k))
+            .map(y => parseInt(y, 10));
+        if (!years.length) return null;
+        const latestYear = String(Math.max(...years));
+
+        // 2) grab its monthly_averages
+        const monthObj = AirDataYear[latestYear].monthly_averages;
+        if (!monthObj) return null;
+
+        // 3) sort the month names by your Greek-month ordering
+        const monthNames = Object.keys(monthObj);
+        monthNames.sort((a, b) => GREEK_MONTH_ORDER[a] - GREEK_MONTH_ORDER[b]);
+
+        // 4) pick the last one
+        const latestMonth = monthNames[monthNames.length - 1];
+
+        return {
+            year: latestYear,
+            month: latestMonth,
+            data: monthObj[latestMonth]
+        };
+    }, [AirDataYear]);
 
     const renderTabContent = () => {
         switch (activeTab) {
@@ -304,7 +328,6 @@ const Results = () => {
                         {RecycleDataLatest ? (
                             <div className='pt-5'>
                                 <div className={ResultsCss.SegmentSection}>
-
                                     <div className={`shadow ${ResultsCss.info}`}>
                                         <RecycleCard recycleData={RecycleUsableGeneral}></RecycleCard>
                                     </div>
@@ -342,13 +365,12 @@ const Results = () => {
                         <h3>Ποιότητα Αέρα - {dimosLabel}</h3>
                         {AirDataLatest ? (
                             <div className='pt-5'>
-                                    {console.log(AirDataYear)}
-                                    {console.log(AirDataLatest)}
                                 <div className={ResultsCss.SegmentSection}>
+
+                                    {console.log(AirDataYear)}
                                     <div className={`shadow ${ResultsCss.info}`}>
                                         <AirLatest airData={AirDataYear}></AirLatest>
                                     </div>
-
 
                                     <div className={`shadow ${ResultsCss.info}`}>
                                         <AirYearlyChart yearlyData={AirDataLatest}></AirYearlyChart>
@@ -364,8 +386,7 @@ const Results = () => {
 
 
                                 </div>
-
-
+                                <p className='text-end pt-5'>    Τελευταία μέτρηση: {lastYearAir.month} {lastYearAir.year}</p>
                             </div>
                         ) : <div className={ResultsCss.comingSoon}>
                             <MdAir className={ResultsCss.comingSoonIcon} />
