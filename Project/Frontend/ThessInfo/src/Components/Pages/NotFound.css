@@ -1,0 +1,55 @@
+.not-found-container {
+  height: 100vh;
+  background: linear-gradient(135deg, #1f1c2c, #928dab);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #ffffff;
+  text-align: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.error-code {
+  font-size: 10rem;
+  font-weight: bold;
+  letter-spacing: 10px;
+  animation: glitch 1.5s infinite;
+}
+
+.message {
+  font-size: 2rem;
+  margin-top: -20px;
+}
+
+.description {
+  max-width: 400px;
+  margin: 20px auto;
+  font-size: 1rem;
+  opacity: 0.85;
+}
+
+.home-button2 {
+  margin-top: 20px;
+  padding: 12px 24px;
+  background-color: #ffffff;
+  color: #1f1c2c;
+  text-decoration: none;
+  border-radius: 30px;
+  font-weight: bold;
+  transition: 0.3s ease;
+}
+
+.home-button2:hover {
+  background-color: #f1f1f1;
+  transform: scale(1.05);
+}
+
+@keyframes glitch {
+  0% { text-shadow: 2px 2px red; }
+  20% { text-shadow: -2px -2px cyan; }
+  40% { text-shadow: 2px -2px lime; }
+  60% { text-shadow: -2px 2px magenta; }
+  80% { text-shadow: 2px 2px blue; }
+  100% { text-shadow: -2px -2px red; }
+}

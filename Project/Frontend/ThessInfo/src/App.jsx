@@ -8,6 +8,7 @@ import ScrollToTop from "./Components/SmallComponents/ScrollToTop";
 import ArrayMapSection from "./Components/Pages/ArrayMapSection";
 import { DataProvider } from "./Components/DataContext";
 import BestRegions from "./Components/Pages/BestRegions";
+import NotFound from "./Components/Pages/NotFound";
 
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
             <Route path="/BestRegions" element={<BestRegions />} />
             <Route path="/Results" element={<Results />} />
             <Route path="/ArrayMapSection/:view/:category" element={<ArrayMapSection />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </ScrollToTop>
       </DataProvider>
