@@ -63,9 +63,13 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = [
+DEFAULT_CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
 ]
+_env = os.getenv("DJANGO_CORS_ALLOWED_ORIGINS", "")
+extra_origins = [o.strip() for o in _env.split(",") if o.strip()]
+CORS_ALLOWED_ORIGINS = DEFAULT_CORS_ALLOWED_ORIGINS + extra_origins
+
 
 ROOT_URLCONF = 'ThessInfo.urls'
 
