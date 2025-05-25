@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import Styles from './SelectRegion.module.css';
 import { useNavigate } from 'react-router-dom';
 import Select, { components } from 'react-select';
-import {regions as rawOptions } from './../Regions.js'
+import {regions as rawOptions } from './../Regions.jsx'
 
 const SelectRegion = () => {
 
