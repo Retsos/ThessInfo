@@ -1,6 +1,7 @@
 // src/config/regions.js
 import { FaHandHoldingWater, FaRecycle } from 'react-icons/fa'
 import { MdAir } from 'react-icons/md'
+import React from 'react';
 
     export const regions = [
         {
