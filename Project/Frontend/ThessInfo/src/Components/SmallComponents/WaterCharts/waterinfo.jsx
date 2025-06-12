@@ -36,9 +36,9 @@ const WaterCard = ({ waterData }) => {
           const limitDisplay = limit ?? null;
           // pick status icon
           let status;
-          if (!hasValue) status = <BsDashCircleFill className={WaterCss.statusNeutral} />;
-          else if (is_compliant) status = <FaCheckCircle className={WaterCss.statusOk} />;
-          else status = <FaTimesCircle className={WaterCss.statusFail} />;
+          if (!hasValue) status = <BsDashCircleFill className={WaterCss.statusNeutral} title='Δεν υπάρχει μέτρηση '/>;
+          else if (is_compliant) status = <FaCheckCircle className={WaterCss.statusOk}title='Εντός Ορίου' />;
+          else status = <FaTimesCircle className={WaterCss.statusFail}title='Εκτός Ορίου' />;
 
           return (
             <li key={idx} className={WaterCss.listItem}>
