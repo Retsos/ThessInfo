@@ -1,4 +1,4 @@
-# ThessInfo - Environmental Data Platform
+# ThessInfo - Environmental Data Platform.
 
 🔗 Live Demo: users.it.teithe.gr/~iliasalt/ThessInfo/#/
 
