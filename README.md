@@ -1,6 +1,7 @@
 # ThessInfo - Environmental Data Platform.
 
 🔗 Live Demo: users.it.teithe.gr/~iliasalt/ThessInfo/#/
+<img width="1895" height="901" alt="thessinfo" src="https://github.com/user-attachments/assets/edee7ffe-b288-4254-ab42-b745b976c4d1" />
 
 ThessInfo is a React application for visualizing water quality, air quality, and recycling compliance data across municipalities in Thessaloniki, Greece. Developed as an entry to the **Open Data Greece** competition, ThessInfo makes public environmental data accessible, interactive, and easy to explore for both citizens and decision‑makers.
 
